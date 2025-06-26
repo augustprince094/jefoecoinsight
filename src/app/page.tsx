@@ -69,18 +69,8 @@ export default function HomePage() {
         {/* Hero Section */}
         <section className="py-12 md:py-20 bg-card">
           <div className="container mx-auto px-4">
-            <div className="grid md:grid-cols-2 gap-8 items-center">
-              <div>
-                <Image 
-                  src="https://images.unsplash.com/photo-1527153857715-3908f2bae5e8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxM3x8bGl2ZXN0b2NrfGVufDB8fHx8MTc1MDk2OTQ0MXww&ixlib=rb-4.1.0&q=80&w=1080"
-                  alt="Diagram showing standard diet vs P(OA+EO) diet for pigs" 
-                  width={600} 
-                  height={400} 
-                  className="rounded-lg shadow-lg"
-                  data-ai-hint="pig diet diagram"
-                />
-              </div>
-              <div className="text-center md:text-left">
+            <div className="grid gap-8 items-center">
+              <div className="text-center">
                  <h1 className="text-3xl md:text-4xl font-bold text-primary mb-4">
                   Lower your carbon footprint with Jefo solutions
                 </h1>
@@ -89,7 +79,7 @@ export default function HomePage() {
                   alt="Bar chart showing greenhouse gas emission reduction" 
                   width={500} 
                   height={300} 
-                  className="rounded-lg shadow-lg mb-6"
+                  className="rounded-lg shadow-lg mb-6 mx-auto"
                   data-ai-hint="emission reduction chart"
                 />
                 <p className="text-muted-foreground mb-8">
