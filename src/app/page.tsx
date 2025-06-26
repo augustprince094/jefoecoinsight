@@ -23,7 +23,7 @@ const livestockData = [
     downloadLink: "/lca-poultry.pdf"
   },
   {
-    species: "Swine",
+    species: "PIGS",
     image: "https://images.unsplash.com/photo-1516463991402-53092574e45d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNDE5ODJ8MHwxfGFsbHx8fHx8fHx8fDE2NzM4OTA0OTk&ixlib=rb-4.0.3&q=80&w=1080",
     alt: "Pigs on a sustainable farm.",
     dataAiHint: "pigs farm",
@@ -72,7 +72,7 @@ export default function HomePage() {
             <div className="grid md:grid-cols-2 gap-8 items-center">
               <div>
                 <Image 
-                  src="https://placehold.co/600x400.png"
+                  src="https://images.unsplash.com/photo-1527153857715-3908f2bae5e8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxM3x8bGl2ZXN0b2NrfGVufDB8fHx8MTc1MDk2OTQ0MXww&ixlib=rb-4.1.0&q=80&w=1080"
                   alt="Diagram showing standard diet vs P(OA+EO) diet for pigs" 
                   width={600} 
                   height={400} 
