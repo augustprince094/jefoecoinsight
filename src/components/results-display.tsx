@@ -76,6 +76,11 @@ export function ResultsDisplay({ results, isLoading, error }: ResultsDisplayProp
         { name: "With Additive", cost: roiData.feedCostPerLiveWeightAfter },
     ];
     
+    // Calculate a dynamic Y-axis domain to make the difference more observable
+    const costs = chartData.map(d => d.cost);
+    const minCost = Math.min(...costs);
+    const yAxisDomainMin = Math.max(0, Math.floor(minCost * 0.95 * 100) / 100);
+
     const chartConfig = {
         cost: {
             label: "Feed Cost ($/kg)",
@@ -119,7 +124,7 @@ export function ResultsDisplay({ results, isLoading, error }: ResultsDisplayProp
                                 axisLine={false}
                                 tickMargin={8}
                                 tickFormatter={(value) => `$${value.toFixed(2)}`}
-                                domain={[0, 'auto']}
+                                domain={[yAxisDomainMin, 'auto']}
                             />
                             <XAxis
                                 dataKey="name"
