@@ -43,13 +43,14 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
     defaultValues: {
       numberOfBirds: 50000,
       broilerLiveWeight: 2.5,
-      mortalityRate: 4.5,
+      baselineMortalityRate: 4.5,
       baselineFCR: 1.75,
       feedCost: 0.80,
       feedAdditive: "Jefo Pro Solution",
       inclusionRate: 1500,
       additiveCost: 12.50,
       feedConversionRatioAfter: 0,
+      mortalityRateAfter: 0,
     },
   });
   const { toast } = useToast();
@@ -57,25 +58,34 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
 
   const feedAdditiveValue = watch("feedAdditive");
   const baselineFCRValue = watch("baselineFCR");
+  const baselineMortalityRateValue = watch("baselineMortalityRate");
 
   useEffect(() => {
+    // FCR Calculation
     if (feedAdditiveValue && baselineFCRValue > 0) {
-      let reduction = 0;
+      let fcrReduction = 0;
       switch (feedAdditiveValue) {
-        case "Jefo Pro Solution":
-          reduction = 0.04;
-          break;
-        case "Jefo P(OA+EO)":
-          reduction = 0.05;
-          break;
-        case "Jefo Xylanase":
-          reduction = 0.06;
-          break;
+        case "Jefo Pro Solution": fcrReduction = 0.04; break;
+        case "Jefo P(OA+EO)": fcrReduction = 0.05; break;
+        case "Jefo Xylanase": fcrReduction = 0.06; break;
       }
-      const newFCR = baselineFCRValue - reduction;
+      const newFCR = baselineFCRValue - fcrReduction;
       setValue("feedConversionRatioAfter", parseFloat(newFCR.toFixed(3)), { shouldValidate: true });
     }
-  }, [feedAdditiveValue, baselineFCRValue, setValue]);
+
+    // Mortality Rate Calculation
+    if (feedAdditiveValue && baselineMortalityRateValue > 0) {
+      let mortalityReduction = 0;
+      switch (feedAdditiveValue) {
+        case "Jefo Pro Solution": mortalityReduction = 1.2; break;
+        case "Jefo P(OA+EO)": mortalityReduction = 1.6; break;
+        case "Jefo Xylanase": mortalityReduction = 1.4; break;
+      }
+      const newMortalityRate = baselineMortalityRateValue - mortalityReduction;
+      setValue("mortalityRateAfter", Math.max(0, parseFloat(newMortalityRate.toFixed(2))), { shouldValidate: true });
+    }
+
+  }, [feedAdditiveValue, baselineFCRValue, baselineMortalityRateValue, setValue]);
 
   async function onSubmit(data: FormValues) {
     setIsLoading(true);
@@ -135,10 +145,10 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
             />
              <FormField
               control={form.control}
-              name="mortalityRate"
+              name="baselineMortalityRate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Mortality Rate (%)</FormLabel>
+                  <FormLabel>Baseline Mortality Rate (%)</FormLabel>
                   <FormControl>
                     <Input type="number" step="0.1" {...field} />
                   </FormControl>

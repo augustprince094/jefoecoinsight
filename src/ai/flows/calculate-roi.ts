@@ -17,7 +17,8 @@ const ROIInputSchema = z.object({
   inclusionRate: z.number().describe('The inclusion rate of the feed additive in kg/ton.'),
   numberOfBirds: z.number().describe('Number of birds per production cycle.'),
   broilerLiveWeight: z.number().describe('The final live weight of a broiler in kg.'),
-  mortalityRate: z.number().describe('The mortality rate as a percentage (e.g., 4.5 for 4.5%).'),
+  mortalityRateBefore: z.number().describe('The mortality rate before using the additive, as a percentage.'),
+  mortalityRateAfter: z.number().describe('The mortality rate after using the additive, as a percentage.'),
   feedConversionRatioBefore: z.number().describe('The feed conversion ratio before using the additive.'),
   feedConversionRatioAfter: z.number().describe('The feed conversion ratio after using the additive.'),
   costMetrics: z.object({
@@ -45,14 +46,21 @@ const prompt = ai.definePrompt({
   name: 'calculateROIPrompt',
   input: {schema: ROIInputSchema},
   output: {schema: ROIOutputSchema},
-  prompt: `You are an expert in broiler economics. Calculate the return on investment (ROI) for using a feed additive, based on the feed cost savings versus the investment in the additive.
+  prompt: `You are an expert in broiler economics. Calculate the return on investment (ROI) for using a feed additive.
+
+The calculation must account for feed consumed by both surviving birds and birds that die during the cycle. Birds that die are assumed to consume 30% of the feed that a full-grown bird would have consumed.
 
 Scenario Details:
 - Number of birds per cycle: {{{numberOfBirds}}}
 - Target live weight per broiler: {{{broilerLiveWeight}}} kg
-- Mortality rate: {{{mortalityRate}}} %
-- Feed Conversion Ratio (FCR) Before: {{{feedConversionRatioBefore}}}
-- FCR After: {{{feedConversionRatioAfter}}}
+
+Baseline Scenario (Before Additive):
+- Mortality rate: {{{mortalityRateBefore}}} %
+- Feed Conversion Ratio (FCR): {{{feedConversionRatioBefore}}}
+
+New Scenario (After Additive):
+- Mortality rate: {{{mortalityRateAfter}}} %
+- Feed Conversion Ratio (FCR): {{{feedConversionRatioAfter}}}
 
 Feed Additive Details:
 - Type: {{{feedAdditiveType}}}
@@ -63,20 +71,33 @@ Cost Metrics:
 - Additive Cost: \${{{costMetrics.additiveCost}}} per kg
 
 Your calculation should only consider the feed cost savings and the cost of the additive. Do not consider the revenue from selling broilers.
-Show your work in the explanation. Follow these steps:
-1. First, calculate the cost of feed per ton. The provided feed cost is per kg of live weight *before* the additive. Use the baseline FCR to find the cost per ton. Formula: Feed Cost per ton = (Feed Cost per kg live weight / FCR Before) * 1000.
-2. Calculate total final birds = Number of birds * (1 - mortality rate / 100).
-3. Calculate total live weight produced = Total final birds * Broiler live weight.
-4. Calculate total feed consumed for both scenarios (Before and After) = Total live weight * FCR.
-5. Calculate total feed cost for both scenarios using the calculated Feed Cost per ton from step 1.
-6. Calculate the total feed cost savings = Total Feed Cost Before - Total Feed Cost After.
-7. Calculate the total investment in the additive = (Total feed consumed After / 1000) * inclusion rate * additive cost.
-8. Calculate ROI = (Total Feed Cost Savings / Total Investment in Additive).
-9. Calculate the feed cost per kg of live weight for the 'After' scenario by dividing the 'Total Feed Cost After' from step 5 by the 'Total live weight produced' from step 3.
+
+Show your work in the explanation. Follow these steps for **both** the 'Before' and 'After' scenarios:
+1.  First, calculate the cost of feed per ton. This value is constant for both scenarios. Formula: Feed Cost per ton = (Feed Cost per kg live weight / FCR Before) * 1000.
+2.  Calculate the number of surviving birds and dead birds for the scenario.
+    - Surviving Birds = Number of birds * (1 - mortality rate / 100)
+    - Dead Birds = Number of birds * (mortality rate / 100)
+3.  Calculate the total live weight produced by surviving birds.
+    - Total Live Weight = Surviving Birds * Broiler live weight
+4.  Calculate the total feed consumed by surviving birds.
+    - Feed for Survivors = Total Live Weight * FCR for the scenario.
+5.  Calculate the total feed consumed by birds that died.
+    - Feed per survivor = Broiler live weight * FCR for the scenario
+    - Feed for Dead Birds = Dead Birds * (Feed per survivor * 0.30)
+6.  Calculate the total feed consumed for the scenario.
+    - Total Feed Consumed = Feed for Survivors + Feed for Dead Birds
+7.  Calculate the total feed cost for the scenario.
+    - Total Feed Cost = (Total Feed Consumed / 1000) * Feed Cost per ton.
+
+After calculating the above for both scenarios:
+8.  Calculate the total feed cost savings = Total Feed Cost Before - Total Feed Cost After.
+9.  Calculate the total investment in the additive = (Total feed consumed After / 1000) * inclusion rate * additive cost.
+10. Calculate ROI = (Total Feed Cost Savings / Total Investment in Additive).
+11. Calculate the feed cost per kg of live weight for the 'After' scenario by dividing the 'Total Feed Cost After' by the 'Total Live Weight' (from the 'After' scenario's step 3).
 
 Return the ROI as a decimal number (e.g., 1.5 for 1.5:1).
 Return the 'feedCostPerLiveWeightBefore' using the value from the input 'costMetrics.feedCost'.
-Return the calculated 'feedCostPerLiveWeightAfter' from step 9.
+Return the calculated 'feedCostPerLiveWeightAfter' from step 11.
 Provide a detailed step-by-step explanation of the calculation.
 `,
 });

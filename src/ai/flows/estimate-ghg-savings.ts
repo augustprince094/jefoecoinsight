@@ -17,7 +17,8 @@ const EstimateGHGSavingsInputSchema = z.object({
   inclusionRate: z.number().describe('The inclusion rate of the feed additive (e.g., in kg/ton).'),
   numberOfBirds: z.number().describe('Number of birds per production cycle.'),
   broilerLiveWeight: z.number().describe('The final live weight of a broiler in kg.'),
-  mortalityRate: z.number().describe('The mortality rate as a percentage.'),
+  mortalityRateBefore: z.number().describe('The mortality rate before using the additive, as a percentage.'),
+  mortalityRateAfter: z.number().describe('The mortality rate after using the additive, as a percentage.'),
   feedConversionRatioBefore: z.number().describe('The feed conversion ratio before using the additive.'),
   feedConversionRatioAfter: z.number().describe('The feed conversion ratio after using the additive.'),
 });
@@ -39,28 +40,33 @@ const prompt = ai.definePrompt({
   output: {schema: EstimateGHGSavingsOutputSchema},
   prompt: `You are an expert in estimating greenhouse gas (GHG) emission reductions in broiler production.
 
-  Based on the provided information, estimate the GHG emission reductions resulting from the use of a feed additive. The primary saving comes from improved feed efficiency.
+  Based on the provided information, estimate the GHG emission reductions resulting from the use of a feed additive. The savings come from improved feed efficiency and reduced mortality. The calculation must account for feed consumed by both surviving birds and birds that die during the cycle. Birds that die are assumed to consume 30% of the feed that a full-grown bird would have consumed.
 
   Scenario Details:
   - Livestock Type: Broilers
   - Number of birds per cycle: {{{numberOfBirds}}}
   - Target live weight per broiler: {{{broilerLiveWeight}}} kg
-  - Mortality rate: {{{mortalityRate}}} %
-  - Feed Conversion Ratio Before: {{{feedConversionRatioBefore}}}
-  - Feed Conversion Ratio After: {{{feedConversionRatioAfter}}}
+  
+  Baseline Scenario (Before Additive):
+  - Mortality rate: {{{mortalityRateBefore}}} %
+  - Feed Conversion Ratio (FCR): {{{feedConversionRatioBefore}}}
+  
+  New Scenario (After Additive):
+  - Mortality rate: {{{mortalityRateAfter}}} %
+  - Feed Conversion Ratio (FCR): {{{feedConversionRatioAfter}}}
 
   Feed Additive Details:
   - Type: {{{feedAdditive}}}
 
-  Calculate the total feed saved due to the improved FCR for the entire production cycle. Then, use standard emission factors for feed production to estimate the total GHG savings in kg CO2e. Assume an emission factor of 1.2 kg CO2e per kg of broiler feed produced.
-
   Calculation Steps:
-  1. Calculate total final birds = Number of birds * (1 - mortality rate / 100).
-  2. Calculate total live weight produced = Total final birds * Broiler live weight.
-  3. Calculate total feed consumed Before = Total live weight * FCR Before.
-  4. Calculate total feed consumed After = Total live weight * FCR After.
-  5. Calculate total feed saved = Total feed consumed Before - Total feed consumed After.
-  6. Calculate GHG Savings = Total feed saved * 1.2 kg CO2e/kg feed.
+  1.  For **both** the 'Before' and 'After' scenarios, calculate the total feed consumed using the following sub-steps:
+      a. Calculate the number of surviving birds and dead birds.
+      b. Calculate total live weight produced by surviving birds.
+      c. Calculate total feed consumed by surviving birds (Total Live Weight * FCR).
+      d. Calculate total feed consumed by dead birds (Dead Birds * (Broiler live weight * FCR * 0.30)).
+      e. Sum the feed from survivors and dead birds to get the total feed consumed for the scenario.
+  2.  Calculate total feed saved = Total Feed Consumed (Before) - Total Feed Consumed (After).
+  3.  Calculate GHG Savings = Total feed saved * 1.2 kg CO2e/kg feed.
 
   Provide both the estimated GHG savings and a brief explanation of your calculation.
   Ensure that the units for ghgSavings are in kg CO2e.

@@ -10,7 +10,7 @@ export const formSchema = z.object({
   // Card 1: Broiler Production Cycle Details
   numberOfBirds: z.coerce.number().positive({ message: "Must be a positive number." }),
   broilerLiveWeight: z.coerce.number().positive({ message: "Must be a positive number." }),
-  mortalityRate: z.coerce.number().min(0, { message: "Cannot be negative." }).max(100, { message: "Cannot exceed 100." }),
+  baselineMortalityRate: z.coerce.number().min(0, { message: "Cannot be negative." }).max(100, { message: "Cannot exceed 100." }),
   baselineFCR: z.coerce.number().positive({ message: "Must be a positive number." }),
   feedCost: z.coerce.number().positive({ message: "Must be a positive number." }),
 
@@ -19,8 +19,11 @@ export const formSchema = z.object({
     required_error: "Please select a feed additive.",
   }),
   inclusionRate: z.coerce.number().positive({ message: "Must be a positive number." }),
-  feedConversionRatioAfter: z.coerce.number().positive({ message: "Must be a positive number." }),
   additiveCost: z.coerce.number().positive({ message: "Must be a positive number." }),
+  
+  // Calculated fields
+  feedConversionRatioAfter: z.coerce.number().positive({ message: "Must be a positive number." }),
+  mortalityRateAfter: z.coerce.number().min(0, { message: "Cannot be negative." }),
 });
 
 
