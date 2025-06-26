@@ -151,6 +151,19 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
                 </FormItem>
               )}
             />
+             <FormField
+              control={form.control}
+              name="feedCost"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Feed Cost ($/ton)</FormLabel>
+                  <FormControl>
+                    <Input type="number" step="0.01" placeholder="e.g., 450" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </CardContent>
         </Card>
 
@@ -220,19 +233,6 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
             <CardTitle>3. Cost Metrics</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="feedCost"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Feed Cost ($/ton)</FormLabel>
-                  <FormControl>
-                    <Input type="number" step="0.01" placeholder="e.g., 450" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
             <FormField
               control={form.control}
               name="livestockPrice"
