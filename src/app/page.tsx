@@ -16,7 +16,7 @@ import {
 const livestockData = [
   {
     species: "Poultry",
-    image: "https://images.unsplash.com/photo-1527153857715-3908f2bae5e8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxM3x8bGl2ZXN0b2NrfGVufDB8fHx8MTc1MDk2OTQ0MXww&ixlib=rb-4.1.0&q=80&w=1080",
+    image: "https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxjaGlja2Vuc3xlbnwwfHx8fDE3NTA5NzAxOTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
     alt: "Chickens in a grassy field, representing sustainable poultry farming.",
     dataAiHint: "chickens field",
     headline: "See how Jefo feed additives can help you reduce your carbon footprint in broiler production",
