@@ -108,6 +108,7 @@ export function ResultsDisplay({ results, isLoading, error }: ResultsDisplayProp
                                     tickLine={false}
                                     axisLine={false}
                                     tickMargin={10}
+                                    domain={[dataMin => (dataMin * 0.95), 'auto']}
                                 />
                                 <ChartTooltip
                                     cursor={false}
