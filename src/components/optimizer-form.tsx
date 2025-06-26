@@ -40,7 +40,16 @@ interface OptimizerFormProps {
 export function OptimizerForm({ setResults, setIsLoading, setError, isCalculating }: OptimizerFormProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {},
+    defaultValues: {
+      numberOfBirds: '' as unknown as number,
+      broilerLiveWeight: '' as unknown as number,
+      mortalityRate: '' as unknown as number,
+      baselineFCR: '' as unknown as number,
+      feedCost: '' as unknown as number,
+      inclusionRate: '' as unknown as number,
+      additiveCost: '' as unknown as number,
+      feedConversionRatioAfter: 0,
+    },
   });
   const { toast } = useToast();
   const { watch, setValue } = form;
@@ -233,6 +242,19 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
                   <FormLabel>Additive Cost ($/kg)</FormLabel>
                   <FormControl>
                     <Input type="number" step="0.01" placeholder="e.g., 12.50" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="feedConversionRatioAfter"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>FCR (After)</FormLabel>
+                  <FormControl>
+                    <Input type="number" {...field} readOnly className="bg-muted" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
