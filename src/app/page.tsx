@@ -1,9 +1,45 @@
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { PlayCircle, Download } from 'lucide-react';
 import { JefoLogo } from '@/components/icons/jefo-logo';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
+
+const livestockData = [
+  {
+    species: "Poultry",
+    image: "https://images.unsplash.com/photo-1527153857715-3908f2bae5e8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxM3x8bGl2ZXN0b2NrfGVufDB8fHx8MTc1MDk2OTQ0MXww&ixlib=rb-4.1.0&q=80&w=1080",
+    alt: "Chickens in a grassy field, representing sustainable poultry farming.",
+    dataAiHint: "chickens field",
+    headline: "See how Jefo feed additives can help you reduce your carbon footprint in broiler production",
+    downloadLink: "/lca-poultry.pdf"
+  },
+  {
+    species: "Swine",
+    image: "https://images.unsplash.com/photo-1516463991402-53092574e45d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNDE5ODJ8MHwxfGFsbHx8fHx8fHx8fDE2NzM4OTA0OTk&ixlib=rb-4.0.3&q=80&w=1080",
+    alt: "Pigs on a sustainable farm.",
+    dataAiHint: "pigs farm",
+    headline: "Discover the environmental benefits for pork production with Jefo solutions",
+    downloadLink: "/lca-swine.pdf"
+  },
+  {
+    species: "Dairy",
+    image: "https://images.unsplash.com/photo-1594998499222-19c91973e6a9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNDE5ODJ8MHwxfGFsbHx8fHx8fHx8fDE2NzM4OTA1ODc&ixlib=rb-4.0.3&q=80&w=1080",
+    alt: "Dairy cows in a field, representing a sustainable dairy operation.",
+    dataAiHint: "dairy cows",
+    headline: "Lower the carbon footprint of your dairy operation with our innovative feed additives",
+    downloadLink: "/lca-dairy.pdf"
+  },
+]
+
 
 export default function HomePage() {
   return (
@@ -49,7 +85,7 @@ export default function HomePage() {
                   Lower your carbon footprint with Jefo solutions
                 </h1>
                 <Image 
-                  src="https://placehold.co/500x300.png"
+                  src="https://images.unsplash.com/photo-1527153857715-3908f2bae5e8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxM3x8bGl2ZXN0b2NrfGVufDB8fHx8MTc1MDk2OTQ0MXww&ixlib=rb-4.1.0&q=80&w=1080"
                   alt="Bar chart showing greenhouse gas emission reduction" 
                   width={500} 
                   height={300} 
@@ -99,26 +135,43 @@ export default function HomePage() {
            <div className="container mx-auto px-4">
             <Card>
               <CardContent className="p-8">
-                <div className="grid md:grid-cols-2 gap-12 items-center">
-                  <div>
-                    <Image
-                      src="https://images.unsplash.com/photo-1527153857715-3908f2bae5e8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxM3x8bGl2ZXN0b2NrfGVufDB8fHx8MTc1MDk2OTQ0MXww&ixlib=rb-4.1.0&q=80&w=1080"
-                      alt="Chickens in a grassy field, representing sustainable agriculture."
-                      width={500}
-                      height={300}
-                      className="rounded-lg shadow-lg w-full h-auto"
-                    />
-                  </div>
-                  <div className="text-center md:text-left">
-                    <h2 className="text-2xl md:text-3xl font-bold mb-4">See how Jefo feed additives can help you reduce your carbon footprint</h2>
-                    <Button asChild size="lg" variant="outline">
-                       <a href="#" download>
-                        <Download className="mr-2" />
-                        Download the Life Cycle Assessment
-                      </a>
-                    </Button>
-                  </div>
-                </div>
+                <Carousel
+                  opts={{
+                    align: "start",
+                    loop: true,
+                  }}
+                  className="w-full"
+                >
+                  <CarouselContent>
+                    {livestockData.map((item, index) => (
+                      <CarouselItem key={index}>
+                        <div className="grid md:grid-cols-2 gap-12 items-center">
+                           <div className="text-center md:text-left">
+                              <h2 className="text-2xl md:text-3xl font-bold mb-4">{item.headline}</h2>
+                              <Button asChild size="lg" variant="outline">
+                                <a href={item.downloadLink} download>
+                                  <Download className="mr-2" />
+                                  Download the Life Cycle Assessment
+                                </a>
+                              </Button>
+                            </div>
+                          <div>
+                            <Image
+                              src={item.image}
+                              alt={item.alt}
+                              width={500}
+                              height={300}
+                              className="rounded-lg shadow-lg w-full h-auto object-cover aspect-[5/3]"
+                              data-ai-hint={item.dataAiHint}
+                            />
+                          </div>
+                        </div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious className="hidden md:flex" />
+                  <CarouselNext className="hidden md:flex"/>
+                </Carousel>
               </CardContent>
             </Card>
           </div>
