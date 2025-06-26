@@ -96,8 +96,14 @@ export function ResultsDisplay({ results, isLoading, error }: ResultsDisplayProp
                         </div>
                     </div>
                 </CardHeader>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>Feed Cost Comparison</CardTitle>
+                    <CardDescription>Cost per kg of live weight, before and after using the additive.</CardDescription>
+                </CardHeader>
                 <CardContent>
-                    <h4 className="text-sm font-semibold mb-2">Feed Cost per kg Live Weight Comparison</h4>
                      <div className="h-48">
                        <ChartContainer config={feedCostChartConfig}>
                             <BarChart data={feedCostChartData} margin={{ top: 20, right: 20, left: -10, bottom: 0 }}>
