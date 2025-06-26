@@ -11,21 +11,22 @@ export function exportResultsToCsv(result: OptimizationResult) {
   
   const headers = [
     // Inputs
-    "Livestock Type", "Feed Additive", "Inclusion Rate (kg/ton)", "FCR Before", "FCR After", 
-    "Avg Daily Gain", "Egg Prod Rate", "Milk Yield", "Feed Cost ($/ton)", "Additive Cost ($/kg)", "Livestock Price ($/kg, dz, L)",
+    "Livestock Type", "Number of Birds", "Broiler Live Weight (kg)", "Mortality Rate (%)",
+    "Feed Additive", "Inclusion Rate (kg/ton)", "Baseline FCR", "FCR After", 
+    "Feed Cost ($/ton)", "Additive Cost ($/kg)", "Broiler Price ($/kg)",
     // Outputs
     "ROI (%)", "ROI Explanation", "GHG Savings (kg CO2e)", "GHG Explanation"
   ];
 
   const row = [
-    inputs.livestockType,
+    "Broiler",
+    inputs.numberOfBirds,
+    inputs.broilerLiveWeight,
+    inputs.mortalityRate,
     inputs.feedAdditive,
     inputs.inclusionRate,
-    inputs.feedConversionRatioBefore,
+    inputs.baselineFCR,
     inputs.feedConversionRatioAfter,
-    inputs.averageDailyGain ?? 'N/A',
-    inputs.eggProductionRate ?? 'N/A',
-    inputs.milkYield ?? 'N/A',
     inputs.feedCost,
     inputs.additiveCost,
     inputs.livestockPrice,
@@ -42,7 +43,7 @@ export function exportResultsToCsv(result: OptimizationResult) {
   const encodedUri = encodeURI(csvContent);
   const link = document.createElement("a");
   link.setAttribute("href", encodedUri);
-  link.setAttribute("download", "livestock_optimizer_results.csv");
+  link.setAttribute("download", "broiler_optimizer_results.csv");
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

@@ -201,16 +201,13 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
             />
             <FormField
               control={form.control}
-              name="feedConversionRatioAfter"
+              name="additiveCost"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>FCR (After)</FormLabel>
+                  <FormLabel>Additive Cost ($/kg)</FormLabel>
                   <FormControl>
-                    <Input type="number" step="0.001" placeholder="Auto-calculated" {...field} readOnly className="bg-muted" />
+                    <Input type="number" step="0.01" placeholder="e.g., 12.50" {...field} />
                   </FormControl>
-                  <FormDescription>
-                    Automatically calculated based on additive.
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -238,35 +235,20 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
             />
             <FormField
               control={form.control}
-              name="additiveCost"
+              name="livestockPrice"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Additive Cost ($/kg)</FormLabel>
+                  <FormLabel>Broiler Price ($/kg)</FormLabel>
                   <FormControl>
-                    <Input type="number" step="0.01" placeholder="e.g., 12.50" {...field} />
+                    <Input type="number" step="0.01" placeholder="e.g., 2.10" {...field} />
                   </FormControl>
+                  <FormDescription>
+                    Price per kg of live weight.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <div className="md:col-span-2">
-              <FormField
-                control={form.control}
-                name="livestockPrice"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Broiler Price ($/kg)</FormLabel>
-                    <FormControl>
-                      <Input type="number" step="0.01" placeholder="e.g., 2.10" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Price per kg of live weight.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
           </CardContent>
         </Card>
 
