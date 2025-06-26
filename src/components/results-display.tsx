@@ -5,8 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, Leaf, TrendingUp } from "lucide-react";
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
-import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import Image from "next/image";
 
 interface ResultsDisplayProps {
@@ -65,18 +63,6 @@ export function ResultsDisplay({ results, isLoading, error }: ResultsDisplayProp
     }
 
     const { roiData, ghgData } = results;
-
-    const feedCostChartData = [
-        { name: "Baseline", cost: roiData.feedCostPerLiveWeightBefore },
-        { name: "With Additive", cost: roiData.feedCostPerLiveWeightAfter }
-    ];
-
-    const feedCostChartConfig = {
-      cost: {
-        label: "$ / kg Live Weight",
-        color: "hsl(var(--primary))",
-      },
-    } satisfies ChartConfig;
     
     return (
         <div className="space-y-6 animate-in fade-in-50 duration-500">
@@ -96,36 +82,6 @@ export function ResultsDisplay({ results, isLoading, error }: ResultsDisplayProp
                         </div>
                     </div>
                 </CardHeader>
-            </Card>
-
-            <Card>
-                <CardHeader>
-                    <CardTitle>Feed Cost Comparison</CardTitle>
-                    <CardDescription>Cost per kg of live weight, before and after using the additive.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                     <div className="h-48">
-                       <ChartContainer config={feedCostChartConfig}>
-                            <BarChart data={feedCostChartData} margin={{ top: 20, right: 20, left: -10, bottom: 0 }}>
-                                <CartesianGrid vertical={false} />
-                                <XAxis dataKey="name" tickLine={false} tickMargin={10} axisLine={false} />
-                                <YAxis
-                                    tickFormatter={(value) => `$${value.toFixed(2)}`}
-                                    tickLine={false}
-                                    axisLine={false}
-                                    tickMargin={10}
-                                />
-                                <ChartTooltip
-                                    cursor={false}
-                                    content={<ChartTooltipContent
-                                        formatter={(value) => `$${(value as number).toFixed(3)}`}
-                                    />}
-                                />
-                                <Bar dataKey="cost" fill="var(--color-cost)" radius={4} />
-                            </BarChart>
-                        </ChartContainer>
-                    </div>
-                </CardContent>
             </Card>
 
             <Card>
