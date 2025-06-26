@@ -3,7 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
-  title: 'Livestock ROI & GHG Optimizer',
+  title: 'Jefo EcoInsight',
   description: 'Calculate ROI and GHG savings for feed additives in livestock production.',
 };
 
