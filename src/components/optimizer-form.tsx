@@ -26,8 +26,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
+import { Loader2, HelpCircle } from "lucide-react";
 import React, { useEffect } from "react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface OptimizerFormProps {
   setResults: (results: any) => void;
@@ -140,13 +141,22 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
               name="baselineFCR"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Baseline FCR</FormLabel>
+                  <FormLabel className="flex items-center gap-1.5">
+                    Baseline FCR
+                    <TooltipProvider delayDuration={100}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Feed Conversion Ratio (before additive).</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </FormLabel>
                   <FormControl>
                     <Input type="number" step="0.01" placeholder="e.g., 1.75" {...field} />
                   </FormControl>
-                   <FormDescription>
-                    Feed Conversion Ratio (before additive).
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
