@@ -1,3 +1,4 @@
+
 "use server";
 
 import { calculateROI, type ROIInput } from '@/ai/flows/calculate-roi';
@@ -9,7 +10,6 @@ export async function getOptimizationResults(data: FormValues): Promise<{ data?:
     const costMetrics = {
         feedCost: data.feedCost,
         additiveCost: data.additiveCost,
-        livestockPrice: data.livestockPrice,
     };
     
     const roiInput: ROIInput = {

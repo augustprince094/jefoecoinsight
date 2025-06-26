@@ -94,7 +94,7 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle>1. Broiler Production Cycle</CardTitle>
+            <CardTitle>1. Production Details</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
@@ -182,7 +182,7 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
 
         <Card>
           <CardHeader>
-            <CardTitle>2. Feed & Performance</CardTitle>
+            <CardTitle>2. Feed Additive & Costs</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="md:col-span-2">
@@ -234,30 +234,6 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
                   <FormControl>
                     <Input type="number" step="0.01" placeholder="e.g., 12.50" {...field} />
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>3. Cost Metrics</CardTitle>
-          </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="livestockPrice"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Broiler Price ($/kg)</FormLabel>
-                  <FormControl>
-                    <Input type="number" step="0.01" placeholder="e.g., 2.10" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Price per kg of live weight.
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

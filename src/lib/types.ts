@@ -1,3 +1,4 @@
+
 import { z } from "zod";
 import { type ROIOutput } from '@/ai/flows/calculate-roi';
 import { type EstimateGHGSavingsOutput } from '@/ai/flows/estimate-ghg-savings';
@@ -11,6 +12,7 @@ export const formSchema = z.object({
   broilerLiveWeight: z.coerce.number().positive({ message: "Must be a positive number." }),
   mortalityRate: z.coerce.number().min(0, { message: "Cannot be negative." }).max(100, { message: "Cannot exceed 100." }),
   baselineFCR: z.coerce.number().positive({ message: "Must be a positive number." }),
+  feedCost: z.coerce.number().positive({ message: "Must be a positive number." }),
 
   // Card 2: Feed & Performance
   feedAdditive: z.enum(feedAdditiveTypes, {
@@ -18,11 +20,7 @@ export const formSchema = z.object({
   }),
   inclusionRate: z.coerce.number().positive({ message: "Must be a positive number." }),
   feedConversionRatioAfter: z.coerce.number().positive({ message: "Must be a positive number." }),
-  
-  // Card 3: Cost Metrics
-  feedCost: z.coerce.number().positive({ message: "Must be a positive number." }),
   additiveCost: z.coerce.number().positive({ message: "Must be a positive number." }),
-  livestockPrice: z.coerce.number().positive({ message: "Must be a positive number." }),
 });
 
 

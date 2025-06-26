@@ -23,7 +23,6 @@ const ROIInputSchema = z.object({
   costMetrics: z.object({
     feedCost: z.number().describe('The cost of feed to produce 1kg of live weight, before using the additive, in $.'),
     additiveCost: z.number().describe('The cost of the feed additive in $/kg.'),
-    livestockPrice: z.number().describe('The price of broilers in $/kg of live weight.'),
   }).describe('Cost metrics related to production.'),
 });
 
@@ -44,7 +43,7 @@ const prompt = ai.definePrompt({
   name: 'calculateROIPrompt',
   input: {schema: ROIInputSchema},
   output: {schema: ROIOutputSchema},
-  prompt: `You are an expert in broiler economics. Calculate the return on investment (ROI) for the given production scenario.
+  prompt: `You are an expert in broiler economics. Calculate the return on investment (ROI) for using a feed additive, based on the feed cost savings versus the investment in the additive.
 
 Scenario Details:
 - Number of birds per cycle: {{{numberOfBirds}}}
@@ -60,21 +59,19 @@ Feed Additive Details:
 Cost Metrics:
 - Feed Cost (before additive): \${{{costMetrics.feedCost}}} per kg of live weight
 - Additive Cost: \${{{costMetrics.additiveCost}}} per kg
-- Broiler Price: \${{{costMetrics.livestockPrice}}} per kg
 
-Calculate the total cost and revenue with and without the feed additive to determine the net gain and the ROI.
+Your calculation should only consider the feed cost savings and the cost of the additive. Do not consider the revenue from selling broilers.
 Show your work in the explanation. Follow these steps:
 1. First, calculate the cost of feed per ton. The provided feed cost is per kg of live weight *before* the additive. Use the baseline FCR to find the cost per ton. Formula: Feed Cost per ton = (Feed Cost per kg live weight / FCR Before) * 1000.
 2. Calculate total final birds = Number of birds * (1 - mortality rate / 100).
 3. Calculate total live weight produced = Total final birds * Broiler live weight.
-4. Calculate total feed consumed for both scenarios = Total live weight * FCR.
+4. Calculate total feed consumed for both scenarios (Before and After) = Total live weight * FCR.
 5. Calculate total feed cost for both scenarios using the calculated Feed Cost per ton from step 1.
-6. Calculate total additive cost for the 'After' scenario = (Total feed consumed After / 1000) * inclusion rate * additive cost.
-7. Calculate total revenue from selling the broilers.
-8. Calculate profit/loss for both scenarios and the net gain from using the additive.
-9. Calculate ROI = (Net Gain / Total Additive Cost).
+6. Calculate the total feed cost savings = Total Feed Cost Before - Total Feed Cost After.
+7. Calculate the total investment in the additive = (Total feed consumed After / 1000) * inclusion rate * additive cost.
+8. Calculate ROI = (Total Feed Cost Savings / Total Investment in Additive).
 
-Return the ROI as a decimal number (e.g., 1.5 for 150%) and provide a detailed step-by-step explanation.
+Return the ROI as a decimal number (e.g., 1.5 for 150%) and provide a detailed step-by-step explanation of the calculation.
 `,
 });
 

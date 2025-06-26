@@ -1,3 +1,4 @@
+
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { type OptimizationResult } from './types';
@@ -13,7 +14,7 @@ export function exportResultsToCsv(result: OptimizationResult) {
     // Inputs
     "Livestock Type", "Number of Birds", "Broiler Live Weight (kg)", "Mortality Rate (%)",
     "Feed Additive", "Inclusion Rate (kg/ton)", "Baseline FCR", "FCR After", 
-    "Feed Cost ($/kg live weight)", "Additive Cost ($/kg)", "Broiler Price ($/kg)",
+    "Feed Cost ($/kg live weight)", "Additive Cost ($/kg)",
     // Outputs
     "ROI (%)", "ROI Explanation", "GHG Savings (kg CO2e)", "GHG Explanation"
   ];
@@ -29,7 +30,6 @@ export function exportResultsToCsv(result: OptimizationResult) {
     inputs.feedConversionRatioAfter,
     inputs.feedCost,
     inputs.additiveCost,
-    inputs.livestockPrice,
     (roiData.roi * 100).toFixed(2),
     `"${roiData.explanation.replace(/"/g, '""')}"`,
     ghgData.ghgSavings.toFixed(2),
