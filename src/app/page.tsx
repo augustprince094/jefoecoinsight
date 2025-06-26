@@ -27,7 +27,7 @@ const livestockData = [
     image: "https://images.unsplash.com/photo-1516463991402-53092574e45d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNDE5ODJ8MHwxfGFsbHx8fHx8fHx8fDE2NzM4OTA0OTk&ixlib=rb-4.0.3&q=80&w=1080",
     alt: "Pigs on a sustainable farm.",
     dataAiHint: "pigs farm",
-    headline: "Discover the environmental benefits for pork production with Jefo solutions",
+    headline: "Discover the environmental benefits for pig production with Jefo solutions",
     downloadLink: "/lca-swine.pdf"
   },
   {
