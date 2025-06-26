@@ -6,6 +6,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, Leaf, TrendingUp } from "lucide-react";
 import Image from "next/image";
+import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts"
+import {
+    ChartContainer,
+    ChartTooltip,
+    ChartTooltipContent,
+    type ChartConfig,
+} from "@/components/ui/chart"
 
 interface ResultsDisplayProps {
     results: OptimizationResult | null;
@@ -64,6 +71,25 @@ export function ResultsDisplay({ results, isLoading, error }: ResultsDisplayProp
 
     const { roiData, ghgData } = results;
     
+    const chartData = [
+        { name: "Baseline", cost: roiData.feedCostPerLiveWeightBefore },
+        { name: "With Additive", cost: roiData.feedCostPerLiveWeightAfter },
+    ];
+    
+    const chartConfig = {
+        cost: {
+            label: "Feed Cost ($/kg)",
+        },
+        baseline: {
+            label: "Baseline",
+            color: "hsl(var(--secondary))",
+        },
+        additive: {
+            label: "With Additive",
+            color: "hsl(var(--primary))",
+        }
+    } satisfies ChartConfig;
+
     return (
         <div className="space-y-6 animate-in fade-in-50 duration-500">
             <Card>
@@ -82,20 +108,35 @@ export function ResultsDisplay({ results, isLoading, error }: ResultsDisplayProp
                         </div>
                     </div>
                 </CardHeader>
-                <CardContent className="pt-0">
-                    <div className="border-t pt-4">
-                        <p className="text-sm font-medium text-center text-muted-foreground mb-2">Feed Cost per kg Live Weight</p>
-                        <div className="flex justify-around items-baseline text-center">
-                            <div>
-                                <p className="text-xl font-bold">${roiData.feedCostPerLiveWeightBefore.toFixed(3)}</p>
-                                <p className="text-xs uppercase text-muted-foreground">Baseline</p>
-                            </div>
-                            <div>
-                                <p className="text-xl font-bold text-primary">${roiData.feedCostPerLiveWeightAfter.toFixed(3)}</p>
-                                <p className="text-xs uppercase text-muted-foreground">With Additive</p>
-                            </div>
-                        </div>
-                    </div>
+                <CardContent className="border-t pt-4">
+                     <p className="text-sm font-medium text-center text-muted-foreground mb-2">Feed Cost per kg Live Weight</p>
+                     <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
+                        <BarChart accessibilityLayer data={chartData} margin={{ top: 20, right: 20, left: 0, bottom: 0 }}>
+                            <CartesianGrid vertical={false} />
+                            <YAxis
+                                dataKey="cost"
+                                tickLine={false}
+                                axisLine={false}
+                                tickMargin={8}
+                                tickFormatter={(value) => `$${value.toFixed(2)}`}
+                                domain={[0, 'auto']}
+                            />
+                            <XAxis
+                                dataKey="name"
+                                tickLine={false}
+                                axisLine={false}
+                                tickMargin={10}
+                            />
+                            <ChartTooltip
+                                cursor={false}
+                                content={<ChartTooltipContent indicator="line" />}
+                            />
+                            <Bar dataKey="cost" radius={4}>
+                               <Cell fill="hsl(var(--secondary))" />
+                               <Cell fill="hsl(var(--primary))" />
+                            </Bar>
+                        </BarChart>
+                    </ChartContainer>
                 </CardContent>
             </Card>
 
