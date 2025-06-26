@@ -13,7 +13,7 @@ export function exportResultsToCsv(result: OptimizationResult) {
   const headers = [
     // Inputs
     "Livestock Type", "Number of Birds", "Broiler Live Weight (kg)", "Mortality Rate (%)",
-    "Feed Additive", "Inclusion Rate (kg/ton)", "Baseline FCR", "FCR After", 
+    "Feed Additive", "Inclusion Rate (g/ton)", "Baseline FCR",
     "Feed Cost ($/kg live weight)", "Additive Cost ($/kg)",
     // Outputs
     "ROI (%)", "ROI Explanation", "GHG Savings (kg CO2e)", "GHG Explanation"
@@ -27,7 +27,6 @@ export function exportResultsToCsv(result: OptimizationResult) {
     inputs.feedAdditive,
     inputs.inclusionRate,
     inputs.baselineFCR,
-    inputs.feedConversionRatioAfter,
     inputs.feedCost,
     inputs.additiveCost,
     (roiData.roi * 100).toFixed(2),

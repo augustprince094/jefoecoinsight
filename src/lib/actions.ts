@@ -14,7 +14,7 @@ export async function getOptimizationResults(data: FormValues): Promise<{ data?:
     
     const roiInput: ROIInput = {
       feedAdditiveType: data.feedAdditive,
-      inclusionRate: data.inclusionRate,
+      inclusionRate: data.inclusionRate / 1000,
       numberOfBirds: data.numberOfBirds,
       broilerLiveWeight: data.broilerLiveWeight,
       mortalityRate: data.mortalityRate,
@@ -25,7 +25,7 @@ export async function getOptimizationResults(data: FormValues): Promise<{ data?:
     
     const ghgInput: EstimateGHGSavingsInput = {
       feedAdditive: data.feedAdditive,
-      inclusionRate: data.inclusionRate,
+      inclusionRate: data.inclusionRate / 1000,
       numberOfBirds: data.numberOfBirds,
       broilerLiveWeight: data.broilerLiveWeight,
       mortalityRate: data.mortalityRate,

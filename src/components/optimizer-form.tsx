@@ -227,9 +227,9 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
                 <FormItem>
                   <FormLabel>Inclusion Rate</FormLabel>
                   <FormControl>
-                    <Input type="number" step="0.1" placeholder="e.g., 1.5" {...field} />
+                    <Input type="number" step="0.1" placeholder="e.g., 1500" {...field} />
                   </FormControl>
-                  <FormDescription>In kg per ton of feed.</FormDescription>
+                  <FormDescription>In g per ton of feed.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
