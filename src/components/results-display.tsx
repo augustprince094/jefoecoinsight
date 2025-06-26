@@ -1,15 +1,12 @@
-
 "use client"
 
 import type { OptimizationResult } from "@/lib/types";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, Download, Leaf, TrendingUp } from "lucide-react";
+import { AlertCircle, Leaf, TrendingUp } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
-import { Button } from "./ui/button";
-import { exportResultsToCsv } from "@/lib/utils";
 import Image from "next/image";
 
 interface ResultsDisplayProps {
@@ -67,7 +64,7 @@ export function ResultsDisplay({ results, isLoading, error }: ResultsDisplayProp
         )
     }
 
-    const { roiData, ghgData, inputs } = results;
+    const { roiData, ghgData } = results;
 
     const feedCostChartData = [
         { name: "Baseline", cost: roiData.feedCostPerLiveWeightBefore },
@@ -124,11 +121,6 @@ export function ResultsDisplay({ results, isLoading, error }: ResultsDisplayProp
                     </div>
                     <p className="text-sm text-muted-foreground mt-4 p-4 bg-muted/50 rounded-lg">{roiData.explanation}</p>
                 </CardContent>
-                 <CardFooter>
-                    <Button onClick={() => exportResultsToCsv(results)} className="w-full">
-                        <Download className="mr-2 h-4 w-4" /> Export All Results (CSV)
-                    </Button>
-                </CardFooter>
             </Card>
 
             <Card>
