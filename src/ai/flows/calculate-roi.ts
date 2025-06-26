@@ -29,8 +29,10 @@ const ROIInputSchema = z.object({
 export type ROIInput = z.infer<typeof ROIInputSchema>;
 
 const ROIOutputSchema = z.object({
-  roi: z.number().describe('The calculated return on investment (ROI) as a decimal.'),
+  roi: z.number().describe('The calculated return on investment (ROI) as a decimal ratio to 1.'),
   explanation: z.string().describe('An explanation of how the ROI was calculated, showing the steps.'),
+  feedCostPerLiveWeightBefore: z.number().describe('The feed cost per kg of live weight before the additive, in $.'),
+  feedCostPerLiveWeightAfter: z.number().describe('The feed cost per kg of live weight after using the additive, in $.'),
 });
 
 export type ROIOutput = z.infer<typeof ROIOutputSchema>;
@@ -70,8 +72,12 @@ Show your work in the explanation. Follow these steps:
 6. Calculate the total feed cost savings = Total Feed Cost Before - Total Feed Cost After.
 7. Calculate the total investment in the additive = (Total feed consumed After / 1000) * inclusion rate * additive cost.
 8. Calculate ROI = (Total Feed Cost Savings / Total Investment in Additive).
+9. Calculate the feed cost per kg of live weight for the 'After' scenario by dividing the 'Total Feed Cost After' from step 5 by the 'Total live weight produced' from step 3.
 
-Return the ROI as a decimal number (e.g., 1.5 for 150%) and provide a detailed step-by-step explanation of the calculation.
+Return the ROI as a decimal number (e.g., 1.5 for 1.5:1).
+Return the 'feedCostPerLiveWeightBefore' using the value from the input 'costMetrics.feedCost'.
+Return the calculated 'feedCostPerLiveWeightAfter' from step 9.
+Provide a detailed step-by-step explanation of the calculation.
 `,
 });
 

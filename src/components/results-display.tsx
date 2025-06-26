@@ -1,3 +1,4 @@
+
 "use client"
 
 import type { OptimizationResult } from "@/lib/types";
@@ -5,7 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, Download, Leaf, TrendingUp } from "lucide-react";
-import { Bar, BarChart, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import { Button } from "./ui/button";
 import { exportResultsToCsv } from "@/lib/utils";
@@ -68,15 +69,16 @@ export function ResultsDisplay({ results, isLoading, error }: ResultsDisplayProp
 
     const { roiData, ghgData, inputs } = results;
 
-    const roiChartData = [
-        { name: "ROI", value: roiData.roi * 100 }
+    const feedCostChartData = [
+        { name: "Baseline", cost: roiData.feedCostPerLiveWeightBefore },
+        { name: "With Additive", cost: roiData.feedCostPerLiveWeightAfter }
     ];
 
-    const chartConfig = {
-        value: {
-            label: 'ROI (%)',
-            color: 'hsl(var(--primary))',
-        },
+    const feedCostChartConfig = {
+      cost: {
+        label: "$ / kg Live Weight",
+        color: "hsl(var(--primary))",
+      },
     } satisfies ChartConfig;
     
     return (
@@ -91,24 +93,32 @@ export function ResultsDisplay({ results, isLoading, error }: ResultsDisplayProp
                             </CardTitle>
                              <CardDescription>Financial performance of the feed additive.</CardDescription>
                         </div>
-                        <div className="text-3xl font-bold text-primary">
-                            {(roiData.roi * 100).toFixed(2)}%
+                        <div className="text-3xl font-bold text-primary text-right">
+                           {roiData.roi.toFixed(1)} : 1
+                           <p className="text-sm font-normal text-muted-foreground">Ratio</p>
                         </div>
                     </div>
                 </CardHeader>
                 <CardContent>
-                     <div className="h-40">
-                       <ChartContainer config={chartConfig}>
-                            <BarChart accessibilityLayer data={roiChartData} layout="vertical" margin={{ left: 10, right: 10 }}>
-                                <XAxis type="number" hide />
-                                <YAxis type="category" dataKey="name" hide />
+                    <h4 className="text-sm font-semibold mb-2">Feed Cost per kg Live Weight Comparison</h4>
+                     <div className="h-48">
+                       <ChartContainer config={feedCostChartConfig}>
+                            <BarChart data={feedCostChartData} margin={{ top: 20, right: 20, left: -10, bottom: 0 }}>
+                                <CartesianGrid vertical={false} />
+                                <XAxis dataKey="name" tickLine={false} tickMargin={10} axisLine={false} />
+                                <YAxis
+                                    tickFormatter={(value) => `$${value.toFixed(2)}`}
+                                    tickLine={false}
+                                    axisLine={false}
+                                    tickMargin={10}
+                                />
                                 <ChartTooltip
                                     cursor={false}
                                     content={<ChartTooltipContent
-                                        formatter={(value) => `${(value as number).toFixed(2)}%`}
+                                        formatter={(value) => `$${(value as number).toFixed(3)}`}
                                     />}
                                 />
-                                <Bar dataKey="value" radius={[4, 4, 4, 4]} fill="var(--color-value)" />
+                                <Bar dataKey="cost" fill="var(--color-cost)" radius={4} />
                             </BarChart>
                         </ChartContainer>
                     </div>

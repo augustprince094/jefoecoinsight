@@ -14,9 +14,9 @@ export function exportResultsToCsv(result: OptimizationResult) {
     // Inputs
     "Livestock Type", "Number of Birds", "Broiler Live Weight (kg)", "Mortality Rate (%)",
     "Feed Additive", "Inclusion Rate (g/ton)", "Baseline FCR",
-    "Feed Cost ($/kg live weight)", "Additive Cost ($/kg)",
+    "Feed Cost Before ($/kg live weight)", "Additive Cost ($/kg)", "Feed Cost After ($/kg live weight)",
     // Outputs
-    "ROI (%)", "ROI Explanation", "GHG Savings (kg CO2e)", "GHG Explanation"
+    "ROI Ratio (X:1)", "ROI Explanation", "GHG Savings (kg CO2e)", "GHG Explanation"
   ];
 
   const row = [
@@ -27,9 +27,10 @@ export function exportResultsToCsv(result: OptimizationResult) {
     inputs.feedAdditive,
     inputs.inclusionRate,
     inputs.baselineFCR,
-    inputs.feedCost,
+    roiData.feedCostPerLiveWeightBefore.toFixed(3),
     inputs.additiveCost,
-    (roiData.roi * 100).toFixed(2),
+    roiData.feedCostPerLiveWeightAfter.toFixed(3),
+    roiData.roi.toFixed(2),
     `"${roiData.explanation.replace(/"/g, '""')}"`,
     ghgData.ghgSavings.toFixed(2),
     `"${ghgData.explanation.replace(/"/g, '""')}"`
