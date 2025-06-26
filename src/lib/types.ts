@@ -6,6 +6,9 @@ import { type EstimateGHGSavingsOutput } from '@/ai/flows/estimate-ghg-savings';
 export const feedAdditiveTypes = ["Jefo Pro Solution", "Jefo P(OA+EO)", "Jefo Xylanase"] as const;
 export type FeedAdditiveType = (typeof feedAdditiveTypes)[number];
 
+export const applicationTypes = ["Matrix", "On-top"] as const;
+export type ApplicationType = (typeof applicationTypes)[number];
+
 export const formSchema = z.object({
   // Card 1: Broiler Production Cycle Details
   numberOfBirds: z.coerce.number().positive({ message: "Must be a positive number." }),
@@ -18,6 +21,7 @@ export const formSchema = z.object({
   feedAdditive: z.enum(feedAdditiveTypes, {
     required_error: "Please select a feed additive.",
   }),
+  applicationType: z.enum(applicationTypes).optional(),
   inclusionRate: z.coerce.number().positive({ message: "Must be a positive number." }),
   additiveCost: z.coerce.number().positive({ message: "Must be a positive number." }),
   

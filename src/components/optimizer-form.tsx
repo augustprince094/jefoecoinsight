@@ -25,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, HelpCircle } from "lucide-react";
 import React, { useEffect } from "react";
@@ -47,6 +48,7 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
       baselineFCR: 1.75,
       feedCost: 0.80,
       feedAdditive: "Jefo Pro Solution",
+      applicationType: "Matrix",
       inclusionRate: 1500,
       additiveCost: 12.50,
       feedConversionRatioAfter: 0,
@@ -59,6 +61,9 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
   const feedAdditiveValue = watch("feedAdditive");
   const baselineFCRValue = watch("baselineFCR");
   const baselineMortalityRateValue = watch("baselineMortalityRate");
+  const showApplicationType =
+    feedAdditiveValue === "Jefo Pro Solution" ||
+    feedAdditiveValue === "Jefo Xylanase";
 
   useEffect(() => {
     // FCR Calculation
@@ -240,6 +245,46 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
                 )}
               />
             </div>
+
+            {showApplicationType && (
+              <div className="md:col-span-2">
+                <FormField
+                  control={form.control}
+                  name="applicationType"
+                  render={({ field }) => (
+                    <FormItem className="space-y-2">
+                      <FormLabel>Application Type</FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          className="flex items-center space-x-4"
+                        >
+                          <FormItem className="flex items-center space-x-2 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value="Matrix" id="matrix" />
+                            </FormControl>
+                            <FormLabel htmlFor="matrix" className="font-normal cursor-pointer">
+                              Matrix
+                            </FormLabel>
+                          </FormItem>
+                          <FormItem className="flex items-center space-x-2 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value="On-top" id="on-top" />
+                            </FormControl>
+                            <FormLabel htmlFor="on-top" className="font-normal cursor-pointer">
+                              On-top
+                            </FormLabel>
+                          </FormItem>
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            )}
+            
             <FormField
               control={form.control}
               name="inclusionRate"
