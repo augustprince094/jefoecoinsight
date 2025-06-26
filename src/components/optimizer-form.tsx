@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -197,7 +198,7 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
         <Card>
           <CardHeader>
             <CardTitle>3. Cost Metrics</CardTitle>
-          </Header>
+          </CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
