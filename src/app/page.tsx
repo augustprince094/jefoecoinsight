@@ -109,12 +109,11 @@ export default function HomePage() {
               </div>
               <div>
                 <Image
-                  src="https://placehold.co/500x300.png"
-                  alt="Green abstract background"
+                  src="https://images.unsplash.com/photo-1527153857715-3908f2bae5e8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxM3x8bGl2ZXN0b2NrfGVufDB8fHx8MTc1MDk2OTQ0MXww&ixlib=rb-4.1.0&q=80&w=1080"
+                  alt="Chickens in a grassy field, representing sustainable agriculture."
                   width={500}
                   height={300}
                   className="rounded-lg shadow-lg"
-                  data-ai-hint="green abstract"
                 />
               </div>
             </div>
