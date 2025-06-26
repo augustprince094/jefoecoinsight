@@ -4,7 +4,7 @@ import type { OptimizationResult } from "@/lib/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, Leaf, TrendingUp } from "lucide-react";
+import { AlertCircle, Leaf, TrendingUp, Car } from "lucide-react";
 import Image from "next/image";
 import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts"
 import {
@@ -95,6 +95,8 @@ export function ResultsDisplay({ results, isLoading, error }: ResultsDisplayProp
         }
     } satisfies ChartConfig;
 
+    const equivalentKm = (ghgData.ghgSavings / 180).toFixed(0);
+
     return (
         <div className="space-y-6 animate-in fade-in-50 duration-500">
             <Card>
@@ -161,6 +163,17 @@ export function ResultsDisplay({ results, isLoading, error }: ResultsDisplayProp
                         </div>
                     </div>
                 </CardHeader>
+                <CardContent className="border-t pt-4 text-center">
+                    <div className="relative overflow-hidden h-10 w-full mb-4">
+                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-px bg-muted-foreground/30">
+                            <div className="absolute left-0 top-0 w-full h-full border-t-2 border-dashed border-muted-foreground/50"></div>
+                        </div>
+                        <Car className="h-8 w-8 text-accent absolute top-0 animate-drive"/>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                        This is equivalent to driving <span className="font-bold text-accent">{equivalentKm} km</span> using a gasoline powered car.
+                    </p>
+                </CardContent>
             </Card>
         </div>
     );
