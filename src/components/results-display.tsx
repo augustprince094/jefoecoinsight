@@ -4,7 +4,7 @@ import type { OptimizationResult } from "@/lib/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, Leaf, TrendingUp, Car } from "lucide-react";
+import { AlertCircle, Leaf, TrendingUp, Car, DollarSign } from "lucide-react";
 import Image from "next/image";
 import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts"
 import {
@@ -20,55 +20,67 @@ interface ResultsDisplayProps {
     error: string | null;
 }
 
-export function ResultsDisplay({ results, isLoading, error }: ResultsDisplayProps) {
+function MatrixDashboard({ results }: { results: OptimizationResult }) {
+    const { roiData, ghgData } = results;
 
-    if (isLoading) {
-        return (
+    const formatCurrency = (value: number) => {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+        }).format(value);
+    }
+
+    return (
+        <div className="space-y-6 animate-in fade-in-50 duration-500">
             <Card>
                 <CardHeader>
-                    <Skeleton className="h-8 w-3/4" />
-                    <Skeleton className="h-4 w-1/2" />
+                    <CardTitle>Matrix Application Results</CardTitle>
+                    <CardDescription>
+                        Summary of financial and environmental benefits from feed reformulation.
+                    </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                    <Skeleton className="h-48 w-full" />
-                    <div className="space-y-2">
-                        <Skeleton className="h-4 w-full" />
-                        <Skeleton className="h-4 w-full" />
-                        <Skeleton className="h-4 w-5/6" />
+                <CardContent className="grid gap-4">
+                    <div className="p-4 rounded-lg border flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="bg-secondary p-3 rounded-full">
+                                <DollarSign className="h-6 w-6 text-secondary-foreground" />
+                            </div>
+                            <p className="font-medium">Feed Cost Savings</p>
+                        </div>
+                        <p className="text-2xl font-bold">
+                            {formatCurrency(roiData.feedCostSavings)}
+                        </p>
+                    </div>
+                    <div className="p-4 rounded-lg border flex items-center justify-between">
+                         <div className="flex items-center gap-3">
+                            <div className="bg-primary/10 p-3 rounded-full">
+                                <TrendingUp className="h-6 w-6 text-primary" />
+                            </div>
+                            <p className="font-medium">Return on Investment</p>
+                        </div>
+                        <p className="text-2xl font-bold text-primary">
+                            {roiData.roi.toFixed(1)} : 1
+                        </p>
+                    </div>
+                    <div className="p-4 rounded-lg border flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="bg-accent/10 p-3 rounded-full">
+                                <Leaf className="h-6 w-6 text-accent" />
+                            </div>
+                            <p className="font-medium">GHG Savings</p>
+                        </div>
+                        <p className="text-2xl font-bold text-accent">
+                            {ghgData.ghgSavings.toFixed(2)}
+                            <span className="text-base font-normal text-muted-foreground ml-1">kg CO₂e</span>
+                        </p>
                     </div>
                 </CardContent>
             </Card>
-        );
-    }
+        </div>
+    );
+}
 
-    if (error) {
-        return (
-            <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Error</AlertTitle>
-                <AlertDescription>
-                    {error}
-                </AlertDescription>
-            </Alert>
-        );
-    }
-    
-    if (!results) {
-        return (
-             <Card className="flex flex-col items-center justify-center text-center p-8 h-full">
-                <CardHeader>
-                  <div className="mx-auto bg-primary/10 p-4 rounded-full">
-                      <Image src="https://placehold.co/80x80.png" alt="Cow illustration" width={80} height={80} className="rounded-full" data-ai-hint="cow illustration" />
-                  </div>
-                    <CardTitle className="mt-4">Ready to Optimize?</CardTitle>
-                    <CardDescription>
-                        Fill out the form to calculate the ROI and GHG savings for your livestock operation. Your results will appear here.
-                    </CardDescription>
-                </CardHeader>
-            </Card>
-        )
-    }
-
+function OnTopDashboard({ results }: { results: OptimizationResult }) {
     const { roiData, ghgData } = results;
     
     const chartData = [
@@ -76,7 +88,6 @@ export function ResultsDisplay({ results, isLoading, error }: ResultsDisplayProp
         { name: "With Additive", cost: roiData.feedCostPerLiveWeightAfter },
     ];
     
-    // Calculate a dynamic Y-axis domain to make the difference more observable
     const costs = chartData.map(d => d.cost);
     const minCost = Math.min(...costs);
     const yAxisDomainMin = Math.max(0, Math.floor(minCost * 0.95 * 100) / 100);
@@ -177,4 +188,61 @@ export function ResultsDisplay({ results, isLoading, error }: ResultsDisplayProp
             </Card>
         </div>
     );
+}
+
+
+export function ResultsDisplay({ results, isLoading, error }: ResultsDisplayProps) {
+
+    if (isLoading) {
+        return (
+            <Card>
+                <CardHeader>
+                    <Skeleton className="h-8 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    <Skeleton className="h-48 w-full" />
+                    <div className="space-y-2">
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-5/6" />
+                    </div>
+                </CardContent>
+            </Card>
+        );
+    }
+
+    if (error) {
+        return (
+            <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>
+                    {error}
+                </AlertDescription>
+            </Alert>
+        );
+    }
+    
+    if (!results) {
+        return (
+             <Card className="flex flex-col items-center justify-center text-center p-8 h-full">
+                <CardHeader>
+                  <div className="mx-auto bg-primary/10 p-4 rounded-full">
+                      <Image src="https://placehold.co/80x80.png" alt="Cow illustration" width={80} height={80} className="rounded-full" data-ai-hint="cow illustration" />
+                  </div>
+                    <CardTitle className="mt-4">Ready to Optimize?</CardTitle>
+                    <CardDescription>
+                        Fill out the form to calculate the ROI and GHG savings for your livestock operation. Your results will appear here.
+                    </CardDescription>
+                </CardHeader>
+            </Card>
+        )
+    }
+
+    if (results.inputs.applicationType === 'Matrix') {
+        return <MatrixDashboard results={results} />;
+    }
+    
+    return <OnTopDashboard results={results} />;
 }

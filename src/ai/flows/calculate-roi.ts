@@ -34,6 +34,7 @@ const ROIOutputSchema = z.object({
   explanation: z.string().describe('An explanation of how the ROI was calculated, showing the steps.'),
   feedCostPerLiveWeightBefore: z.number().describe('The feed cost per kg of live weight before the additive, in $.'),
   feedCostPerLiveWeightAfter: z.number().describe('The feed cost per kg of live weight after using the additive, in $.'),
+  feedCostSavings: z.number().describe('The total feed cost savings in $.'),
 });
 
 export type ROIOutput = z.infer<typeof ROIOutputSchema>;
@@ -98,6 +99,7 @@ After calculating the above for both scenarios:
 Return the ROI as a decimal number (e.g., 1.5 for 1.5:1).
 Return the 'feedCostPerLiveWeightBefore' using the value from the input 'costMetrics.feedCost'.
 Return the calculated 'feedCostPerLiveWeightAfter' from step 11.
+Return the total feed cost savings from step 8 in the 'feedCostSavings' field.
 Provide a detailed step-by-step explanation of the calculation.
 `,
 });
