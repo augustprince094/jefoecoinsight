@@ -2,58 +2,27 @@ import { z } from "zod";
 import { type ROIOutput } from '@/ai/flows/calculate-roi';
 import { type EstimateGHGSavingsOutput } from '@/ai/flows/estimate-ghg-savings';
 
-export const livestockTypes = ["broilers", "layers", "pigs", "dairy cows"] as const;
-export type LivestockType = (typeof livestockTypes)[number];
-
 export const feedAdditiveTypes = ["Jefo Pro Solution", "Jefo P(OA+EO)", "Jefo Xylanase"] as const;
 export type FeedAdditiveType = (typeof feedAdditiveTypes)[number];
 
 export const formSchema = z.object({
-  livestockType: z.enum(livestockTypes, { 
-    required_error: "Please select a livestock type." 
-  }),
+  // Card 1: Broiler Production Cycle Details
+  numberOfBirds: z.coerce.number().positive({ message: "Must be a positive number." }),
+  broilerLiveWeight: z.coerce.number().positive({ message: "Must be a positive number." }),
+  mortalityRate: z.coerce.number().min(0, { message: "Cannot be negative." }).max(100, { message: "Cannot exceed 100." }),
+  baselineFCR: z.coerce.number().positive({ message: "Must be a positive number." }),
+
+  // Card 2: Feed & Performance
   feedAdditive: z.enum(feedAdditiveTypes, {
     required_error: "Please select a feed additive.",
   }),
   inclusionRate: z.coerce.number().positive({ message: "Must be a positive number." }),
-
-  feedConversionRatioBefore: z.coerce.number().positive({ message: "Must be a positive number." }),
   feedConversionRatioAfter: z.coerce.number().positive({ message: "Must be a positive number." }),
   
-  averageDailyGain: z.coerce.number().optional(),
-  eggProductionRate: z.coerce.number().optional(),
-  milkYield: z.coerce.number().optional(),
-
+  // Card 3: Cost Metrics
   feedCost: z.coerce.number().positive({ message: "Must be a positive number." }),
   additiveCost: z.coerce.number().positive({ message: "Must be a positive number." }),
   livestockPrice: z.coerce.number().positive({ message: "Must be a positive number." }),
-})
-.refine(data => {
-    if (data.livestockType === 'broilers' || data.livestockType === 'pigs') {
-        return data.averageDailyGain !== undefined && data.averageDailyGain > 0;
-    }
-    return true;
-}, {
-    message: "Average daily gain is required for broilers and pigs.",
-    path: ["averageDailyGain"],
-})
-.refine(data => {
-    if (data.livestockType === 'layers') {
-        return data.eggProductionRate !== undefined && data.eggProductionRate > 0;
-    }
-    return true;
-}, {
-    message: "Egg production rate is required for layers.",
-    path: ["eggProductionRate"],
-})
-.refine(data => {
-    if (data.livestockType === 'dairy cows') {
-        return data.milkYield !== undefined && data.milkYield > 0;
-    }
-    return true;
-}, {
-    message: "Milk yield is required for dairy cows.",
-    path: ["milkYield"],
 });
 
 

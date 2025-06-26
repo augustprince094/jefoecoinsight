@@ -2,8 +2,8 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import type { FormValues, LivestockType } from "@/lib/types";
-import { formSchema, livestockTypes, feedAdditiveTypes } from "@/lib/types";
+import type { FormValues } from "@/lib/types";
+import { formSchema, feedAdditiveTypes } from "@/lib/types";
 import { getOptimizationResults } from "@/lib/actions";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -25,17 +25,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Bird, Loader2 } from "lucide-react";
-import { PigIcon } from "./icons/pig-icon";
-import { CowIcon } from "./icons/cow-icon";
+import { Loader2 } from "lucide-react";
 import React from "react";
-
-const livestockIcons: Record<LivestockType, React.ReactNode> = {
-  broilers: <Bird className="h-5 w-5 mr-2" />,
-  layers: <Bird className="h-5 w-5 mr-2" />,
-  pigs: <PigIcon className="h-5 w-5 mr-2" />,
-  "dairy cows": <CowIcon className="h-5 w-5 mr-2" />,
-};
 
 interface OptimizerFormProps {
   setResults: (results: any) => void;
@@ -50,8 +41,6 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
     defaultValues: {},
   });
   const { toast } = useToast();
-
-  const watchedLivestockType = form.watch("livestockType");
 
   async function onSubmit(data: FormValues) {
     setIsLoading(true);
@@ -75,154 +64,113 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
     }
   }
 
-  const renderConditionalFields = () => {
-    switch (watchedLivestockType) {
-      case "broilers":
-      case "pigs":
-        return (
-          <FormField
-            control={form.control}
-            name="averageDailyGain"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Average Daily Gain (kg)</FormLabel>
-                <FormControl>
-                  <Input type="number" step="0.01" placeholder="e.g., 0.08" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        );
-      case "layers":
-        return (
-          <FormField
-            control={form.control}
-            name="eggProductionRate"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Egg Production Rate (%)</FormLabel>
-                <FormControl>
-                  <Input type="number" step="0.1" placeholder="e.g., 92.5" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        );
-      case "dairy cows":
-        return (
-          <FormField
-            control={form.control}
-            name="milkYield"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Milk Yield (liters/day)</FormLabel>
-                <FormControl>
-                  <Input type="number" step="0.1" placeholder="e.g., 35.5" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        );
-      default:
-        return null;
-    }
-  };
-
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle>1. Farm & Feed Details</CardTitle>
+            <CardTitle>1. Broiler Production Cycle</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
-              name="livestockType"
+              name="numberOfBirds"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Livestock Type</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select livestock..." />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {livestockTypes.map((type) => (
-                        <SelectItem key={type} value={type}>
-                          <div className="flex items-center">
-                            {livestockIcons[type]}
-                            <span className="capitalize">{type}</span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormLabel>Birds per cycle</FormLabel>
+                  <FormControl>
+                    <Input type="number" placeholder="e.g., 50000" {...field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <FormField
               control={form.control}
-              name="feedAdditive"
+              name="broilerLiveWeight"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Feed Additive Type</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select an additive..." />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {feedAdditiveTypes.map((type) => (
-                        <SelectItem key={type} value={type}>
-                          {type}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormLabel>Live Weight (kg)</FormLabel>
+                  <FormControl>
+                    <Input type="number" step="0.01" placeholder="e.g., 2.5" {...field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <div className="md:col-span-2">
-              <FormField
-                control={form.control}
-                name="inclusionRate"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Inclusion Rate</FormLabel>
-                    <FormControl>
-                      <Input type="number" step="0.1" placeholder="e.g., 1.5" {...field} />
-                    </FormControl>
-                    <FormDescription>In kg per ton of feed.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+             <FormField
+              control={form.control}
+              name="mortalityRate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Mortality Rate (%)</FormLabel>
+                  <FormControl>
+                    <Input type="number" step="0.1" placeholder="e.g., 4.5" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="baselineFCR"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Baseline FCR</FormLabel>
+                  <FormControl>
+                    <Input type="number" step="0.01" placeholder="e.g., 1.75" {...field} />
+                  </FormControl>
+                   <FormDescription>
+                    Feed Conversion Ratio (before additive).
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>2. Production Metrics</CardTitle>
+            <CardTitle>2. Feed & Performance</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="md:col-span-2">
+              <FormField
+                control={form.control}
+                name="feedAdditive"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Feed Additive Type</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select an additive..." />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {feedAdditiveTypes.map((type) => (
+                          <SelectItem key={type} value={type}>
+                            {type}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <FormField
               control={form.control}
-              name="feedConversionRatioBefore"
+              name="inclusionRate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>FCR (Before)</FormLabel>
+                  <FormLabel>Inclusion Rate</FormLabel>
                   <FormControl>
-                    <Input type="number" step="0.01" placeholder="e.g., 1.75" {...field} />
+                    <Input type="number" step="0.1" placeholder="e.g., 1.5" {...field} />
                   </FormControl>
+                  <FormDescription>In kg per ton of feed.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -236,26 +184,20 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
                   <FormControl>
                     <Input type="number" step="0.01" placeholder="e.g., 1.68" {...field} />
                   </FormControl>
+                  <FormDescription>
+                    FCR with additive.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <div className="md:col-span-2">
-              <FormDescription>
-                Feed Conversion Ratio: kg of feed per kg of gain/product.
-              </FormDescription>
-            </div>
-
-            <div className="md:col-span-2">
-              {renderConditionalFields()}
-            </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
             <CardTitle>3. Cost Metrics</CardTitle>
-          </CardHeader>
+          </Header>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
@@ -289,12 +231,12 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
                 name="livestockPrice"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Livestock Product Price</FormLabel>
+                    <FormLabel>Broiler Price ($/kg)</FormLabel>
                     <FormControl>
                       <Input type="number" step="0.01" placeholder="e.g., 2.10" {...field} />
                     </FormControl>
                     <FormDescription>
-                      $/kg for meat, $/dozen for eggs, $/liter for milk.
+                      Price per kg of live weight.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
