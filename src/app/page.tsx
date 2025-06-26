@@ -32,7 +32,7 @@ const livestockData = [
   },
   {
     species: "Dairy",
-    image: "https://images.unsplash.com/photo-1594998499222-19c91973e6a9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNDE5ODJ8MHwxfGFsbHx8fHx8fHx8fDE2NzM4OTA1ODc&ixlib=rb-4.0.3&q=80&w=1080",
+    image: "https://images.unsplash.com/photo-1636998980792-63f27ddea4e3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxkYWlyeSUyMGNvd3xlbnwwfHx8fDE3NTA5NzAwODl8MA&ixlib=rb-4.1.0&q=80&w=1080",
     alt: "Dairy cows in a field, representing a sustainable dairy operation.",
     dataAiHint: "dairy cows",
     headline: "Lower the carbon footprint of your dairy operation with our innovative feed additives",
