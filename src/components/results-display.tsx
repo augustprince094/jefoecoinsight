@@ -82,6 +82,21 @@ export function ResultsDisplay({ results, isLoading, error }: ResultsDisplayProp
                         </div>
                     </div>
                 </CardHeader>
+                <CardContent className="pt-0">
+                    <div className="border-t pt-4">
+                        <p className="text-sm font-medium text-center text-muted-foreground mb-2">Feed Cost per kg Live Weight</p>
+                        <div className="flex justify-around items-baseline text-center">
+                            <div>
+                                <p className="text-xl font-bold">${roiData.feedCostPerLiveWeightBefore.toFixed(3)}</p>
+                                <p className="text-xs uppercase text-muted-foreground">Baseline</p>
+                            </div>
+                            <div>
+                                <p className="text-xl font-bold text-primary">${roiData.feedCostPerLiveWeightAfter.toFixed(3)}</p>
+                                <p className="text-xs uppercase text-muted-foreground">With Additive</p>
+                            </div>
+                        </div>
+                    </div>
+                </CardContent>
             </Card>
 
             <Card>
