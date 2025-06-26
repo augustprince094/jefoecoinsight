@@ -124,13 +124,15 @@ export default function HomePage() {
 
       {/* Footer */}
       <footer className="bg-card/80 border-t py-8">
-        <div className="container mx-auto px-4 text-center text-muted-foreground text-sm">
-           <div className="flex justify-center mb-4">
-             <JefoLogo className="h-12 w-12 text-primary" />
+        <div className="container mx-auto px-4 text-muted-foreground text-sm">
+           <div className="text-center">
+             <div className="flex justify-center mb-4">
+               <JefoLogo className="h-12 w-12 text-primary" />
+             </div>
+            <p>5020, Jefo Avenue, CP 325 Saint-Hyacinthe (Quebec) J2S 7B6</p>
+            <p className="mt-1">Phone: 450 799-2000 | 1 800 465-2247</p>
            </div>
-          <p>5020, Jefo Avenue, CP 325 Saint-Hyacinthe (Quebec) J2S 7B6</p>
-          <p className="mt-1">Phone: 450 799-2000 | 1 800 465-2247</p>
-          <p className="mt-4">&copy; {new Date().getFullYear()} Jefo | All rights reserved</p>
+          <p className="mt-4 text-right">&copy; {new Date().getFullYear()} Jefo | All rights reserved</p>
         </div>
       </footer>
     </div>
