@@ -13,7 +13,7 @@ export function exportResultsToCsv(result: OptimizationResult) {
     // Inputs
     "Livestock Type", "Number of Birds", "Broiler Live Weight (kg)", "Mortality Rate (%)",
     "Feed Additive", "Inclusion Rate (kg/ton)", "Baseline FCR", "FCR After", 
-    "Feed Cost ($/ton)", "Additive Cost ($/kg)", "Broiler Price ($/kg)",
+    "Feed Cost ($/kg live weight)", "Additive Cost ($/kg)", "Broiler Price ($/kg)",
     // Outputs
     "ROI (%)", "ROI Explanation", "GHG Savings (kg CO2e)", "GHG Explanation"
   ];

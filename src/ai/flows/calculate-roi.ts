@@ -1,3 +1,4 @@
+
 // src/ai/flows/calculate-roi.ts
 'use server';
 /**
@@ -20,7 +21,7 @@ const ROIInputSchema = z.object({
   feedConversionRatioBefore: z.number().describe('The feed conversion ratio before using the additive.'),
   feedConversionRatioAfter: z.number().describe('The feed conversion ratio after using the additive.'),
   costMetrics: z.object({
-    feedCost: z.number().describe('The cost of feed in $/ton.'),
+    feedCost: z.number().describe('The cost of feed to produce 1kg of live weight, before using the additive, in $.'),
     additiveCost: z.number().describe('The cost of the feed additive in $/kg.'),
     livestockPrice: z.number().describe('The price of broilers in $/kg of live weight.'),
   }).describe('Cost metrics related to production.'),
@@ -57,20 +58,21 @@ Feed Additive Details:
 - Inclusion Rate: {{{inclusionRate}}} kg/ton
 
 Cost Metrics:
-- Feed Cost: \${{{costMetrics.feedCost}}} per ton
+- Feed Cost (before additive): \${{{costMetrics.feedCost}}} per kg of live weight
 - Additive Cost: \${{{costMetrics.additiveCost}}} per kg
 - Broiler Price: \${{{costMetrics.livestockPrice}}} per kg
 
 Calculate the total cost and revenue with and without the feed additive to determine the net gain and the ROI.
 Show your work in the explanation. Follow these steps:
-1. Calculate total final birds = Number of birds * (1 - mortality rate / 100).
-2. Calculate total live weight produced = Total final birds * Broiler live weight.
-3. Calculate total feed consumed for both scenarios = Total live weight * FCR.
-4. Calculate total feed cost for both scenarios.
-5. Calculate total additive cost for the 'After' scenario = (Total feed consumed After / 1000) * inclusion rate * additive cost.
-6. Calculate total revenue from selling the broilers.
-7. Calculate profit/loss for both scenarios and the net gain from using the additive.
-8. Calculate ROI = (Net Gain / Total Additive Cost).
+1. First, calculate the cost of feed per ton. The provided feed cost is per kg of live weight *before* the additive. Use the baseline FCR to find the cost per ton. Formula: Feed Cost per ton = (Feed Cost per kg live weight / FCR Before) * 1000.
+2. Calculate total final birds = Number of birds * (1 - mortality rate / 100).
+3. Calculate total live weight produced = Total final birds * Broiler live weight.
+4. Calculate total feed consumed for both scenarios = Total live weight * FCR.
+5. Calculate total feed cost for both scenarios using the calculated Feed Cost per ton from step 1.
+6. Calculate total additive cost for the 'After' scenario = (Total feed consumed After / 1000) * inclusion rate * additive cost.
+7. Calculate total revenue from selling the broilers.
+8. Calculate profit/loss for both scenarios and the net gain from using the additive.
+9. Calculate ROI = (Net Gain / Total Additive Cost).
 
 Return the ROI as a decimal number (e.g., 1.5 for 150%) and provide a detailed step-by-step explanation.
 `,
