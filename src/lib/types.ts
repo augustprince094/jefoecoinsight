@@ -5,11 +5,16 @@ import { type EstimateGHGSavingsOutput } from '@/ai/flows/estimate-ghg-savings';
 export const livestockTypes = ["broilers", "layers", "pigs", "dairy cows"] as const;
 export type LivestockType = (typeof livestockTypes)[number];
 
+export const feedAdditiveTypes = ["Jefo Pro Solution", "Jefo P(OA+EO)", "Jefo Xylanase"] as const;
+export type FeedAdditiveType = (typeof feedAdditiveTypes)[number];
+
 export const formSchema = z.object({
   livestockType: z.enum(livestockTypes, { 
     required_error: "Please select a livestock type." 
   }),
-  feedAdditive: z.string().min(1, "Feed additive type is required."),
+  feedAdditive: z.enum(feedAdditiveTypes, {
+    required_error: "Please select a feed additive.",
+  }),
   inclusionRate: z.coerce.number().positive({ message: "Must be a positive number." }),
 
   feedConversionRatioBefore: z.coerce.number().positive({ message: "Must be a positive number." }),

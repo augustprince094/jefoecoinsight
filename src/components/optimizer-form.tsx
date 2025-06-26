@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import type { FormValues, LivestockType } from "@/lib/types";
-import { formSchema, livestockTypes } from "@/lib/types";
+import { formSchema, livestockTypes, feedAdditiveTypes } from "@/lib/types";
 import { getOptimizationResults } from "@/lib/actions";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -47,9 +47,7 @@ interface OptimizerFormProps {
 export function OptimizerForm({ setResults, setIsLoading, setError, isCalculating }: OptimizerFormProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      feedAdditive: "",
-    },
+    defaultValues: {},
   });
   const { toast } = useToast();
 
@@ -141,62 +139,73 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
             <CardTitle>1. Farm & Feed Details</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="md:col-span-2">
-              <FormField
-                control={form.control}
-                name="livestockType"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Livestock Type</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select livestock..." />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {livestockTypes.map((type) => (
-                          <SelectItem key={type} value={type}>
-                            <div className="flex items-center">
-                              {livestockIcons[type]}
-                              <span className="capitalize">{type}</span>
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <FormField
+              control={form.control}
+              name="livestockType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Livestock Type</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select livestock..." />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {livestockTypes.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          <div className="flex items-center">
+                            {livestockIcons[type]}
+                            <span className="capitalize">{type}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="feedAdditive"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Feed Additive Type</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g., Probiotic X" {...field} />
-                  </FormControl>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select an additive..." />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {feedAdditiveTypes.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="inclusionRate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Inclusion Rate</FormLabel>
-                  <FormControl>
-                    <Input type="number" step="0.1" placeholder="e.g., 1.5" {...field} />
-                  </FormControl>
-                  <FormDescription>In kg per ton of feed.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="md:col-span-2">
+              <FormField
+                control={form.control}
+                name="inclusionRate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Inclusion Rate</FormLabel>
+                    <FormControl>
+                      <Input type="number" step="0.1" placeholder="e.g., 1.5" {...field} />
+                    </FormControl>
+                    <FormDescription>In kg per ton of feed.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </CardContent>
         </Card>
 
