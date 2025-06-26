@@ -59,9 +59,11 @@ export default function HomePage() {
                 <p className="text-muted-foreground mb-8">
                   Incorporating the protected organic acid and essential oils could lower your carbon footprint by -4.8%
                 </p>
-                <Button asChild size="lg" className="rounded-full">
-                  <Link href="/calculator">Calculate your savings</Link>
-                </Button>
+                <div className="text-center">
+                  <Button asChild size="lg" className="rounded-full">
+                    <Link href="/calculator">Calculate your savings</Link>
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
