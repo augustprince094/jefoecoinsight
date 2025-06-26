@@ -140,34 +140,36 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
           <CardHeader>
             <CardTitle>1. Farm & Feed Details</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <FormField
-              control={form.control}
-              name="livestockType"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Livestock Type</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select livestock..." />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {livestockTypes.map((type) => (
-                        <SelectItem key={type} value={type}>
-                          <div className="flex items-center">
-                            {livestockIcons[type]}
-                            <span className="capitalize">{type}</span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="md:col-span-2">
+              <FormField
+                control={form.control}
+                name="livestockType"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Livestock Type</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select livestock..." />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {livestockTypes.map((type) => (
+                          <SelectItem key={type} value={type}>
+                            <div className="flex items-center">
+                              {livestockIcons[type]}
+                              <span className="capitalize">{type}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <FormField
               control={form.control}
               name="feedAdditive"
@@ -202,40 +204,42 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
           <CardHeader>
             <CardTitle>2. Production Metrics</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-               <FormField
-                  control={form.control}
-                  name="feedConversionRatioBefore"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>FCR (Before)</FormLabel>
-                      <FormControl>
-                        <Input type="number" step="0.01" placeholder="e.g., 1.75" {...field} />
-                      </FormControl>
-                       <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="feedConversionRatioAfter"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>FCR (After)</FormLabel>
-                      <FormControl>
-                        <Input type="number" step="0.01" placeholder="e.g., 1.68" {...field} />
-                      </FormControl>
-                       <FormMessage />
-                    </FormItem>
-                  )}
-                />
-            </div>
-             <FormDescription>
+          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="feedConversionRatioBefore"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>FCR (Before)</FormLabel>
+                  <FormControl>
+                    <Input type="number" step="0.01" placeholder="e.g., 1.75" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="feedConversionRatioAfter"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>FCR (After)</FormLabel>
+                  <FormControl>
+                    <Input type="number" step="0.01" placeholder="e.g., 1.68" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="md:col-span-2">
+              <FormDescription>
                 Feed Conversion Ratio: kg of feed per kg of gain/product.
-            </FormDescription>
+              </FormDescription>
+            </div>
 
-            {renderConditionalFields()}
+            <div className="md:col-span-2">
+              {renderConditionalFields()}
+            </div>
           </CardContent>
         </Card>
 
@@ -243,7 +247,7 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
           <CardHeader>
             <CardTitle>3. Cost Metrics</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="feedCost"
@@ -270,22 +274,24 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="livestockPrice"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Livestock Product Price</FormLabel>
-                  <FormControl>
-                    <Input type="number" step="0.01" placeholder="e.g., 2.10" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    $/kg for meat, $/dozen for eggs, $/liter for milk.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="md:col-span-2">
+              <FormField
+                control={form.control}
+                name="livestockPrice"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Livestock Product Price</FormLabel>
+                    <FormControl>
+                      <Input type="number" step="0.01" placeholder="e.g., 2.10" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      $/kg for meat, $/dozen for eggs, $/liter for milk.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </CardContent>
         </Card>
 
