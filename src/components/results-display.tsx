@@ -8,7 +8,6 @@ import { AlertCircle, Leaf, TrendingUp } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import Image from "next/image";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 interface ResultsDisplayProps {
     results: OptimizationResult | null;
@@ -120,14 +119,6 @@ export function ResultsDisplay({ results, isLoading, error }: ResultsDisplayProp
                             </BarChart>
                         </ChartContainer>
                     </div>
-                     <Accordion type="single" collapsible className="w-full mt-4">
-                      <AccordionItem value="item-1">
-                        <AccordionTrigger className="text-sm font-semibold py-2">Show Calculation Details</AccordionTrigger>
-                        <AccordionContent>
-                           <p className="text-sm text-muted-foreground bg-muted/50 p-4 rounded-lg whitespace-pre-wrap">{roiData.explanation}</p>
-                        </AccordionContent>
-                      </AccordionItem>
-                    </Accordion>
                 </CardContent>
             </Card>
 
@@ -147,16 +138,6 @@ export function ResultsDisplay({ results, isLoading, error }: ResultsDisplayProp
                         </div>
                     </div>
                 </CardHeader>
-                <CardContent>
-                     <Accordion type="single" collapsible className="w-full">
-                      <AccordionItem value="item-1">
-                        <AccordionTrigger className="text-sm font-semibold py-2">Show Calculation Details</AccordionTrigger>
-                        <AccordionContent>
-                          <p className="text-sm text-muted-foreground bg-muted/50 p-4 rounded-lg whitespace-pre-wrap">{ghgData.explanation}</p>
-                        </AccordionContent>
-                      </AccordionItem>
-                    </Accordion>
-                </CardContent>
             </Card>
         </div>
     );
