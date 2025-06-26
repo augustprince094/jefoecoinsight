@@ -175,13 +175,22 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
               name="feedCost"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Feed Cost ($/kg live weight)</FormLabel>
+                   <FormLabel className="flex items-center gap-1.5">
+                    Feed cost ($/ kg live weight)
+                    <TooltipProvider delayDuration={100}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>The cost of feed to produce 1kg of live weight.</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </FormLabel>
                   <FormControl>
                     <Input type="number" step="0.01" placeholder="e.g., 0.80" {...field} />
                   </FormControl>
-                  <FormDescription>
-                    The cost of feed to produce 1kg of live weight.
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -229,7 +238,7 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
                   <FormControl>
                     <Input type="number" step="0.1" placeholder="e.g., 1500" {...field} />
                   </FormControl>
-                  <FormDescription>In g per ton of feed.</FormDescription>
+                  <FormDescription>In g/ton of feed.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
