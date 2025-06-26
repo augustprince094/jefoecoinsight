@@ -247,19 +247,6 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="feedConversionRatioAfter"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>FCR (After)</FormLabel>
-                  <FormControl>
-                    <Input type="number" {...field} readOnly className="bg-muted" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
           </CardContent>
         </Card>
 
