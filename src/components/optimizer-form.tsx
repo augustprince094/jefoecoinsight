@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
-import React from "react";
+import React, { useEffect } from "react";
 
 interface OptimizerFormProps {
   setResults: (results: any) => void;
@@ -42,6 +42,29 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
     defaultValues: {},
   });
   const { toast } = useToast();
+  const { watch, setValue } = form;
+
+  const feedAdditiveValue = watch("feedAdditive");
+  const baselineFCRValue = watch("baselineFCR");
+
+  useEffect(() => {
+    if (feedAdditiveValue && baselineFCRValue > 0) {
+      let reduction = 0;
+      switch (feedAdditiveValue) {
+        case "Jefo Pro Solution":
+          reduction = 0.04;
+          break;
+        case "Jefo P(OA+EO)":
+          reduction = 0.05;
+          break;
+        case "Jefo Xylanase":
+          reduction = 0.06;
+          break;
+      }
+      const newFCR = baselineFCRValue - reduction;
+      setValue("feedConversionRatioAfter", parseFloat(newFCR.toFixed(3)), { shouldValidate: true });
+    }
+  }, [feedAdditiveValue, baselineFCRValue, setValue]);
 
   async function onSubmit(data: FormValues) {
     setIsLoading(true);
@@ -183,10 +206,10 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
                 <FormItem>
                   <FormLabel>FCR (After)</FormLabel>
                   <FormControl>
-                    <Input type="number" step="0.01" placeholder="e.g., 1.68" {...field} />
+                    <Input type="number" step="0.001" placeholder="Auto-calculated" {...field} readOnly className="bg-muted" />
                   </FormControl>
                   <FormDescription>
-                    FCR with additive.
+                    Automatically calculated based on additive.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
