@@ -5,8 +5,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, Download, Leaf, TrendingUp } from "lucide-react";
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
+import { Bar, BarChart, XAxis, YAxis } from "recharts";
+import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import { Button } from "./ui/button";
 import { exportResultsToCsv } from "@/lib/utils";
 import Image from "next/image";
@@ -69,12 +69,15 @@ export function ResultsDisplay({ results, isLoading, error }: ResultsDisplayProp
     const { roiData, ghgData, inputs } = results;
 
     const roiChartData = [
-        { name: "ROI", value: roiData.roi * 100, fill: "hsl(var(--primary))" }
+        { name: "ROI", value: roiData.roi * 100 }
     ];
 
-    const ghgChartData = [
-        { name: "GHG Savings", value: ghgData.ghgSavings, fill: "hsl(var(--accent))" }
-    ];
+    const chartConfig = {
+        value: {
+            label: 'ROI (%)',
+            color: 'hsl(var(--primary))',
+        },
+    } satisfies ChartConfig;
     
     return (
         <div className="space-y-6 animate-in fade-in-50 duration-500">
@@ -95,19 +98,19 @@ export function ResultsDisplay({ results, isLoading, error }: ResultsDisplayProp
                 </CardHeader>
                 <CardContent>
                      <div className="h-40">
-                       <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={roiChartData} layout="vertical" margin={{ left: 10, right: 10 }}>
+                       <ChartContainer config={chartConfig}>
+                            <BarChart accessibilityLayer data={roiChartData} layout="vertical" margin={{ left: 10, right: 10 }}>
                                 <XAxis type="number" hide />
                                 <YAxis type="category" dataKey="name" hide />
-                                <Tooltip
-                                    cursor={{ fill: 'hsl(var(--muted))' }}
+                                <ChartTooltip
+                                    cursor={false}
                                     content={<ChartTooltipContent
                                         formatter={(value) => `${(value as number).toFixed(2)}%`}
                                     />}
                                 />
-                                <Bar dataKey="value" radius={[4, 4, 4, 4]} />
+                                <Bar dataKey="value" radius={[4, 4, 4, 4]} fill="var(--color-value)" />
                             </BarChart>
-                        </ResponsiveContainer>
+                        </ChartContainer>
                     </div>
                     <p className="text-sm text-muted-foreground mt-4 p-4 bg-muted/50 rounded-lg">{roiData.explanation}</p>
                 </CardContent>
