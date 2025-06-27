@@ -290,11 +290,10 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
               name="inclusionRate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Inclusion Rate</FormLabel>
+                  <FormLabel>Inclusion Rate (g/ton)</FormLabel>
                   <FormControl>
                     <Input type="number" step="0.1" {...field} />
                   </FormControl>
-                  <FormDescription>In g/ton of feed.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
