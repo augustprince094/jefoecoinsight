@@ -4,7 +4,7 @@ import type { OptimizationResult } from "@/lib/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, Leaf, TrendingUp, Car, DollarSign } from "lucide-react";
+import { AlertCircle, Leaf, TrendingUp, Car, DollarSign, Sparkles } from "lucide-react";
 import Image from "next/image";
 import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts"
 import {
@@ -13,15 +13,30 @@ import {
     ChartTooltipContent,
     type ChartConfig,
 } from "@/components/ui/chart"
+import type { ProvideAdvisoryOutput } from "@/ai/flows/provide-advisory";
 
-interface ResultsDisplayProps {
-    results: OptimizationResult | null;
-    isLoading: boolean;
-    error: string | null;
-}
+const AdvisoryCard = ({ advisoryData }: { advisoryData: ProvideAdvisoryOutput | undefined }) => {
+  if (!advisoryData?.advisoryText) return null;
+
+  return (
+    <Card className="bg-primary/5 border-primary/20">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-primary">
+          <Sparkles className="h-6 w-6" />
+          Smart Advisory
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed">
+          {advisoryData.advisoryText}
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
 
 function MatrixDashboard({ results }: { results: OptimizationResult }) {
-    const { roiData, ghgData } = results;
+    const { roiData, ghgData, advisoryData } = results;
 
     const formatCurrency = (value: number) => {
         return new Intl.NumberFormat('en-US', {
@@ -76,12 +91,13 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
                     </div>
                 </CardContent>
             </Card>
+            <AdvisoryCard advisoryData={advisoryData} />
         </div>
     );
 }
 
 function OnTopDashboard({ results }: { results: OptimizationResult }) {
-    const { roiData, ghgData } = results;
+    const { roiData, ghgData, advisoryData } = results;
     
     const chartData = [
         { name: "Baseline", cost: roiData.feedCostPerLiveWeightBefore },
@@ -186,6 +202,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                     </p>
                 </CardContent>
             </Card>
+            <AdvisoryCard advisoryData={advisoryData} />
         </div>
     );
 }

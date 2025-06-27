@@ -2,6 +2,7 @@
 import { z } from "zod";
 import { type ROIOutput } from '@/ai/flows/calculate-roi';
 import { type EstimateGHGSavingsOutput } from '@/ai/flows/estimate-ghg-savings';
+import { type ProvideAdvisoryOutput } from '@/ai/flows/provide-advisory';
 
 export const feedAdditiveTypes = ["Jefo Pro Solution", "Jefo P(OA+EO)", "Jefo Xylanase"] as const;
 export type FeedAdditiveType = (typeof feedAdditiveTypes)[number];
@@ -36,5 +37,6 @@ export type FormValues = z.infer<typeof formSchema>;
 export type OptimizationResult = {
   roiData: ROIOutput;
   ghgData: EstimateGHGSavingsOutput;
+  advisoryData: ProvideAdvisoryOutput;
   inputs: FormValues;
 };
