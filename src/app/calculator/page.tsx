@@ -36,7 +36,7 @@ export default function CalculatorPage() {
 
       <main className="flex-grow container mx-auto p-4 sm:p-6 lg:p-8">
         <div className="text-center mb-10">
-          <h2 className="text-3xl md:text-4xl font-bold font-headline text-foreground tracking-tight">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
             ROI & GHG Impact Calculator
           </h2>
           <p className="text-muted-foreground mt-3 max-w-2xl mx-auto text-base">
