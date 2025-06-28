@@ -4,7 +4,7 @@ import type { OptimizationResult } from "@/lib/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, Leaf, TrendingUp, Car, DollarSign, Sparkles } from "lucide-react";
+import { AlertCircle, Leaf, TrendingUp, Car, DollarSign, Sparkles, HelpCircle } from "lucide-react";
 import Image from "next/image";
 import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts"
 import {
@@ -13,6 +13,12 @@ import {
     ChartTooltipContent,
     type ChartConfig,
 } from "@/components/ui/chart"
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type { ProvideAdvisoryOutput } from "@/ai/flows/provide-advisory";
 
 const AdvisoryCard = ({ advisoryData }: { advisoryData: ProvideAdvisoryOutput | undefined }) => {
@@ -97,7 +103,19 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
                             </p>
                         </Card>
                         <Card className="p-4 flex flex-col items-center justify-center text-center">
-                            <CardDescription>Total GHG Savings</CardDescription>
+                            <CardDescription className="flex items-center justify-center gap-1.5">
+                                Total GHG Savings
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                                        </TooltipTrigger>
+                                        <TooltipContent className="w-64 whitespace-pre-wrap">
+                                            <p>{ghgData.explanation}</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                            </CardDescription>
                              <p className="text-2xl font-bold text-accent">
                                 {ghgData.ghgSavings.toFixed(2)}
                                 <span className="text-base font-normal text-muted-foreground ml-1">kg CO₂e</span>
@@ -241,6 +259,16 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                              <CardTitle className="flex items-center gap-2">
                                 <Leaf className="h-6 w-6 text-accent" />
                                 GHG Savings
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                                        </TooltipTrigger>
+                                        <TooltipContent className="w-64 whitespace-pre-wrap">
+                                            <p>{ghgData.explanation}</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
                             </CardTitle>
                             <CardDescription>Estimated environmental impact reduction.</CardDescription>
                         </div>
@@ -268,7 +296,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
 }
 
 
-export function ResultsDisplay({ results, isLoading, error }: ResultsDisplayProps) {
+export function ResultsDisplay({ results, isLoading, error }: { results: OptimizationResult | null; isLoading: boolean; error: string | null; }) {
 
     if (isLoading) {
         return (
