@@ -12,6 +12,7 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 import { feedAdditiveData, regionalBaselineGHG } from '@/lib/additive-data';
+import { feedData } from '@/lib/feed-data';
 
 const EstimateGHGSavingsInputSchema = z.object({
   region: z.string().describe('The region of operation.'),
@@ -83,32 +84,85 @@ const estimateGHGSavingsFlow = ai.defineFlow(
     outputSchema: EstimateGHGSavingsOutputSchema,
   },
   async (input) => {
-    const isCanadaOnTop = input.region === 'Canada' && input.applicationType === 'On-top';
-    const additiveKey = input.feedAdditive as keyof typeof feedAdditiveData;
-    const additiveHasData = additiveKey in feedAdditiveData && 'ghgReductionOnTop' in feedAdditiveData[additiveKey];
+    // Matrix application with Jefo Pro Solution
+    if (input.applicationType === 'Matrix' && input.feedAdditive === 'Jefo Pro Solution') {
+      const regionFeed = feedData.find(d => d.region === input.region);
+      if (!regionFeed) {
+        throw new Error(`Feed data for region ${input.region} not found.`);
+      }
 
-    if (isCanadaOnTop && additiveHasData) {
-      const additiveInfo = feedAdditiveData[additiveKey] as any;
-      const reductionFactor = additiveInfo.ghgReductionOnTop?.Canada;
+      const baselineGHGPerTon = regionFeed.ingredients.reduce((total, ing) => {
+        return total + ing.quantity * ing.carbonFootprint;
+      }, 0);
+      
+      const reformulatedIngredients = regionFeed.ingredients.map(ing => {
+        let newQuantity = ing.quantity;
+        switch (ing.name) {
+          case 'Corn': newQuantity *= 1.031; break;
+          case 'Soybean Meal': newQuantity *= (1 - 0.045); break;
+          case 'Soybean Oil': newQuantity *= (1 - 0.06); break;
+          case 'Synthetic Amino Acid': newQuantity *= (1 - 0.031); break;
+          case 'Other Raw Materials': newQuantity *= 1.007; break;
+        }
+        return { ...ing, quantity: newQuantity };
+      });
+      
+      const reformulatedGHGPerTon = reformulatedIngredients.reduce((total, ing) => {
+        return total + ing.quantity * ing.carbonFootprint;
+      }, 0);
+      
+      const survivingBirdsAfter = input.numberOfBirds * (1 - input.mortalityRateAfter / 100);
+      const deadBirdsAfter = input.numberOfBirds * (input.mortalityRateAfter / 100);
+      const totalLiveWeightAfter = survivingBirdsAfter * input.broilerLiveWeight;
+      const feedForSurvivorsAfter = totalLiveWeightAfter * input.feedConversionRatioAfter;
+      const feedPerSurvivorAfter = input.broilerLiveWeight * input.feedConversionRatioAfter;
+      const feedForDeadBirdsAfter = deadBirdsAfter * (feedPerSurvivorAfter * 0.30);
+      const totalFeedConsumedAfter = feedForSurvivorsAfter + feedForDeadBirdsAfter;
+      const totalFeedConsumedAfterInTons = totalFeedConsumedAfter / 1000;
+      
+      const ghgSavingsPerTon = baselineGHGPerTon - reformulatedGHGPerTon;
+      const ghgSavings = ghgSavingsPerTon * totalFeedConsumedAfterInTons;
+      
+      const explanation = `For a 'Matrix' application with ${input.feedAdditive}, GHG savings are from feed reformulation based on GHG factors of ingredients:\n\n` +
+        `1. Baseline Feed GHG: ${baselineGHGPerTon.toFixed(2)} kg CO2e per ton.\n` +
+        `2. Reformulated Feed GHG: ${reformulatedGHGPerTon.toFixed(2)} kg CO2e per ton.\n` +
+        `3. GHG Saving per Ton: ${ghgSavingsPerTon.toFixed(2)} kg CO2e.\n` +
+        `4. Total Feed Consumed: ${totalFeedConsumedAfterInTons.toFixed(2)} tons.\n` +
+        `5. Total GHG Savings: ${ghgSavings.toFixed(2)} kg CO2e.`;
 
-      if (reductionFactor) {
-          const survivingBirdsAfter = input.numberOfBirds * (1 - input.mortalityRateAfter / 100);
-          const totalLiveWeightAfter = survivingBirdsAfter * input.broilerLiveWeight;
-          const baselineGHGPerKg = regionalBaselineGHG.Canada;
-          
-          const totalBaselineGHG = totalLiveWeightAfter * baselineGHGPerKg;
-          const ghgSavings = totalBaselineGHG * reductionFactor;
+      return {
+        ghgSavings,
+        explanation,
+      };
+    } 
+    // On-top application in Canada
+    else if (input.region === 'Canada' && input.applicationType === 'On-top') {
+      const additiveKey = input.feedAdditive as keyof typeof feedAdditiveData;
+      const additiveHasData = additiveKey in feedAdditiveData && 'ghgReductionOnTop' in feedAdditiveData[additiveKey];
 
-          const explanation = `For an 'On-top' application in Canada with ${input.feedAdditive}, GHG savings are based on reduced emissions per kg of live weight:\n\n` +
-          `1. Total Live Weight Produced: ${totalLiveWeightAfter.toFixed(2)} kg.\n` +
-          `2. Baseline GHG Emissions: ${totalBaselineGHG.toFixed(2)} kg CO2e (at ${baselineGHGPerKg} kg CO2e per kg live weight).\n` +
-          `3. GHG Reduction with Additive: ${(reductionFactor * 100).toFixed(1)}%.\n` +
-          `4. Total GHG Savings: ${ghgSavings.toFixed(2)} kg CO2e.`;
+      if (additiveHasData) {
+        const additiveInfo = feedAdditiveData[additiveKey] as any;
+        const reductionFactor = additiveInfo.ghgReductionOnTop?.Canada;
 
-          return {
-              ghgSavings,
-              explanation,
-          };
+        if (reductionFactor) {
+            const survivingBirdsAfter = input.numberOfBirds * (1 - input.mortalityRateAfter / 100);
+            const totalLiveWeightAfter = survivingBirdsAfter * input.broilerLiveWeight;
+            const baselineGHGPerKg = regionalBaselineGHG.Canada;
+            
+            const totalBaselineGHG = totalLiveWeightAfter * baselineGHGPerKg;
+            const ghgSavings = totalBaselineGHG * reductionFactor;
+
+            const explanation = `For an 'On-top' application in Canada with ${input.feedAdditive}, GHG savings are based on reduced emissions per kg of live weight:\n\n` +
+            `1. Total Live Weight Produced: ${totalLiveWeightAfter.toFixed(2)} kg.\n` +
+            `2. Baseline GHG Emissions: ${totalBaselineGHG.toFixed(2)} kg CO2e (at ${baselineGHGPerKg} kg CO2e per kg live weight).\n` +
+            `3. GHG Reduction with Additive: ${(reductionFactor * 100).toFixed(1)}%.\n` +
+            `4. Total GHG Savings: ${ghgSavings.toFixed(2)} kg CO2e.`;
+
+            return {
+                ghgSavings,
+                explanation,
+            };
+        }
       }
     }
 
