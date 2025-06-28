@@ -10,8 +10,14 @@ export type FeedAdditiveType = (typeof feedAdditiveTypes)[number];
 export const applicationTypes = ["Matrix", "On-top"] as const;
 export type ApplicationType = (typeof applicationTypes)[number];
 
+export const regions = ["Canada", "Asia", "Europe"] as const;
+export type Region = (typeof regions)[number];
+
 export const formSchema = z.object({
   // Card 1: Broiler Production Cycle Details
+  region: z.enum(regions, {
+    required_error: "Please select a region.",
+  }),
   numberOfBirds: z.coerce.number().positive({ message: "Must be a positive number." }),
   broilerLiveWeight: z.coerce.number().positive({ message: "Must be a positive number." }),
   baselineMortalityRate: z.coerce.number().min(0, { message: "Cannot be negative." }).max(100, { message: "Cannot exceed 100." }),
