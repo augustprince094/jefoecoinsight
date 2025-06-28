@@ -38,12 +38,40 @@ const AdvisoryCard = ({ advisoryData }: { advisoryData: ProvideAdvisoryOutput | 
 function MatrixDashboard({ results }: { results: OptimizationResult }) {
     const { roiData, ghgData, advisoryData } = results;
 
-    const formatCurrency = (value: number) => {
+    const formatCurrency = (value: number, options: Intl.NumberFormatOptions = {}) => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
             currency: 'USD',
+            ...options
         }).format(value);
     }
+    
+    const { baselineCostPerTon, reformulatedCostPerTon } = roiData;
+
+    const chartData = [
+        { name: "Baseline Feed", cost: baselineCostPerTon ?? 0 },
+        { name: "Reformulated Feed", cost: reformulatedCostPerTon ?? 0 },
+    ];
+    
+    const costs = chartData.map(d => d.cost);
+    const minCost = Math.min(...costs);
+    const yAxisDomainMin = Math.max(0, Math.floor(minCost * 0.95));
+
+    const chartConfig = {
+        cost: {
+            label: "Feed Cost ($/ton)",
+        },
+        baseline: {
+            label: "Baseline",
+            color: "hsl(var(--secondary))",
+        },
+        reformulated: {
+            label: "Reformulated",
+            color: "hsl(var(--primary))",
+        }
+    } satisfies ChartConfig;
+
+    const savingsPerTon = (baselineCostPerTon ?? 0) - (reformulatedCostPerTon ?? 0);
 
     return (
         <div className="space-y-6 animate-in fade-in-50 duration-500">
@@ -54,40 +82,71 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
                         Summary of financial and environmental benefits from feed reformulation.
                     </CardDescription>
                 </CardHeader>
-                <CardContent className="grid gap-4">
-                    <div className="p-4 rounded-lg border flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <div className="bg-secondary p-3 rounded-full">
-                                <DollarSign className="h-6 w-6 text-secondary-foreground" />
-                            </div>
-                            <p className="font-medium">Feed Cost Savings</p>
-                        </div>
-                        <p className="text-2xl font-bold">
-                            {formatCurrency(roiData.feedCostSavings)}
-                        </p>
+                <CardContent className="grid gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <Card className="p-4 flex flex-col items-center justify-center text-center">
+                             <CardDescription>Total Feed Cost Savings</CardDescription>
+                             <p className="text-2xl font-bold">
+                                {formatCurrency(roiData.feedCostSavings)}
+                            </p>
+                        </Card>
+                        <Card className="p-4 flex flex-col items-center justify-center text-center bg-primary/10 border-primary/20">
+                           <CardDescription className="text-primary">Return on Investment</CardDescription>
+                            <p className="text-2xl font-bold text-primary">
+                                {roiData.roi.toFixed(1)} : 1
+                            </p>
+                        </Card>
+                        <Card className="p-4 flex flex-col items-center justify-center text-center">
+                            <CardDescription>Total GHG Savings</CardDescription>
+                             <p className="text-2xl font-bold text-accent">
+                                {ghgData.ghgSavings.toFixed(2)}
+                                <span className="text-base font-normal text-muted-foreground ml-1">kg CO₂e</span>
+                            </p>
+                        </Card>
                     </div>
-                    <div className="p-4 rounded-lg border flex items-center justify-between">
-                         <div className="flex items-center gap-3">
-                            <div className="bg-primary/10 p-3 rounded-full">
-                                <TrendingUp className="h-6 w-6 text-primary" />
-                            </div>
-                            <p className="font-medium">Return on Investment</p>
+
+                    <div className="border-t pt-6">
+                        <div className="text-center mb-4">
+                            <p className="text-sm text-muted-foreground">Feed Cost per Ton Comparison</p>
+                            <p className="text-xl font-bold text-primary">
+                               Saving of {formatCurrency(savingsPerTon)} per ton
+                            </p>
                         </div>
-                        <p className="text-2xl font-bold text-primary">
-                            {roiData.roi.toFixed(1)} : 1
-                        </p>
-                    </div>
-                    <div className="p-4 rounded-lg border flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <div className="bg-accent/10 p-3 rounded-full">
-                                <Leaf className="h-6 w-6 text-accent" />
-                            </div>
-                            <p className="font-medium">GHG Savings</p>
-                        </div>
-                        <p className="text-2xl font-bold text-accent">
-                            {ghgData.ghgSavings.toFixed(2)}
-                            <span className="text-base font-normal text-muted-foreground ml-1">kg CO₂e</span>
-                        </p>
+                        <ChartContainer config={chartConfig} className="min-h-[250px] w-full">
+                            <BarChart accessibilityLayer data={chartData} margin={{ top: 20, right: 0, left: -10, bottom: 0 }}>
+                                <CartesianGrid vertical={false} />
+                                <YAxis
+                                    dataKey="cost"
+                                    tickLine={false}
+                                    axisLine={false}
+                                    tickMargin={8}
+                                    tickFormatter={(value) => `$${value.toFixed(0)}`}
+                                    domain={[yAxisDomainMin, 'auto']}
+                                />
+                                <XAxis
+                                    dataKey="name"
+                                    tickLine={false}
+                                    axisLine={false}
+                                    tickMargin={10}
+                                />
+                                <ChartTooltip
+                                    cursor={false}
+                                    content={<ChartTooltipContent 
+                                        indicator="line" 
+                                        formatter={(value, name) => (
+                                             <div className="text-center">
+                                                <div>{name}</div>
+                                                <div className="font-bold">{formatCurrency(value as number, {minimumFractionDigits: 2})}</div>
+                                            </div>
+                                        )}
+                                    />}
+                                />
+                                <Bar dataKey="cost" radius={4}>
+                                   <Cell fill="hsl(var(--secondary))" />
+                                   <Cell fill="hsl(var(--primary))" />
+                                </Bar>
+                            </BarChart>
+                        </ChartContainer>
                     </div>
                 </CardContent>
             </Card>
@@ -95,6 +154,7 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
         </div>
     );
 }
+
 
 function OnTopDashboard({ results }: { results: OptimizationResult }) {
     const { roiData, ghgData, advisoryData } = results;

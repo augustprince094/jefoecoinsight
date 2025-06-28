@@ -38,6 +38,8 @@ const ROIOutputSchema = z.object({
   feedCostPerLiveWeightBefore: z.number().describe('The feed cost per kg of live weight before the additive, in $.'),
   feedCostPerLiveWeightAfter: z.number().describe('The feed cost per kg of live weight after using the additive, in $.'),
   feedCostSavings: z.number().describe('The total feed cost savings in $.'),
+  baselineCostPerTon: z.number().optional().describe('The baseline feed cost per ton in $.'),
+  reformulatedCostPerTon: z.number().optional().describe('The reformulated feed cost per ton in $.'),
 });
 
 export type ROIOutput = z.infer<typeof ROIOutputSchema>;
@@ -174,6 +176,8 @@ const calculateROIFlow = ai.defineFlow(
         feedCostPerLiveWeightBefore: input.costMetrics.feedCost,
         feedCostPerLiveWeightAfter: feedCostPerLiveWeightAfter,
         feedCostSavings: feedCostSavings,
+        baselineCostPerTon: baselineCostPerTon,
+        reformulatedCostPerTon: reformulatedCostPerTon,
       };
 
     } else {
