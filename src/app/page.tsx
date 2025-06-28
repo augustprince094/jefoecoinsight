@@ -47,7 +47,7 @@ const livestockData = [
 
 export default function HomePage() {
   const plugin = React.useRef(
-    Autoplay({ delay: 5000, stopOnInteraction: true })
+    Autoplay({ delay: 5000, stopOnInteraction: true, stopOnMouseEnter: true })
   )
 
   return (
@@ -132,8 +132,6 @@ export default function HomePage() {
                     loop: true,
                   }}
                   className="w-full"
-                  onMouseEnter={plugin.current.stop}
-                  onMouseLeave={plugin.current.reset}
                 >
                   <CarouselContent>
                     {livestockData.map((item, index) => (
