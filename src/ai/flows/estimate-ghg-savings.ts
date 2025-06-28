@@ -11,8 +11,11 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { feedAdditiveData, regionalBaselineGHG } from '@/lib/additive-data';
 
 const EstimateGHGSavingsInputSchema = z.object({
+  region: z.string().describe('The region of operation.'),
+  applicationType: z.string().optional().describe('The application type (Matrix or On-top).'),
   feedAdditive: z.string().describe('The type of feed additive used.'),
   inclusionRate: z.number().describe('The inclusion rate of the feed additive (e.g., in kg/ton).'),
   numberOfBirds: z.number().describe('Number of birds per production cycle.'),
@@ -79,7 +82,37 @@ const estimateGHGSavingsFlow = ai.defineFlow(
     inputSchema: EstimateGHGSavingsInputSchema,
     outputSchema: EstimateGHGSavingsOutputSchema,
   },
-  async input => {
+  async (input) => {
+    const isCanadaOnTop = input.region === 'Canada' && input.applicationType === 'On-top';
+    const additiveKey = input.feedAdditive as keyof typeof feedAdditiveData;
+    const additiveHasData = additiveKey in feedAdditiveData && 'ghgReductionOnTop' in feedAdditiveData[additiveKey];
+
+    if (isCanadaOnTop && additiveHasData) {
+      const additiveInfo = feedAdditiveData[additiveKey] as any;
+      const reductionFactor = additiveInfo.ghgReductionOnTop?.Canada;
+
+      if (reductionFactor) {
+          const survivingBirdsAfter = input.numberOfBirds * (1 - input.mortalityRateAfter / 100);
+          const totalLiveWeightAfter = survivingBirdsAfter * input.broilerLiveWeight;
+          const baselineGHGPerKg = regionalBaselineGHG.Canada;
+          
+          const totalBaselineGHG = totalLiveWeightAfter * baselineGHGPerKg;
+          const ghgSavings = totalBaselineGHG * reductionFactor;
+
+          const explanation = `For an 'On-top' application in Canada with ${input.feedAdditive}, GHG savings are based on reduced emissions per kg of live weight:\n\n` +
+          `1. Total Live Weight Produced: ${totalLiveWeightAfter.toFixed(2)} kg.\n` +
+          `2. Baseline GHG Emissions: ${totalBaselineGHG.toFixed(2)} kg CO2e (at ${baselineGHGPerKg} kg CO2e per kg live weight).\n` +
+          `3. GHG Reduction with Additive: ${(reductionFactor * 100).toFixed(1)}%.\n` +
+          `4. Total GHG Savings: ${ghgSavings.toFixed(2)} kg CO2e.`;
+
+          return {
+              ghgSavings,
+              explanation,
+          };
+      }
+    }
+
+    // Fallback to original prompt-based calculation for other regions/applications
     const {output} = await prompt(input);
     return output!;
   }

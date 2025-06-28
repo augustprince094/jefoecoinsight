@@ -28,6 +28,8 @@ export async function getOptimizationResults(data: FormValues): Promise<{ data?:
     };
     
     const ghgInput: EstimateGHGSavingsInput = {
+      region: data.region,
+      applicationType: data.applicationType,
       feedAdditive: data.feedAdditive,
       inclusionRate: data.inclusionRate / 1000,
       numberOfBirds: data.numberOfBirds,
