@@ -114,7 +114,7 @@ const calculateROIFlow = ai.defineFlow(
     outputSchema: ROIOutputSchema,
   },
   async (input) => {
-    if (input.applicationType === 'Matrix') {
+    if (input.applicationType === 'Matrix' && input.feedAdditiveType === 'Jefo Pro Solution') {
       const regionFeed = feedData.find(d => d.region === input.region);
       if (!regionFeed) {
         throw new Error(`Feed data for region ${input.region} not found.`);
@@ -159,9 +159,9 @@ const calculateROIFlow = ai.defineFlow(
       const totalFeedCostAfter = totalFeedConsumedAfterInTons * reformulatedCostPerTon;
       const feedCostPerLiveWeightAfter = totalLiveWeightAfter > 0 ? totalFeedCostAfter / totalLiveWeightAfter : 0;
       
-      const explanation = `For a 'Matrix' application, savings are calculated from feed reformulation:\n\n` +
+      const explanation = `For a 'Matrix' application with ${input.feedAdditiveType}, savings are calculated from feed reformulation:\n\n` +
         `1. Baseline Feed Cost: The cost for the standard feed in ${input.region} is $${baselineCostPerTon.toFixed(2)} per ton.\n` +
-        `2. Reformulated Feed Cost: With ${input.feedAdditiveType}, the new feed cost is $${reformulatedCostPerTon.toFixed(2)} per ton.\n` +
+        `2. Reformulated Feed Cost: With the additive, the new feed cost is $${reformulatedCostPerTon.toFixed(2)} per ton.\n` +
         `3. Saving per Ton: $${(baselineCostPerTon - reformulatedCostPerTon).toFixed(2)}.\n` +
         `4. Total Feed Consumed: ${totalFeedConsumedAfterInTons.toFixed(2)} tons.\n` +
         `5. Total Feed Cost Savings: $${feedCostSavings.toFixed(2)}.\n` +
@@ -177,7 +177,7 @@ const calculateROIFlow = ai.defineFlow(
       };
 
     } else {
-      // For 'On-top' applications, use the original prompt-based calculation.
+      // For 'On-top' applications or other 'Matrix' cases, use the original prompt-based calculation.
       const { output } = await prompt(input);
       return output!;
     }
