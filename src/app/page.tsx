@@ -1,4 +1,6 @@
+"use client"
 
+import * as React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
@@ -12,6 +14,8 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
+import Autoplay from "embla-carousel-autoplay"
+
 
 const livestockData = [
   {
@@ -42,6 +46,10 @@ const livestockData = [
 
 
 export default function HomePage() {
+  const plugin = React.useRef(
+    Autoplay({ delay: 5000, stopOnInteraction: true })
+  )
+
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       {/* Header */}
@@ -74,14 +82,6 @@ export default function HomePage() {
                  <h1 className="text-3xl md:text-4xl font-bold text-primary mb-4">
                   Lower your carbon footprint with Jefo solutions
                 </h1>
-                <Image 
-                  src="https://images.unsplash.com/photo-1527153857715-3908f2bae5e8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxM3x8bGl2ZXN0b2NrfGVufDB8fHx8MTc1MDk2OTQ0MXww&ixlib=rb-4.1.0&q=80&w=1080"
-                  alt="Bar chart showing greenhouse gas emission reduction" 
-                  width={500} 
-                  height={300} 
-                  className="rounded-lg shadow-lg mb-6 mx-auto"
-                  data-ai-hint="emission reduction chart"
-                />
                 <p className="text-muted-foreground mb-8">
                   Incorporating the protected organic acid and essential oils could lower your carbon footprint by -4.8%
                 </p>
@@ -126,11 +126,14 @@ export default function HomePage() {
             <Card>
               <CardContent className="p-8">
                 <Carousel
+                  plugins={[plugin.current]}
                   opts={{
                     align: "start",
                     loop: true,
                   }}
                   className="w-full"
+                  onMouseEnter={plugin.current.stop}
+                  onMouseLeave={plugin.current.reset}
                 >
                   <CarouselContent>
                     {livestockData.map((item, index) => (
