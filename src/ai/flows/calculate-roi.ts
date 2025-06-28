@@ -11,8 +11,11 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { feedData } from '@/lib/feed-data';
 
 const ROIInputSchema = z.object({
+  region: z.string().describe('The region of operation.'),
+  applicationType: z.string().optional().describe('The application type (Matrix or On-top).'),
   feedAdditiveType: z.string().describe('The type of feed additive used.'),
   inclusionRate: z.number().describe('The inclusion rate of the feed additive in kg/ton.'),
   numberOfBirds: z.number().describe('Number of birds per production cycle.'),
@@ -47,7 +50,7 @@ const prompt = ai.definePrompt({
   name: 'calculateROIPrompt',
   input: {schema: ROIInputSchema},
   output: {schema: ROIOutputSchema},
-  prompt: `You are an expert in broiler economics. Calculate the return on investment (ROI) for using a feed additive.
+  prompt: `You are an expert in broiler economics. Calculate the return on investment (ROI) for using a feed additive with an 'On-top' application.
 
 The calculation must account for feed consumed by both surviving birds and birds that die during the cycle. Birds that die are assumed to consume 30% of the feed that a full-grown bird would have consumed.
 
@@ -110,8 +113,73 @@ const calculateROIFlow = ai.defineFlow(
     inputSchema: ROIInputSchema,
     outputSchema: ROIOutputSchema,
   },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
+  async (input) => {
+    if (input.applicationType === 'Matrix') {
+      const regionFeed = feedData.find(d => d.region === input.region);
+      if (!regionFeed) {
+        throw new Error(`Feed data for region ${input.region} not found.`);
+      }
+
+      const baselineCostPerTon = regionFeed.ingredients.reduce((total, ing) => {
+        return total + (ing.quantity / 1000) * ing.cost;
+      }, 0);
+      
+      const reformulatedIngredients = regionFeed.ingredients.map(ing => {
+        let newQuantity = ing.quantity;
+        // The reformulation logic is based on the user request.
+        // It's currently the same for all regions as no other logic was provided.
+        switch (ing.name) {
+          case 'Corn': newQuantity *= 1.031; break;
+          case 'Soybean Meal': newQuantity *= (1 - 0.045); break;
+          case 'Soybean Oil': newQuantity *= (1 - 0.06); break;
+          case 'Synthetic Amino Acid': newQuantity *= (1 - 0.031); break;
+          case 'Other Raw Materials': newQuantity *= 1.007; break;
+        }
+        return { ...ing, quantity: newQuantity };
+      });
+      
+      const reformulatedCostPerTon = reformulatedIngredients.reduce((total, ing) => {
+        return total + (ing.quantity / 1000) * ing.cost;
+      }, 0);
+      
+      const survivingBirdsAfter = input.numberOfBirds * (1 - input.mortalityRateAfter / 100);
+      const deadBirdsAfter = input.numberOfBirds * (input.mortalityRateAfter / 100);
+      const totalLiveWeightAfter = survivingBirdsAfter * input.broilerLiveWeight;
+      const feedForSurvivorsAfter = totalLiveWeightAfter * input.feedConversionRatioAfter;
+      const feedPerSurvivorAfter = input.broilerLiveWeight * input.feedConversionRatioAfter;
+      const feedForDeadBirdsAfter = deadBirdsAfter * (feedPerSurvivorAfter * 0.30);
+      const totalFeedConsumedAfter = feedForSurvivorsAfter + feedForDeadBirdsAfter;
+      const totalFeedConsumedAfterInTons = totalFeedConsumedAfter / 1000;
+      
+      const feedCostSavings = (baselineCostPerTon - reformulatedCostPerTon) * totalFeedConsumedAfterInTons;
+      const totalInvestmentInAdditive = totalFeedConsumedAfterInTons * input.inclusionRate * input.costMetrics.additiveCost;
+      
+      const roi = totalInvestmentInAdditive > 0 ? feedCostSavings / totalInvestmentInAdditive : Infinity;
+      
+      const totalFeedCostAfter = totalFeedConsumedAfterInTons * reformulatedCostPerTon;
+      const feedCostPerLiveWeightAfter = totalLiveWeightAfter > 0 ? totalFeedCostAfter / totalLiveWeightAfter : 0;
+      
+      const explanation = `For a 'Matrix' application, savings are calculated from feed reformulation:\n\n` +
+        `1. Baseline Feed Cost: The cost for the standard feed in ${input.region} is $${baselineCostPerTon.toFixed(2)} per ton.\n` +
+        `2. Reformulated Feed Cost: With ${input.feedAdditiveType}, the new feed cost is $${reformulatedCostPerTon.toFixed(2)} per ton.\n` +
+        `3. Saving per Ton: $${(baselineCostPerTon - reformulatedCostPerTon).toFixed(2)}.\n` +
+        `4. Total Feed Consumed: ${totalFeedConsumedAfterInTons.toFixed(2)} tons.\n` +
+        `5. Total Feed Cost Savings: $${feedCostSavings.toFixed(2)}.\n` +
+        `6. Total Additive Investment: $${totalInvestmentInAdditive.toFixed(2)}.\n` +
+        `7. Return on Investment (ROI): The final ROI is ${roi.toFixed(1)}:1.`;
+      
+      return {
+        roi: roi,
+        explanation: explanation,
+        feedCostPerLiveWeightBefore: input.costMetrics.feedCost,
+        feedCostPerLiveWeightAfter: feedCostPerLiveWeightAfter,
+        feedCostSavings: feedCostSavings,
+      };
+
+    } else {
+      // For 'On-top' applications, use the original prompt-based calculation.
+      const { output } = await prompt(input);
+      return output!;
+    }
   }
 );

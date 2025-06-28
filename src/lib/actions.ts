@@ -14,6 +14,8 @@ export async function getOptimizationResults(data: FormValues): Promise<{ data?:
     };
     
     const roiInput: ROIInput = {
+      region: data.region,
+      applicationType: data.applicationType,
       feedAdditiveType: data.feedAdditive,
       inclusionRate: data.inclusionRate / 1000,
       numberOfBirds: data.numberOfBirds,
