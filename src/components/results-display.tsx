@@ -117,8 +117,8 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
                                 </TooltipProvider>
                             </CardDescription>
                              <p className="text-2xl font-bold text-accent">
-                                {ghgData.ghgSavings.toFixed(2)}
-                                <span className="text-base font-normal text-muted-foreground ml-1">kg CO₂e</span>
+                                {(ghgData.ghgSavings / 1000).toFixed(2)}
+                                <span className="text-base font-normal text-muted-foreground ml-1">tons CO₂e</span>
                             </p>
                         </Card>
                     </div>
@@ -200,7 +200,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
         }
     } satisfies ChartConfig;
 
-    const equivalentKm = (ghgData.ghgSavings / 180).toFixed(0);
+    const equivalentKm = (ghgData.ghgSavings * 4.1).toFixed(0);
 
     return (
         <div className="space-y-6 animate-in fade-in-50 duration-500">
@@ -273,8 +273,8 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                             <CardDescription>Estimated environmental impact reduction.</CardDescription>
                         </div>
                         <div className="text-3xl font-bold text-accent">
-                            {ghgData.ghgSavings.toFixed(2)}
-                            <span className="text-base font-normal text-muted-foreground ml-1">kg CO₂e</span>
+                            {(ghgData.ghgSavings / 1000).toFixed(2)}
+                            <span className="text-base font-normal text-muted-foreground ml-1">tons CO₂e</span>
                         </div>
                     </div>
                 </CardHeader>

@@ -60,7 +60,7 @@ export async function getOptimizationResults(data: FormValues): Promise<{ data?:
         feedCostSavings: roiData.feedCostSavings,
       },
       ghgData: {
-        ghgSavings: ghgData.ghgSavings,
+        ghgSavings: ghgData.ghgSavings / 1000, // Convert to tons
       },
     };
 

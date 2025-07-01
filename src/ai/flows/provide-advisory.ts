@@ -21,7 +21,7 @@ const AdvisoryInputSchema = z.object({
     feedCostSavings: z.number(),
   }),
   ghgData: z.object({
-    ghgSavings: z.number(),
+    ghgSavings: z.number().describe('The total GHG savings in tons CO2e.'),
   }),
 });
 export type ProvideAdvisoryInput = z.infer<typeof AdvisoryInputSchema>;
@@ -47,14 +47,14 @@ Data:
 - Number of Birds: {{{inputs.numberOfBirds}}}
 - Calculated ROI: {{{roiData.roi}}}:1
 - Total Feed Cost Savings: \${{{roiData.feedCostSavings}}}
-- Total GHG Savings: {{{ghgData.ghgSavings}}} kg CO2e
+- Total GHG Savings: {{{ghgData.ghgSavings}}} tons CO2e
 
 Your advisory should:
 1.  Start with a positive and engaging opening celebrating the results.
-2.  Briefly summarize the key positive outcomes: a strong ROI, significant feed cost savings (if applicable), and meaningful GHG reduction.
+2.  Briefly summarize the key positive outcomes: a strong ROI, significant feed cost savings (if applicable), and meaningful GHG reduction. The GHG savings should be mentioned in tons.
 3.  If the application type is 'Matrix', specifically highlight the financial benefit of feed reformulation through the matrix value of the additive.
 4.  If the application type is 'On-top', emphasize the performance gains (improved FCR and lower mortality) that drive the positive ROI.
-5.  Translate the GHG savings into a more relatable equivalent. Use the fact that 1 kg of CO2e is roughly equivalent to driving 4.1 km in a standard gasoline car. Calculate the total equivalent km and include it in your summary.
+5.  Translate the GHG savings into a more relatable equivalent. Use the fact that 1 ton of CO2e is roughly equivalent to driving 4,100 km in a standard gasoline car. Calculate the total equivalent km (ghgSavings in tons * 4100) and include it in your summary.
 6.  Conclude with a powerful statement about how Jefo helps achieve both profitability and sustainability goals.
 7.  Keep the tone professional, but accessible and positive. Use bullet points (with asterisks) for the key takeaways. Do not use headers.
 `,
