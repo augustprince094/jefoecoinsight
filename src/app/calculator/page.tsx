@@ -2,11 +2,38 @@
 "use client";
 
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import { OptimizerForm } from '@/components/optimizer-form';
-import { ResultsDisplay } from '@/components/results-display';
 import type { OptimizationResult } from '@/lib/types';
 import Link from 'next/link';
 import { JefoLogo } from '@/components/icons/jefo-logo';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+
+// Dynamically import the ResultsDisplay component to optimize initial page load
+const ResultsDisplay = dynamic(
+  () => import('@/components/results-display').then((mod) => mod.ResultsDisplay),
+  {
+    ssr: false, // This component uses recharts which is client-side only
+    loading: () => (
+      <Card>
+        <CardHeader>
+          <Skeleton className="h-8 w-3/4" />
+          <Skeleton className="h-4 w-1/2" />
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <Skeleton className="h-48 w-full" />
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-5/6" />
+          </div>
+        </CardContent>
+      </Card>
+    ),
+  }
+);
+
 
 export default function CalculatorPage() {
   const [results, setResults] = useState<OptimizationResult | null>(null);
