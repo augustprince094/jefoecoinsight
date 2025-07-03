@@ -94,11 +94,16 @@ export default {
           '0%': { left: '-10%' },
           '100%': { left: '110%' },
         },
+        'wobble': {
+          '0%, 100%': { transform: 'translateY(0) rotate(0)' },
+          '50%': { transform: 'translateY(-2px) rotate(1deg)' },
+        }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'drive': 'drive 6s linear infinite',
+        'drive-and-wobble': 'drive 6s linear infinite, wobble 2s ease-in-out infinite alternate'
       },
     },
   },

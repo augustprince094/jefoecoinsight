@@ -280,10 +280,8 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                 </CardHeader>
                 <CardContent className="border-t pt-4 text-center">
                     <div className="relative overflow-hidden h-10 w-full mb-4">
-                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-px bg-muted-foreground/30">
-                            <div className="absolute left-0 top-0 w-full h-full border-t-2 border-dashed border-muted-foreground/50"></div>
-                        </div>
-                        <Car className="h-8 w-8 text-accent absolute top-0 animate-drive"/>
+                        <div className="absolute inset-x-0 top-1/2 w-full -translate-y-1/2 border-t-2 border-dashed border-muted-foreground/30" />
+                        <Car className="h-8 w-8 text-accent absolute bottom-5 animate-drive-and-wobble" style={{ animationDelay: '-3s, 0s' }}/>
                     </div>
                     <p className="text-sm text-muted-foreground">
                         This is equivalent to driving <span className="font-bold text-accent">{equivalentKm} km</span> using a gasoline powered car.
