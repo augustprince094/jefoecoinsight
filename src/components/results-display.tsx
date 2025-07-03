@@ -279,7 +279,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                     </div>
                 </CardHeader>
                 <CardContent className="border-t pt-4 text-center">
-                    <div className="relative overflow-hidden h-10 w-full mb-4">
+                    <div className="relative h-10 w-full mb-4">
                         <div className="absolute inset-x-0 top-1/2 w-full -translate-y-1/2 border-t-2 border-dashed border-muted-foreground/30" />
                         <Car className="h-8 w-8 text-accent absolute bottom-5 animate-drive-and-wobble" style={{ animationDelay: '-3s, 0s' }}/>
                     </div>
