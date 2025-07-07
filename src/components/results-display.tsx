@@ -260,7 +260,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
             {/* Panel 2: Economic Performance Summary */}
             <Card>
                 <CardHeader>
-                    <CardTitle>Economic Performance Summary</CardTitle>
+                    <CardTitle className="text-lg">Economic Performance Summary</CardTitle>
                     <CardDescription>Key financial and efficiency metrics.</CardDescription>
                 </CardHeader>
                 <CardContent>
