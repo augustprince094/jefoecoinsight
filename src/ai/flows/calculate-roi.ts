@@ -54,7 +54,7 @@ const prompt = ai.definePrompt({
   output: {schema: ROIOutputSchema},
   prompt: `You are an expert in broiler economics. Your main task is to calculate the return on investment (ROI) and related financial metrics for using a feed additive with an 'On-top' application.
 
-Use the following formulas and data to perform the calculation. You must follow these steps precisely.
+Use the following data and perform the calculation by following the steps precisely.
 
 **Input Data:**
 - Number of birds per cycle: {{{numberOfBirds}}}
@@ -69,18 +69,22 @@ Use the following formulas and data to perform the calculation. You must follow 
 
 **Calculation Steps:**
 
-1.  **Calculate Baseline Cost:**
-    a. Calculate **Total Baseline Cost** using this exact formula: \`({{{numberOfBirds}}} * {{{feedConversionRatioBefore}}} * {{{broilerLiveWeight}}} * {{{costMetrics.feedCost}}}) / (1 - ({{{mortalityRateBefore}}} / 100))\`.
-    b. Calculate **Total Live Weight Before** = {{{numberOfBirds}}} * (1 - ({{{mortalityRateBefore}}} / 100)) * {{{broilerLiveWeight}}}.
-    c. Calculate \`feedCostPerLiveWeightBefore\` = Total Baseline Cost / Total Live Weight Before.
+1.  **Calculate Total Baseline Cost:**
+    a. First, calculate the **Average Feed per Bird (Baseline)** = \`{{{feedConversionRatioBefore}}} * {{{broilerLiveWeight}}}\`.
+    b. Next, calculate the **Survival Rate (Baseline)** = \`1 - ({{{mortalityRateBefore}}} / 100)\`.
+    c. Now, calculate the **Total Baseline Cost** using this exact formula: \`( ({{{numberOfBirds}}} * Average Feed per Bird (Baseline) * {{{costMetrics.feedCost}}}) / Survival Rate (Baseline) )\`.
+    d. Calculate **Total Live Weight Before** = {{{numberOfBirds}}} * (1 - ({{{mortalityRateBefore}}} / 100)) * {{{broilerLiveWeight}}}.
+    e. Calculate \`feedCostPerLiveWeightBefore\` = Total Baseline Cost / Total Live Weight Before.
 
 2.  **Calculate New Costs (With Additive):**
-    a. Calculate **Total Feed Cost After** using this exact formula: \`({{{numberOfBirds}}} * {{{feedConversionRatioAfter}}} * {{{broilerLiveWeight}}} * {{{costMetrics.feedCost}}}) / (1 - ({{{mortalityRateAfter}}} / 100))\`.
-    b. To calculate the investment, first find **Total Feed Consumed After**: \`({{{numberOfBirds}}} * {{{feedConversionRatioAfter}}} * {{{broilerLiveWeight}}}) / (1 - ({{{mortalityRateAfter}}} / 100))\`.
-    c. Calculate **Total Investment in Additive** = (Total Feed Consumed After / 1000) * {{{inclusionRate}}} * {{{costMetrics.additiveCost}}}.
-    d. Calculate **Total Cost With Additive** = Total Feed Cost After + Total Investment in Additive.
-    e. Calculate **Total Live Weight After** = {{{numberOfBirds}}} * (1 - ({{{mortalityRateAfter}}} / 100)) * {{{broilerLiveWeight}}}.
-    f. Calculate \`feedCostPerLiveWeightAfter\` = Total Cost With Additive / Total Live Weight After.
+    a. First, calculate the **Average Feed per Bird (After)** = \`{{{feedConversionRatioAfter}}} * {{{broilerLiveWeight}}}\`.
+    b. Next, calculate the **Survival Rate (After)** = \`1 - ({{{mortalityRateAfter}}} / 100)\`.
+    c. Now, calculate the **Total Feed Cost After** using this exact formula: \`( ({{{numberOfBirds}}} * Average Feed per Bird (After) * {{{costMetrics.feedCost}}}) / Survival Rate (After) )\`.
+    d. Calculate the **Total Feed Consumed After**: This is the feed portion of the cost calculation: \`( ({{{numberOfBirds}}} * Average Feed per Bird (After)) / Survival Rate (After) )\`.
+    e. Calculate **Total Investment in Additive** = (Total Feed Consumed After / 1000) * {{{inclusionRate}}} * {{{costMetrics.additiveCost}}}.
+    f. Calculate **Total Cost With Additive** = Total Feed Cost After + Total Investment in Additive.
+    g. Calculate **Total Live Weight After** = {{{numberOfBirds}}} * (1 - ({{{mortalityRateAfter}}} / 100)) * {{{broilerLiveWeight}}}.
+    h. Calculate \`feedCostPerLiveWeightAfter\` = Total Cost With Additive / Total Live Weight After.
 
 3.  **Calculate Savings and ROI:**
     a. Calculate **Total Cost Savings (\`feedCostSavings\`)** = Total Baseline Cost - Total Cost With Additive.

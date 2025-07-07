@@ -172,7 +172,7 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
               name="numberOfBirds"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Birds per cycle</FormLabel>
+                  <FormLabel>Number of birds per cycle</FormLabel>
                   <FormControl>
                     <Input type="number" {...field} />
                   </FormControl>
