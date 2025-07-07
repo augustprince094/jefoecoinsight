@@ -4,7 +4,7 @@ import type { OptimizationResult } from "@/lib/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, Leaf, TrendingUp, Car, DollarSign, Sparkles, HelpCircle } from "lucide-react";
+import { AlertCircle, Leaf, TrendingUp, Car, DollarSign, Sparkles, HelpCircle, Zap } from "lucide-react";
 import Image from "next/image";
 import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts"
 import {
@@ -175,7 +175,11 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
 
 
 function OnTopDashboard({ results }: { results: OptimizationResult }) {
-    const { roiData, ghgData, advisoryData } = results;
+    const { roiData, ghgData, advisoryData, inputs } = results;
+
+    const feedCostReduction = roiData.feedCostPerLiveWeightBefore > 0
+        ? ((roiData.feedCostPerLiveWeightBefore - roiData.feedCostPerLiveWeightAfter) / roiData.feedCostPerLiveWeightBefore) * 100
+        : 0;
     
     const chartData = [
         { name: "Baseline", cost: roiData.feedCostPerLiveWeightBefore },
@@ -204,24 +208,74 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
 
     return (
         <div className="space-y-6 animate-in fade-in-50 duration-500">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium text-primary">Return on Investment</CardTitle>
+                        <TrendingUp className="h-4 w-4 text-primary" />
+                    </CardHeader>
+                    <CardContent className="pt-2">
+                        <div className="text-2xl font-bold text-primary">{roiData.roi.toFixed(1)} : 1</div>
+                        <p className="text-xs text-muted-foreground">Ratio</p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Feed Cost Reduction</CardTitle>
+                        <DollarSign className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent className="pt-2">
+                        <div className="text-2xl font-bold">{feedCostReduction.toFixed(1)}%</div>
+                        <p className="text-xs text-muted-foreground">Per kg live weight</p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Improved FCR</CardTitle>
+                        <Zap className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent className="pt-2">
+                        <div className="text-2xl font-bold">
+                           {inputs.feedConversionRatioAfter.toFixed(3)}
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                            From {inputs.baselineFCR.toFixed(3)}
+                        </p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium text-accent">GHG Savings</CardTitle>
+                        <Leaf className="h-4 w-4 text-accent" />
+                    </CardHeader>
+                    <CardContent className="pt-2">
+                        <div className="text-2xl font-bold text-accent">
+                            {(ghgData.ghgSavings / 1000).toFixed(2)}
+                            <span className="text-base font-normal ml-1">tons</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground flex items-center gap-1">
+                            CO₂ equivalent
+                             <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <HelpCircle className="h-3 w-3 text-muted-foreground cursor-help" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-64 whitespace-pre-wrap">
+                                        <p>{ghgData.explanation}</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        </p>
+                    </CardContent>
+                </Card>
+            </div>
+
             <Card>
                 <CardHeader>
-                    <div className="flex items-start justify-between">
-                        <div>
-                            <CardTitle className="flex items-center gap-2">
-                                <TrendingUp className="h-6 w-6 text-primary" />
-                                Return on Investment (ROI)
-                            </CardTitle>
-                             <CardDescription>Financial performance of the feed additive.</CardDescription>
-                        </div>
-                        <div className="text-3xl font-bold text-primary text-right">
-                           {roiData.roi.toFixed(1)} : 1
-                           <p className="text-sm font-normal text-muted-foreground">Ratio</p>
-                        </div>
-                    </div>
+                    <CardTitle className="text-lg">Feed Cost Analysis</CardTitle>
+                    <CardDescription>Comparison of feed cost per kg of live weight.</CardDescription>
                 </CardHeader>
-                <CardContent className="border-t pt-4">
-                     <p className="text-sm font-medium text-center text-muted-foreground mb-2">Feed Cost per kg Live Weight</p>
+                <CardContent className="pl-0">
                      <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
                         <BarChart accessibilityLayer data={chartData} margin={{ top: 20, right: 20, left: 0, bottom: 0 }}>
                             <CartesianGrid vertical={false} />
@@ -254,37 +308,16 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
 
             <Card>
                 <CardHeader>
-                     <div className="flex items-start justify-between">
-                        <div>
-                             <CardTitle className="flex items-center gap-2">
-                                <Leaf className="h-6 w-6 text-accent" />
-                                GHG Savings
-                                <TooltipProvider>
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
-                                        </TooltipTrigger>
-                                        <TooltipContent className="w-64 whitespace-pre-wrap">
-                                            <p>{ghgData.explanation}</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
-                            </CardTitle>
-                            <CardDescription>Estimated environmental impact reduction.</CardDescription>
-                        </div>
-                        <div className="text-3xl font-bold text-accent">
-                            {(ghgData.ghgSavings / 1000).toFixed(2)}
-                            <span className="text-base font-normal text-muted-foreground ml-1">tons CO₂e</span>
-                        </div>
-                    </div>
+                    <CardTitle className="text-lg">Environmental Impact</CardTitle>
+                    <CardDescription>Equivalent GHG savings visualized.</CardDescription>
                 </CardHeader>
-                <CardContent className="border-t pt-4 text-center">
+                <CardContent className="pt-4 text-center">
                     <div className="relative h-10 w-full mb-4">
                         <div className="absolute inset-x-0 top-1/2 w-full -translate-y-1/2 border-t-2 border-dashed border-muted-foreground/30" />
-                        <Car className="h-8 w-8 text-accent absolute bottom-5 animate-drive-and-wobble" style={{ animationDelay: '-3s, 0s' }}/>
+                        <Car className="h-8 w-8 text-accent absolute bottom-0 animate-drive-and-wobble" style={{ animationDelay: '-3s, 0s' }}/>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                        This is equivalent to driving <span className="font-bold text-accent">{equivalentKm} km</span> using a gasoline powered car.
+                        This is equivalent to driving <span className="font-bold text-accent">{equivalentKm} km</span> in a standard gasoline car.
                     </p>
                 </CardContent>
             </Card>

@@ -275,7 +275,7 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select an additive..." />
-                        </Trigger>
+                        </SelectTrigger>
                       </FormControl>
                       <SelectContent>
                         {feedAdditiveTypes.map((type) => (
