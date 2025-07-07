@@ -100,21 +100,19 @@ export default function HomePage() {
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-2xl md:text-3xl font-bold mb-4">A Simple solution with tangible results</h2>
             <p className="text-muted-foreground max-w-3xl mx-auto mb-8">
-              Watch how Jefo feed additives reduce the carbon impact of feed and the overall emissions of pork production.
+              Watch how Jefo feed additives can reduce the environmental impact of livestock farming.
             </p>
             <Card className="max-w-4xl mx-auto overflow-hidden">
-              <CardContent className="p-0 relative">
-                <Image 
-                  src="https://placehold.co/960x540.png"
-                  alt="Video thumbnail showing a pig and emission reduction stats" 
-                  width={960} 
-                  height={540}
+              <CardContent className="p-0 relative bg-black">
+                <video
+                  controls
+                  poster="https://placehold.co/960x540.png"
                   className="w-full"
-                  data-ai-hint="video thumbnail pig"
-                />
-                <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                  <PlayCircle className="h-20 w-20 text-white/80 hover:text-white transition-colors cursor-pointer"/>
-                </div>
+                  data-ai-hint="farm video"
+                >
+                  <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
               </CardContent>
             </Card>
           </div>
