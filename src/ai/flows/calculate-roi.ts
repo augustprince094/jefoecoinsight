@@ -87,9 +87,17 @@ Show your work in the explanation. Follow these steps:
 5.  Calculate the total feed consumed for the 'After' scenario. Formula: Total Feed Consumed After = (Number of Birds * FCR After * Live Weight) / (1 - (Mortality Rate After / 100)).
 6.  Calculate the total investment in the additive = (Total Feed Consumed After / 1000) * inclusion rate * additive cost.
 7.  Calculate ROI = (Total Feed Cost Savings / Total Investment in Additive).
-8.  Calculate the feed cost per kg of live weight for both 'Before' and 'After' scenarios.
-    -   For 'Before': Feed Cost per kg Live Weight = FCR Before * Cost per kg of Feed.
-    -   For 'After': First, calculate the cost of feed including the additive per kg. Cost of Feed After per kg = (Cost per kg of Feed) + ((Inclusion Rate kg/ton / 1000) * Additive Cost per kg). Then, Feed Cost per kg Live Weight = FCR After * Cost of Feed After per kg.
+8. Calculate the feed cost per kg of live weight for both 'Before' and 'After' scenarios. This metric represents the total cost of production (feed + additive) divided by the total kilograms of live weight produced from surviving birds.
+   - For 'Before':
+     a. Take the 'Total Feed Cost Before' calculated in step 2.
+     b. Calculate 'Total Live Weight Before' = Number of Birds * (1 - (Mortality Rate Before / 100)) * Live Weight.
+     c. Calculate 'Feed Cost per kg Live Weight Before' = Total Feed Cost Before / Total Live Weight Before.
+   - For 'After':
+     a. Take the 'Total Feed Cost After' from step 3.
+     b. Take the 'Total Investment in Additive' from step 6.
+     c. Calculate 'Total Production Cost After' = Total Feed Cost After + Total Investment in Additive.
+     d. Calculate 'Total Live Weight After' = Number of Birds * (1 - (Mortality Rate After / 100)) * Live Weight.
+     e. Calculate 'Feed Cost per kg Live Weight After' = Total Production Cost After / Total Live Weight After.
 
 Return the ROI as a decimal number (e.g., 1.5 for 1.5:1).
 Return the calculated 'feedCostPerLiveWeightBefore' from step 8.
