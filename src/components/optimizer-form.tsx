@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -103,7 +104,7 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
       let mortalityReduction = 0;
       switch (feedAdditiveValue) {
         case "Jefo Pro Solution": mortalityReduction = 1.5; break;
-        case "Jefo P(OA+EO)": mortalityReduction = 3.0; break;
+        case "Jefo P(OA+EO)": mortalityReduction = 2.0; break;
         case "Jefo Xylanase": mortalityReduction = 1.4; break;
       }
       const newMortalityRate = baselineMortalityRateValue - mortalityReduction;
