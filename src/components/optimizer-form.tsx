@@ -50,7 +50,7 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
       feedCost: 0.80,
       feedAdditive: "Jefo Pro Solution",
       applicationType: "Matrix",
-      inclusionRate: 1500,
+      inclusionRate: 125,
       additiveCost: 12.50,
       feedConversionRatioAfter: 0,
       mortalityRateAfter: 0,
@@ -67,6 +67,19 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
     feedAdditiveValue === "Jefo Xylanase";
 
   useEffect(() => {
+    // Set default inclusion rate based on additive
+    if (feedAdditiveValue) {
+      let newInclusionRate = 0;
+      switch (feedAdditiveValue) {
+        case "Jefo Pro Solution": newInclusionRate = 125; break;
+        case "Jefo Xylanase": newInclusionRate = 100; break;
+        case "Jefo P(OA+EO)": newInclusionRate = 200; break;
+      }
+      if (newInclusionRate > 0) {
+        setValue("inclusionRate", newInclusionRate, { shouldValidate: true });
+      }
+    }
+
     // FCR Calculation
     if (feedAdditiveValue && baselineFCRValue > 0) {
       let fcrReduction = 0;
@@ -255,7 +268,7 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select an additive..." />
-                        </SelectTrigger>
+                        </Trigger>
                       </FormControl>
                       <SelectContent>
                         {feedAdditiveTypes.map((type) => (
