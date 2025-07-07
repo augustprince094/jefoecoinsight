@@ -305,9 +305,9 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                     </p>
                     <p className="text-muted-foreground mb-4">Total greenhouse gas savings.</p>
                     
-                    <div className="relative h-10 w-full mb-4 mt-8">
+                    <div className="relative h-14 w-full mb-4 mt-8">
                         <div className="absolute inset-x-0 top-1/2 w-full -translate-y-1/2 border-t-2 border-dashed border-muted-foreground/30" />
-                        <Car className="h-8 w-8 text-accent absolute bottom-0 animate-drive-and-wobble" style={{ animationDelay: '-3s, 0s' }}/>
+                        <Car className="h-12 w-12 text-accent absolute bottom-0 animate-drive-and-wobble" style={{ animationDelay: '-3s, 0s' }}/>
                     </div>
                     <p className="text-sm text-muted-foreground">
                         This is equivalent to driving <span className="font-bold text-accent">{equivalentKm} km</span> in a standard gasoline car.
@@ -322,7 +322,6 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
 
 
 export function ResultsDisplay({ results, isLoading, error }: { results: OptimizationResult | null; isLoading: boolean; error: string | null; }) {
-
     if (isLoading) {
         return (
             <Card>
@@ -367,7 +366,7 @@ export function ResultsDisplay({ results, isLoading, error }: { results: Optimiz
                     </CardDescription>
                 </CardHeader>
             </Card>
-        )
+        );
     }
 
     if (results.inputs.applicationType === 'Matrix') {
