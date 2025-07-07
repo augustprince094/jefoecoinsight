@@ -44,7 +44,8 @@ const prompt = ai.definePrompt({
   output: {schema: EstimateGHGSavingsOutputSchema},
   prompt: `You are an expert in estimating greenhouse gas (GHG) emission reductions in broiler production.
 
-  Based on the provided information, estimate the GHG emission reductions resulting from the use of a feed additive. The savings come from improved feed efficiency and reduced mortality. The calculation must account for feed consumed by both surviving birds and birds that die during the cycle. Birds that die are assumed to consume 30% of the feed that a full-grown bird would have consumed.
+  Based on the provided information, estimate the GHG emission reductions resulting from the use of a feed additive. The savings come from improved feed efficiency and reduced mortality.
+  Use the following formula to estimate total feed consumption, which accounts for mortality: Total Feed Consumed = (Total Birds * FCR * Live Weight) / (1 - (Mortality Rate / 100)).
 
   Scenario Details:
   - Livestock Type: Broilers
@@ -63,14 +64,10 @@ const prompt = ai.definePrompt({
   - Type: {{{feedAdditive}}}
 
   Calculation Steps:
-  1.  For **both** the 'Before' and 'After' scenarios, calculate the total feed consumed using the following sub-steps:
-      a. Calculate the number of surviving birds and dead birds.
-      b. Calculate total live weight produced by surviving birds.
-      c. Calculate total feed consumed by surviving birds (Total Live Weight * FCR).
-      d. Calculate total feed consumed by dead birds (Dead Birds * (Broiler live weight * FCR * 0.30)).
-      e. Sum the feed from survivors and dead birds to get the total feed consumed for the scenario.
-  2.  Calculate total feed saved = Total Feed Consumed (Before) - Total Feed Consumed (After).
-  3.  Calculate GHG Savings = Total feed saved * 1.2 kg CO2e/kg feed.
+  1.  Calculate total feed consumed for the 'Before' scenario. Formula: Total Feed Consumed (Before) = (Number of Birds * FCR Before * Live Weight) / (1 - (Mortality Rate Before / 100)).
+  2.  Calculate total feed consumed for the 'After' scenario. Formula: Total Feed Consumed (After) = (Number of Birds * FCR After * Live Weight) / (1 - (Mortality Rate After / 100)).
+  3.  Calculate total feed saved = Total Feed Consumed (Before) - Total Feed Consumed (After).
+  4.  Calculate GHG Savings = Total feed saved * 1.2 kg CO2e/kg feed.
 
   Provide both the estimated GHG savings and a brief explanation of your calculation.
   Ensure that the units for ghgSavings are in kg CO2e.
@@ -111,13 +108,7 @@ const estimateGHGSavingsFlow = ai.defineFlow(
         return total + ing.quantity * ing.carbonFootprint;
       }, 0);
       
-      const survivingBirdsAfter = input.numberOfBirds * (1 - input.mortalityRateAfter / 100);
-      const deadBirdsAfter = input.numberOfBirds * (input.mortalityRateAfter / 100);
-      const totalLiveWeightAfter = survivingBirdsAfter * input.broilerLiveWeight;
-      const feedForSurvivorsAfter = totalLiveWeightAfter * input.feedConversionRatioAfter;
-      const feedPerSurvivorAfter = input.broilerLiveWeight * input.feedConversionRatioAfter;
-      const feedForDeadBirdsAfter = deadBirdsAfter * (feedPerSurvivorAfter * 0.30);
-      const totalFeedConsumedAfter = feedForSurvivorsAfter + feedForDeadBirdsAfter;
+      const totalFeedConsumedAfter = (input.numberOfBirds * input.feedConversionRatioAfter * input.broilerLiveWeight) / (1 - (input.mortalityRateAfter / 100));
       const totalFeedConsumedAfterInTons = totalFeedConsumedAfter / 1000;
       
       const ghgSavingsPerTon = baselineGHGPerTon - reformulatedGHGPerTon;

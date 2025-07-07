@@ -54,7 +54,7 @@ const prompt = ai.definePrompt({
   output: {schema: ROIOutputSchema},
   prompt: `You are an expert in broiler economics. Calculate the return on investment (ROI) for using a feed additive with an 'On-top' application.
 
-The calculation must account for feed consumed by both surviving birds and birds that die during the cycle. Birds that die are assumed to consume 30% of the feed that a full-grown bird would have consumed.
+The calculation must use the following formula to account for mortality: Total Feed Cost = (Total Birds * FCR * Live Weight * Price per kg of Feed) / (1 - (Mortality Rate / 100)).
 
 Scenario Details:
 - Number of birds per cycle: {{{numberOfBirds}}}
@@ -78,33 +78,20 @@ Cost Metrics:
 
 Your calculation should only consider the feed cost savings and the cost of the additive. Do not consider the revenue from selling broilers.
 
-Show your work in the explanation. Follow these steps for **both** the 'Before' and 'After' scenarios:
-1.  First, calculate the cost of feed per ton. This value is constant for both scenarios. Formula: Feed Cost per ton = (Feed Cost per kg live weight / FCR Before) * 1000.
-2.  Calculate the number of surviving birds and dead birds for the scenario.
-    - Surviving Birds = Number of birds * (1 - mortality rate / 100)
-    - Dead Birds = Number of birds * (mortality rate / 100)
-3.  Calculate the total live weight produced by surviving birds.
-    - Total Live Weight = Surviving Birds * Broiler live weight
-4.  Calculate the total feed consumed by surviving birds.
-    - Feed for Survivors = Total Live Weight * FCR for the scenario.
-5.  Calculate the total feed consumed by birds that died.
-    - Feed per survivor = Broiler live weight * FCR for the scenario
-    - Feed for Dead Birds = Dead Birds * (Feed per survivor * 0.30)
-6.  Calculate the total feed consumed for the scenario.
-    - Total Feed Consumed = Feed for Survivors + Feed for Dead Birds
-7.  Calculate the total feed cost for the scenario.
-    - Total Feed Cost = (Total Feed Consumed / 1000) * Feed Cost per ton.
-
-After calculating the above for both scenarios:
-8.  Calculate the total feed cost savings = Total Feed Cost Before - Total Feed Cost After.
-9.  Calculate the total investment in the additive = (Total feed consumed After / 1000) * inclusion rate * additive cost.
-10. Calculate ROI = (Total Feed Cost Savings / Total Investment in Additive).
-11. Calculate the feed cost per kg of live weight for the 'After' scenario by dividing the 'Total Feed Cost After' by the 'Total Live Weight' (from the 'After' scenario's step 3).
+Show your work in the explanation. Follow these steps:
+1.  First, calculate the cost of feed per kg. This value is constant for both scenarios. Formula: Feed Cost per kg = (Feed Cost per kg live weight / FCR Before).
+2.  Calculate the total feed cost for the 'Before' scenario. Formula: Total Feed Cost Before = (Number of Birds * FCR Before * Live Weight * Feed Cost per kg) / (1 - (Mortality Rate Before / 100)).
+3.  Calculate the total feed cost for the 'After' scenario. Formula: Total Feed Cost After = (Number of Birds * FCR After * Live Weight * Feed Cost per kg) / (1 - (Mortality Rate After / 100)).
+4.  Calculate the total feed cost savings = Total Feed Cost Before - Total Feed Cost After.
+5.  Calculate the total feed consumed for the 'After' scenario to determine the amount of additive used. Formula: Total Feed Consumed After = (Number of Birds * FCR After * Live Weight) / (1 - (Mortality Rate After / 100)).
+6.  Calculate the total investment in the additive = (Total Feed Consumed After / 1000) * inclusion rate * additive cost.
+7.  Calculate ROI = (Total Feed Cost Savings / Total Investment in Additive).
+8.  Calculate the feed cost per kg of live weight for the 'After' scenario. First, calculate total live weight produced: Surviving Birds * Live Weight. Then divide the 'Total Feed Cost After' by the 'Total Live Weight'. Surviving Birds = Number of Birds * (1 - (Mortality Rate After / 100)).
 
 Return the ROI as a decimal number (e.g., 1.5 for 1.5:1).
 Return the 'feedCostPerLiveWeightBefore' using the value from the input 'costMetrics.feedCost'.
-Return the calculated 'feedCostPerLiveWeightAfter' from step 11.
-Return the total feed cost savings from step 8 in the 'feedCostSavings' field.
+Return the calculated 'feedCostPerLiveWeightAfter' from step 8.
+Return the total feed cost savings from step 4 in the 'feedCostSavings' field.
 Provide a detailed step-by-step explanation of the calculation.
 `,
 });
@@ -144,13 +131,7 @@ const calculateROIFlow = ai.defineFlow(
         return total + (ing.quantity / 1000) * ing.cost;
       }, 0);
       
-      const survivingBirdsAfter = input.numberOfBirds * (1 - input.mortalityRateAfter / 100);
-      const deadBirdsAfter = input.numberOfBirds * (input.mortalityRateAfter / 100);
-      const totalLiveWeightAfter = survivingBirdsAfter * input.broilerLiveWeight;
-      const feedForSurvivorsAfter = totalLiveWeightAfter * input.feedConversionRatioAfter;
-      const feedPerSurvivorAfter = input.broilerLiveWeight * input.feedConversionRatioAfter;
-      const feedForDeadBirdsAfter = deadBirdsAfter * (feedPerSurvivorAfter * 0.30);
-      const totalFeedConsumedAfter = feedForSurvivorsAfter + feedForDeadBirdsAfter;
+      const totalFeedConsumedAfter = (input.numberOfBirds * input.feedConversionRatioAfter * input.broilerLiveWeight) / (1 - (input.mortalityRateAfter / 100));
       const totalFeedConsumedAfterInTons = totalFeedConsumedAfter / 1000;
       
       const feedCostSavings = (baselineCostPerTon - reformulatedCostPerTon) * totalFeedConsumedAfterInTons;
@@ -159,6 +140,9 @@ const calculateROIFlow = ai.defineFlow(
       const roi = totalInvestmentInAdditive > 0 ? feedCostSavings / totalInvestmentInAdditive : Infinity;
       
       const totalFeedCostAfter = totalFeedConsumedAfterInTons * reformulatedCostPerTon;
+
+      const survivingBirdsAfter = input.numberOfBirds * (1 - input.mortalityRateAfter / 100);
+      const totalLiveWeightAfter = survivingBirdsAfter * input.broilerLiveWeight;
       const feedCostPerLiveWeightAfter = totalLiveWeightAfter > 0 ? totalFeedCostAfter / totalLiveWeightAfter : 0;
       
       const explanation = `For a 'Matrix' application with ${input.feedAdditiveType}, savings are calculated from feed reformulation:\n\n` +
