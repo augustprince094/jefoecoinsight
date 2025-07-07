@@ -218,7 +218,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                     </CardHeader>
                     <CardContent className="pt-2">
                         <div className="text-2xl font-bold">{feedCostReduction.toFixed(1)}%</div>
-                        <p className="text-xs text-muted-foreground">Per kg live weight</p>
+                        <p className="text-xs text-muted-foreground">Per surviving bird</p>
                     </CardContent>
                 </Card>
                 <Card>
@@ -265,7 +265,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
             <Card>
                 <CardHeader>
                     <CardTitle className="text-lg">Feed Cost Analysis</CardTitle>
-                    <CardDescription>Comparison of feed cost per kg of live weight.</CardDescription>
+                    <CardDescription>Comparison of feed cost per surviving bird.</CardDescription>
                 </CardHeader>
                 <CardContent className="pl-0">
                      <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
