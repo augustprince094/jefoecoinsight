@@ -259,9 +259,9 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-white dark:bg-card">
           <CardHeader>
-            <CardTitle>2. Feed Additive & Costs</CardTitle>
+            <CardTitle>2. Feed Additive &amp; Costs</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="md:col-span-2">
