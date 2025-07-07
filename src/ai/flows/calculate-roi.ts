@@ -56,10 +56,9 @@ const prompt = ai.definePrompt({
 
 Use the following base formulas:
 - Survival Rate = 1 - (Mortality Rate / 100)
-- Average Feed per Bird = FCR * Live Weight
-- Total Feed Consumed (for the flock) = (Number of Birds * Average Feed per Bird) / Survival Rate
-- Total Feed Cost = Total Feed Consumed * Cost per kg of Feed
-- Total Investment in Additive = (Total Feed Consumed with Additive / 1000) * inclusion rate (in kg/ton) * additive cost (in $/kg)
+- Total Feed Consumed (for the flock) = (Number of Birds * FCR * Live Weight) / Survival Rate
+- Total Flock Cost = (Total Feed Consumed * Cost per kg of Feed) + Total Additive Cost
+- Cost per Surviving Bird = Total Flock Cost / (Number of Birds * Survival Rate)
 
 Scenario Details:
 - Number of birds per cycle: {{{numberOfBirds}}}
@@ -83,32 +82,27 @@ Cost Metrics:
 
 Show your work in the explanation. Follow these steps precisely:
 
-1.  **Calculate Baseline Costs (Before Additive):**
+1.  **Calculate Total Flock Costs (Before Additive):**
     a. Calculate Survival Rate Before = 1 - ({{{mortalityRateBefore}}} / 100).
-    b. Calculate Average Feed per Bird Before = {{{feedConversionRatioBefore}}} * {{{broilerLiveWeight}}}.
-    c. Calculate Total Feed Consumed Before = ({{{numberOfBirds}}} * Average Feed per Bird Before) / Survival Rate Before.
-    d. Calculate Total Baseline Cost = Total Feed Consumed Before * {{{costMetrics.feedCost}}}.
+    b. Calculate Total Feed Consumed Before = ({{{numberOfBirds}}} * {{{feedConversionRatioBefore}}} * {{{broilerLiveWeight}}}) / Survival Rate Before.
+    c. Calculate Total Baseline Cost = Total Feed Consumed Before * {{{costMetrics.feedCost}}}.
+    d. Calculate Surviving Birds Before = {{{numberOfBirds}}} * Survival Rate Before.
+    e. Calculate \`feedCostPerLiveWeightBefore\` = Total Baseline Cost / Surviving Birds Before.
 
-2.  **Calculate New Costs (After Additive):**
+2.  **Calculate Total Flock Costs (After Additive):**
     a. Calculate Survival Rate After = 1 - ({{{mortalityRateAfter}}} / 100).
-    b. Calculate Average Feed per Bird After = {{{feedConversionRatioAfter}}} * {{{broilerLiveWeight}}}.
-    c. Calculate Total Feed Consumed After = ({{{numberOfBirds}}} * Average Feed per Bird After) / Survival Rate After.
-    d. Calculate Total Feed Cost After = Total Feed Consumed After * {{{costMetrics.feedCost}}}.
+    b. Calculate Total Feed Consumed After = ({{{numberOfBirds}}} * {{{feedConversionRatioAfter}}} * {{{broilerLiveWeight}}}) / Survival Rate After.
+    c. Calculate Total Feed Cost After = Total Feed Consumed After * {{{costMetrics.feedCost}}}.
+    d. Calculate Total Investment in Additive = (Total Feed Consumed After / 1000) * {{{inclusionRate}}} * {{{costMetrics.additiveCost}}}.
+    e. Calculate Total Cost With Additive = Total Feed Cost After + Total Investment in Additive.
+    f. Calculate Surviving Birds After = {{{numberOfBirds}}} * Survival Rate After.
+    g. Calculate \`feedCostPerLiveWeightAfter\` = Total Cost With Additive / Surviving Birds After.
 
-3.  **Calculate Investment and Savings:**
-    a. Calculate Total Investment in Additive = (Total Feed Consumed After / 1000) * {{{inclusionRate}}} * {{{costMetrics.additiveCost}}}.
+3.  **Calculate Savings and ROI:**
+    a. Calculate Net Savings (\`feedCostSavings\`) = Total Baseline Cost - Total Cost With Additive.
     b. Calculate Gross Feed Savings = Total Baseline Cost - Total Feed Cost After.
-    c. Calculate Net Savings (\`feedCostSavings\`) = Gross Feed Savings - Total Investment in Additive. Store this in the \`feedCostSavings\` output field.
-
-4.  **Calculate Final Metrics (per live weight bird):**
-    a. Calculate \`feedCostPerLiveWeightBefore\` = Total Baseline Cost / ({{{numberOfBirds}}} * Survival Rate Before).
-    b. Calculate Total Cost With Additive = Total Feed Cost After + Total Investment in Additive.
-    c. Calculate \`feedCostPerLiveWeightAfter\` = Total Cost With Additive / ({{{numberOfBirds}}} * Survival Rate After).
-    d. Store these values in their respective output fields.
-
-5.  **Calculate ROI:**
-    a. If Total Investment in Additive is zero, the ROI is infinite. Otherwise, calculate ROI = Gross Feed Savings / Total Investment in Additive.
-    b. Store this value in the \`roi\` field.
+    c. If Total Investment in Additive is zero, the ROI is infinite. Otherwise, calculate ROI = Gross Feed Savings / Total Investment in Additive.
+    d. Store all calculated values in their respective output fields.
 
 Provide a detailed step-by-step explanation of the calculation.
 Return all the required fields in the output schema.
