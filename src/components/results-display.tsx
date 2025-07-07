@@ -257,14 +257,14 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                 </CardContent>
             </Card>
 
-            {/* Panel 2: Economic & Performance */}
+            {/* Panel 2: Economic Performance Summary */}
             <Card>
                 <CardHeader>
-                    <CardTitle>Economic & Performance Summary</CardTitle>
+                    <CardTitle>Economic Performance Summary</CardTitle>
                     <CardDescription>Key financial and efficiency metrics.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
                         <div className="p-3 rounded-lg border bg-card shadow-sm">
                             <p className="text-sm text-muted-foreground flex items-center justify-center gap-1.5 mb-1">
                                 <TrendingUp className="h-4 w-4" /> ROI
@@ -276,13 +276,6 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                                 <DollarSign className="h-4 w-4" /> Cost Reduction
                             </p>
                             <p className="text-2xl font-bold">{feedCostReduction.toFixed(1)}%</p>
-                        </div>
-                        <div className="p-3 rounded-lg border bg-card shadow-sm">
-                            <p className="text-sm text-muted-foreground flex items-center justify-center gap-1.5 mb-1">
-                                <Zap className="h-4 w-4" /> Improved FCR
-                            </p>
-                            <p className="text-2xl font-bold">{inputs.feedConversionRatioAfter.toFixed(3)}</p>
-                            <p className="text-xs text-muted-foreground">from {inputs.baselineFCR.toFixed(3)}</p>
                         </div>
                         <div className="p-3 rounded-lg border bg-card shadow-sm">
                             <p className="text-sm text-muted-foreground flex items-center justify-center gap-1.5 mb-1">
