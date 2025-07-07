@@ -225,7 +225,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
     return (
         <div className="space-y-6 animate-in fade-in-50 duration-500">
             {/* Panel 1: Feed Cost Comparison */}
-            <Card>
+            <Card className="bg-white dark:bg-card">
                 <CardHeader>
                     <CardTitle className="text-lg">Feed Cost per kg Live Weight</CardTitle>
                     <CardDescription>A comparison of the feed cost per kg of live weight, before and after using the additive.</CardDescription>
@@ -270,7 +270,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
             </Card>
 
             {/* Panel 2: Economic Performance Summary */}
-            <Card>
+            <Card className="bg-white dark:bg-card">
                 <CardHeader>
                     <CardTitle className="text-lg">Economic Performance Summary</CardTitle>
                 </CardHeader>
@@ -310,7 +310,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
             </Card>
 
             {/* Panel 3: Environmental Impact */}
-            <Card>
+            <Card className="bg-white dark:bg-card">
                 <CardHeader>
                      <CardTitle className="text-lg flex items-center gap-2">
                         <Leaf className="h-5 w-5 text-accent" />
@@ -329,7 +329,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                     
                     <div className="relative h-20 w-full mb-4 mt-8">
                         <div className="absolute inset-x-0 top-1/2 w-full -translate-y-1/2 border-t-2 border-dashed border-muted-foreground/30" />
-                        <Car className="h-16 w-16 text-accent absolute bottom-0 animate-drive-and-wobble" style={{ animationDelay: '-3s, 0s' }}/>
+                        <Car className="h-20 w-20 text-accent absolute bottom-0 animate-drive-and-wobble" style={{ animationDelay: '-3s, 0s' }}/>
                     </div>
                     <p className="text-sm text-muted-foreground">
                         This is equivalent to driving <span className="font-bold text-accent">{equivalentKm} km</span> in a standard gasoline car.
