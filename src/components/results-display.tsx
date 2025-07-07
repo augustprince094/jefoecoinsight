@@ -206,8 +206,8 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
         : 0;
     
     const chartData = [
-        { name: "Baseline", cost: roiData.feedCostPerLiveWeightBefore * inputs.broilerLiveWeight },
-        { name: "With Additive", cost: roiData.feedCostPerLiveWeightAfter * inputs.broilerLiveWeight },
+        { name: "Baseline", cost: roiData.feedCostPerLiveWeightBefore },
+        { name: "With Additive", cost: roiData.feedCostPerLiveWeightAfter },
     ];
     
     const costs = chartData.map(d => d.cost);
@@ -227,8 +227,8 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
             {/* Panel 1: Feed Cost Comparison */}
             <Card>
                 <CardHeader>
-                    <CardTitle className="text-lg">Feed Cost per Live-Weight Bird ({inputs.broilerLiveWeight} kg)</CardTitle>
-                    <CardDescription>A comparison of the total feed cost per bird, before and after using the additive.</CardDescription>
+                    <CardTitle className="text-lg">Feed Cost per kg Live Weight</CardTitle>
+                    <CardDescription>A comparison of the feed cost per kg of live weight, before and after using the additive.</CardDescription>
                 </CardHeader>
                 <CardContent className="pl-0">
                      <ChartContainer config={chartConfig} className="min-h-[150px] w-full">
@@ -397,5 +397,3 @@ export function ResultsDisplay({ results, isLoading, error }: { results: Optimiz
     
     return <OnTopDashboard results={results} />;
 }
-
-    
