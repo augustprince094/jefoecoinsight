@@ -118,9 +118,9 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
 
                     <div className="border-t pt-6">
                          <div className="text-center mb-4">
-                            <p className="text-sm text-muted-foreground">Feed Cost per kg Live weight</p>
+                            <p className="text-sm text-muted-foreground">Feed Cost per Ton</p>
                             <p className="text-xl font-bold text-primary">
-                               Saving of {formatCurrency((roiData.feedCostPerLiveWeightBefore - roiData.feedCostPerLiveWeightAfter) * inputs.broilerLiveWeight)} per bird
+                               Saving of {formatCurrency(savingsPerTon)} per ton of feed
                             </p>
                         </div>
                         <ChartContainer config={chartConfig} className="min-h-[250px] w-full">
@@ -184,8 +184,8 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
     
     // The cost per bird is the cost per kg live weight * live weight
     const chartData = [
-        { name: "Baseline", cost: roiData.feedCostPerLiveWeightBefore * inputs.broilerLiveWeight },
-        { name: "With Additive", cost: roiData.feedCostPerLiveWeightAfter * inputs.broilerLiveWeight },
+        { name: "Baseline", cost: roiData.feedCostPerLiveWeightBefore },
+        { name: "With Additive", cost: roiData.feedCostPerLiveWeightAfter },
     ];
     
     const costs = chartData.map(d => d.cost);
@@ -209,7 +209,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                     <CardDescription>A comparison of the total feed cost per bird, before and after using the additive.</CardDescription>
                 </CardHeader>
                 <CardContent className="pl-0">
-                     <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
+                     <ChartContainer config={chartConfig} className="min-h-[150px] w-full">
                         <BarChart accessibilityLayer data={chartData} margin={{ top: 20, right: 20, left: 0, bottom: 0 }}>
                             <CartesianGrid vertical={false} />
                             <YAxis
