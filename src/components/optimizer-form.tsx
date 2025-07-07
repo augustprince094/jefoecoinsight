@@ -102,7 +102,7 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
     if (feedAdditiveValue && baselineMortalityRateValue > 0) {
       let mortalityReduction = 0;
       switch (feedAdditiveValue) {
-        case "Jefo Pro Solution": mortalityReduction = 1.2; break;
+        case "Jefo Pro Solution": mortalityReduction = 1.5; break;
         case "Jefo P(OA+EO)": mortalityReduction = 3.0; break;
         case "Jefo Xylanase": mortalityReduction = 1.4; break;
       }
