@@ -51,9 +51,10 @@ const prompt = ai.definePrompt({
 **Instructions:**
 
 1.  **Craft a Summary (for the 'summary' field):**
-    *   Create a positive, engaging sentence summarizing the excellent ROI and GHG savings. This summary must be no more than two lines.
+    *   Create a positive, engaging sentence summarizing the ROI and GHG savings. This summary must be no more than two lines.
+    *   **Important: Format the ROI value to one decimal place.**
     *   Calculate the equivalent kilometers driven for the GHG savings (Total GHG Savings * 4100).
-    *   Example: "Impressive results! Using {{{inputs.feedAdditive}}} not only delivers a strong {{{roiData.roi}}}:1 return on investment but also reduces emissions equivalent to driving [calculated km] km."
+    *   Example: "Impressive results! Using {{{inputs.feedAdditive}}} not only delivers a strong 8.5:1 return on investment but also reduces emissions equivalent to driving [calculated km] km."
 
 2.  **Select a Key Benefit (for the 'keyBenefit' field):**
     *   Choose the *exact* sentence from the "Key Benefit Options" below that matches the user's selected \`feedAdditive\` and \`applicationType\`.
@@ -61,15 +62,15 @@ const prompt = ai.definePrompt({
 **Key Benefit Options (Use one of these verbatim):**
 
 *   **If feedAdditive is 'Jefo Pro Solution':**
-    *   And \`applicationType\` is 'Matrix': "It reduces feed cost without compromising performance when formulated based on its recommended nutrition matrix."
-    *   And \`applicationType\` is 'On-top': "During heat stress situations, its use can drastically reduce total mortality."
+    *   And \`applicationType\` is 'Matrix': "Jefo Pro Solution can reduce feed cost without compromising performance when added to broiler diets containing either traditional or alternative feed ingredients and formulated based on its recommended nutrition matrix."
+    *   And \`applicationType\` is 'On-top': "During heat stress situations, the use of Jefo Pro Solution, both in regular feeds and low density feeds, drastically reduces total mortality."
 
 *   **If feedAdditive is 'Jefo P(OA+EO)':**
-    *   (This is always 'On-top'): "It is a proven and effective strategy to help reduce the count of Salmonella Typhimurium in broiler chickens."
+    *   (This is always 'On-top'): "The use of Jefo P(OA+EO) is an efficient strategy to reduce Salmonella Typhimurium counts in broiler chickens."
 
 *   **If feedAdditive is 'Jefo Xylanase':**
-    *   And \`applicationType\` is 'Matrix': "It allows for the use of reduced-energy diets, improving growth performance while lowering feed costs."
-    *   And \`applicationType\` is 'On-top': "It is a reliable solution for achieving better performance, improved footpad quality, and greater economic returns."
+    *   And \`applicationType\` is 'Matrix': "Jefo Xylanase can be used in reduced energy corn-soybean based diets to improve growth performance and reduce cost of broiler diets."
+    *   And \`applicationType\` is 'On-top': "Jefo Xylanase is a reliable solution for better performance, improves footpad quality and economic returns."
 
 **Final Output:**
 - Populate the \`summary\` and \`keyBenefit\` fields in the output schema.

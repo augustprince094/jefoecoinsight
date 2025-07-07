@@ -53,7 +53,7 @@ const AdvisoryCard = ({ advisoryData, additiveColor }: { advisoryData: ProvideAd
                     <Lightbulb className="h-5 w-5" />
                     Key Benefit
                 </h4>
-                <p className="text-sm text-foreground/90 leading-relaxed">
+                <p className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed">
                     {advisoryData.keyBenefit}
                 </p>
             </div>
