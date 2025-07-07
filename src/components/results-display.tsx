@@ -92,7 +92,7 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
                 </CardHeader>
                 <CardContent className="grid gap-6">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <Card className="p-4 flex flex-col items-center justify-center text-center">
+                        <Card className="p-4 flex flex-col items-center justify-center text-center bg-white dark:bg-card">
                             <CardDescription className="flex items-center justify-center gap-1.5">
                                 Total Feed Cost Savings
                                 <TooltipProvider>
@@ -117,7 +117,7 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
                                 {roiData.roi.toFixed(1)} : 1
                             </p>
                         </Card>
-                        <Card className="p-4 flex flex-col items-center justify-center text-center">
+                        <Card className="p-4 flex flex-col items-center justify-center text-center bg-white dark:bg-card">
                             <CardDescription className="flex items-center justify-center gap-1.5">
                                 Total GHG Savings
                                 <TooltipProvider>
@@ -206,8 +206,8 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
         : 0;
     
     const chartData = [
-        { name: "Baseline", cost: roiData.feedCostPerLiveWeightBefore },
-        { name: "With Additive", cost: roiData.feedCostPerLiveWeightAfter },
+        { name: "Baseline", cost: roiData.feedCostPerLiveWeightBefore * inputs.broilerLiveWeight },
+        { name: "With Additive", cost: roiData.feedCostPerLiveWeightAfter * inputs.broilerLiveWeight },
     ];
     
     const costs = chartData.map(d => d.cost);
@@ -227,8 +227,8 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
             {/* Panel 1: Feed Cost Comparison */}
             <Card className="bg-white dark:bg-card">
                 <CardHeader>
-                    <CardTitle className="text-lg">Feed Cost per kg Live Weight</CardTitle>
-                    <CardDescription>A comparison of the feed cost per kg of live weight, before and after using the additive.</CardDescription>
+                    <CardTitle className="text-lg">Feed Cost per Live Weight</CardTitle>
+                    <CardDescription>A comparison of the feed cost per live weight bird, before and after using the additive.</CardDescription>
                 </CardHeader>
                 <CardContent className="pl-0">
                      <ChartContainer config={chartConfig} className="min-h-[150px] w-full">
@@ -329,7 +329,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                     
                     <div className="relative h-20 w-full mb-4 mt-8">
                         <div className="absolute inset-x-0 top-1/2 w-full -translate-y-1/2 border-t-2 border-dashed border-muted-foreground/30" />
-                        <Car className="h-20 w-20 text-accent absolute bottom-1/2 animate-drive-and-wobble" style={{ animationDelay: '-3s, 0s' }}/>
+                        <Car className="h-20 w-20 text-accent absolute bottom-0 animate-drive-and-wobble" style={{ animationDelay: '-3s, 0s' }}/>
                     </div>
                     <p className="text-sm text-muted-foreground">
                         This is equivalent to driving <span className="font-bold text-accent">{equivalentKm} km</span> in a standard gasoline car.
