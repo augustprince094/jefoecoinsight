@@ -72,19 +72,18 @@ Use the following formulas and data to perform the calculation.
 1.  **Calculate Baseline Costs (Before Additive):**
     a. Calculate **Survival Rate Before** = 1 - ({{{mortalityRateBefore}}} / 100).
     b. Calculate **Average Feed per Bird Before** = {{{feedConversionRatioBefore}}} * {{{broilerLiveWeight}}}.
-    c. Calculate **Total Baseline Cost** using the formula: (Total Number of Birds * Average Feed per Bird Before * Feed Cost per kg) / Survival Rate Before. This is: ({{{numberOfBirds}}} * Average Feed per Bird Before * {{{costMetrics.feedCost}}}) / Survival Rate Before.
-    d. Calculate Surviving Birds Before = {{{numberOfBirds}}} * Survival Rate Before.
-    e. Calculate Total Live Weight Before = Surviving Birds Before * {{{broilerLiveWeight}}}.
-    f. Calculate \`feedCostPerLiveWeightBefore\` = Total Baseline Cost / Total Live Weight Before.
+    c. Calculate **Total Baseline Cost** = ({{{numberOfBirds}}} * Average Feed per Bird Before * {{{costMetrics.feedCost}}}) / Survival Rate Before.
+    d. Calculate **Total Live Weight Before** = {{{numberOfBirds}}} * Survival Rate Before * {{{broilerLiveWeight}}}.
+    e. Calculate \`feedCostPerLiveWeightBefore\` = Total Baseline Cost / Total Live Weight Before.
 
 2.  **Calculate New Costs (With Additive):**
     a. Calculate **Survival Rate After** = 1 - ({{{mortalityRateAfter}}} / 100).
-    b. Calculate Total Feed Consumed After = ({{{numberOfBirds}}} * {{{feedConversionRatioAfter}}} * {{{broilerLiveWeight}}}) / Survival Rate After.
-    c. Calculate **Total Feed Cost After** = Total Feed Consumed After * {{{costMetrics.feedCost}}}.
-    d. Calculate **Total Investment in Additive** = (Total Feed Consumed After / 1000) * {{{inclusionRate}}} * {{{costMetrics.additiveCost}}}.
-    e. Calculate **Total Cost With Additive** = Total Feed Cost After + Total Investment in Additive.
-    f. Calculate Surviving Birds After = {{{numberOfBirds}}} * Survival Rate After.
-    g. Calculate Total Live Weight After = Surviving Birds After * {{{broilerLiveWeight}}}.
+    b. Calculate **Average Feed per Bird After** = {{{feedConversionRatioAfter}}} * {{{broilerLiveWeight}}}.
+    c. Calculate **Total Feed Consumed After** = ({{{numberOfBirds}}} * Average Feed per Bird After) / Survival Rate After.
+    d. Calculate **Total Feed Cost After** = Total Feed Consumed After * {{{costMetrics.feedCost}}}.
+    e. Calculate **Total Investment in Additive** = (Total Feed Consumed After / 1000) * {{{inclusionRate}}} * {{{costMetrics.additiveCost}}}.
+    f. Calculate **Total Cost With Additive** = Total Feed Cost After + Total Investment in Additive.
+    g. Calculate **Total Live Weight After** = {{{numberOfBirds}}} * Survival Rate After * {{{broilerLiveWeight}}}.
     h. Calculate \`feedCostPerLiveWeightAfter\` = Total Cost With Additive / Total Live Weight After.
 
 3.  **Calculate Savings and ROI:**
