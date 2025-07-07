@@ -52,14 +52,14 @@ const prompt = ai.definePrompt({
   name: 'calculateROIPrompt',
   input: {schema: ROIInputSchema},
   output: {schema: ROIOutputSchema},
-  prompt: `You are an expert in broiler economics. Your main task is to calculate the return on investment (ROI) and the feed cost per kg of live weight for using a feed additive with an 'On-top' application.
+  prompt: `You are an expert in broiler economics. Your main task is to calculate the return on investment (ROI) and related financial metrics for using a feed additive with an 'On-top' application.
 
 Use the following base formulas:
 - Survival Rate = 1 - (Mortality Rate / 100)
-- Total Live Weight Produced = Number of Birds * Survival Rate * Live Weight
-- Cost per kg Live Weight (from feed) = (FCR * Cost per kg of Feed) / Survival Rate. This formula accounts for the feed consumed by the entire flock, amortized over the live weight produced.
-- Total Feed Consumed = FCR * Total Live Weight Produced
-- Total Investment in Additive = (Total Feed Consumed / 1000) * inclusion rate (in kg/ton) * additive cost (in $/kg)
+- Average Feed per Bird = FCR * Live Weight
+- Total Feed Consumed (for the flock) = (Number of Birds * Average Feed per Bird) / Survival Rate
+- Total Feed Cost = Total Feed Consumed * Cost per kg of Feed
+- Total Investment in Additive = (Total Feed Consumed with Additive / 1000) * inclusion rate (in kg/ton) * additive cost (in $/kg)
 
 Scenario Details:
 - Number of birds per cycle: {{{numberOfBirds}}}
@@ -83,32 +83,32 @@ Cost Metrics:
 
 Show your work in the explanation. Follow these steps precisely:
 
-1.  **Calculate Feed Cost per kg Live Weight (Before Additive):**
+1.  **Calculate Baseline Costs (Before Additive):**
     a. Calculate Survival Rate Before = 1 - ({{{mortalityRateBefore}}} / 100).
-    b. Use the formula: \`feedCostPerLiveWeightBefore\` = ({{{feedConversionRatioBefore}}} * {{{costMetrics.feedCost}}}) / Survival Rate Before.
-    c. Store this value in the \`feedCostPerLiveWeightBefore\` output field.
+    b. Calculate Average Feed per Bird Before = {{{feedConversionRatioBefore}}} * {{{broilerLiveWeight}}}.
+    c. Calculate Total Feed Consumed Before = ({{{numberOfBirds}}} * Average Feed per Bird Before) / Survival Rate Before.
+    d. Calculate Total Baseline Cost = Total Feed Consumed Before * {{{costMetrics.feedCost}}}.
 
-2.  **Calculate Total Production Cost per kg Live Weight (After Additive):**
+2.  **Calculate New Costs (After Additive):**
     a. Calculate Survival Rate After = 1 - ({{{mortalityRateAfter}}} / 100).
-    b. Calculate the feed-only cost: \`Feed Cost per kg LW After\` = ({{{feedConversionRatioAfter}}} * {{{costMetrics.feedCost}}}) / Survival Rate After.
-    c. Calculate the additive cost per kg of live weight:
-        i.  \`Additive Cost per Ton of Feed\` = {{{inclusionRate}}} * {{{costMetrics.additiveCost}}}.
-        ii. \`Additive Cost per kg of Feed\` = \`Additive Cost per Ton of Feed\` / 1000.
-        iii. \`Additive Cost per kg LW\` = (\`Additive Cost per kg of Feed\` * {{{feedConversionRatioAfter}}}) / Survival Rate After.
-    d. Calculate the total cost: \`feedCostPerLiveWeightAfter\` = \`Feed Cost per kg LW After\` + \`Additive Cost per kg LW\`.
-    e. Store this value in the \`feedCostPerLiveWeightAfter\` output field.
+    b. Calculate Average Feed per Bird After = {{{feedConversionRatioAfter}}} * {{{broilerLiveWeight}}}.
+    c. Calculate Total Feed Consumed After = ({{{numberOfBirds}}} * Average Feed per Bird After) / Survival Rate After.
+    d. Calculate Total Feed Cost After = Total Feed Consumed After * {{{costMetrics.feedCost}}}.
 
-3.  **Calculate Total Feed Cost Savings:**
-    a. Calculate Total Live Weight Produced Before = {{{numberOfBirds}}} * Survival Rate Before * {{{broilerLiveWeight}}}.
-    b. Calculate Total Live Weight Produced After = {{{numberOfBirds}}} * Survival Rate After * {{{broilerLiveWeight}}}.
-    c. Calculate Total Feed Cost Before = \`feedCostPerLiveWeightBefore\` * Total Live Weight Produced Before.
-    d. Calculate Total Feed Cost After (feed only) = \`Feed Cost per kg LW After\` * Total Live Weight Produced After.
-    e. \`feedCostSavings\` = Total Feed Cost Before - Total Feed Cost After (feed only). Store this.
+3.  **Calculate Investment and Savings:**
+    a. Calculate Total Investment in Additive = (Total Feed Consumed After / 1000) * {{{inclusionRate}}} * {{{costMetrics.additiveCost}}}.
+    b. Calculate Gross Feed Savings = Total Baseline Cost - Total Feed Cost After.
+    c. Calculate Net Savings (\`feedCostSavings\`) = Gross Feed Savings - Total Investment in Additive. Store this in the \`feedCostSavings\` output field.
 
-4.  **Calculate ROI:**
-    a. Calculate Total Feed Consumed After = {{{feedConversionRatioAfter}}} * Total Live Weight Produced After.
-    b. Calculate Total Investment in Additive = (Total Feed Consumed After / 1000) * {{{inclusionRate}}} * {{{costMetrics.additiveCost}}}.
-    c. ROI = \`feedCostSavings\` / Total Investment in Additive. Store this in the \`roi\` field.
+4.  **Calculate Final Metrics (per live weight bird):**
+    a. Calculate \`feedCostPerLiveWeightBefore\` = Total Baseline Cost / ({{{numberOfBirds}}} * Survival Rate Before).
+    b. Calculate Total Cost With Additive = Total Feed Cost After + Total Investment in Additive.
+    c. Calculate \`feedCostPerLiveWeightAfter\` = Total Cost With Additive / ({{{numberOfBirds}}} * Survival Rate After).
+    d. Store these values in their respective output fields.
+
+5.  **Calculate ROI:**
+    a. If Total Investment in Additive is zero, the ROI is infinite. Otherwise, calculate ROI = Gross Feed Savings / Total Investment in Additive.
+    b. Store this value in the \`roi\` field.
 
 Provide a detailed step-by-step explanation of the calculation.
 Return all the required fields in the output schema.
