@@ -52,24 +52,24 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
         }).format(value);
     }
     
-    const { feedCostPerLiveWeightBefore, feedCostPerLiveWeightAfter } = roiData;
+    const { baselineCostPerTon, reformulatedCostPerTon } = roiData;
 
     const chartData = [
-        { name: "Baseline", cost: feedCostPerLiveWeightBefore ?? 0 },
-        { name: "With Additive", cost: feedCostPerLiveWeightAfter ?? 0 },
+        { name: "Baseline", cost: baselineCostPerTon ?? 0 },
+        { name: "With Additive", cost: reformulatedCostPerTon ?? 0 },
     ];
     
     const costs = chartData.map(d => d.cost);
     const minCost = Math.min(...costs);
-    const yAxisDomainMin = Math.max(0, Math.floor(minCost * 0.95 * 100) / 100);
+    const yAxisDomainMin = Math.max(0, Math.floor(minCost * 0.95));
 
     const chartConfig = {
         cost: {
-            label: "Cost",
+            label: "Cost per Ton",
         },
     } satisfies ChartConfig;
 
-    const savingsPerKgLiveWeight = feedCostPerLiveWeightBefore - feedCostPerLiveWeightAfter;
+    const savingsPerTon = (baselineCostPerTon ?? 0) - (reformulatedCostPerTon ?? 0);
 
     return (
         <div className="space-y-6 animate-in fade-in-50 duration-500">
@@ -117,9 +117,9 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
 
                     <div className="border-t pt-6">
                         <div className="text-center mb-4">
-                            <p className="text-sm text-muted-foreground">Feed Cost per kg Live Weight</p>
+                            <p className="text-sm text-muted-foreground">Feed Cost per Ton</p>
                             <p className="text-xl font-bold text-primary">
-                               Saving of {formatCurrency(savingsPerKgLiveWeight, {minimumFractionDigits: 4})} per kg
+                               Saving of {formatCurrency(savingsPerTon)} per ton
                             </p>
                         </div>
                         <ChartContainer config={chartConfig} className="min-h-[250px] w-full">
@@ -130,7 +130,7 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
                                     tickLine={false}
                                     axisLine={false}
                                     tickMargin={8}
-                                    tickFormatter={(value) => `$${value.toFixed(2)}`}
+                                    tickFormatter={(value) => `$${value.toFixed(0)}`}
                                     domain={[yAxisDomainMin, 'auto']}
                                 />
                                 <XAxis
@@ -146,7 +146,7 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
                                         formatter={(value, name) => (
                                             <div className="flex w-full justify-between items-center gap-4">
                                                 <span className="text-muted-foreground">{chartConfig[name as keyof typeof chartConfig]?.label}</span>
-                                                <span className="font-bold">{formatCurrency(value as number, {minimumFractionDigits: 3})}</span>
+                                                <span className="font-bold">{formatCurrency(value as number, {minimumFractionDigits: 2})}</span>
                                             </div>
                                         )}
                                     />}
