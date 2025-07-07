@@ -1,13 +1,13 @@
 
 "use client";
 
+import * as React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import type { FormValues } from "@/lib/types";
-import { formSchema, feedAdditiveTypes, regions } from "@/lib/types";
-import { getOptimizationResults } from "@/lib/actions";
-import { useToast } from "@/hooks/use-toast";
+import { Loader2, HelpCircle } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -18,6 +18,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
   SelectContent,
@@ -25,11 +26,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, HelpCircle } from "lucide-react";
-import React, { useEffect } from "react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useToast } from "@/hooks/use-toast";
+import { getOptimizationResults } from "@/lib/actions";
+import {
+  formSchema,
+  feedAdditiveTypes,
+  regions,
+  type FormValues,
+} from "@/lib/types";
 
 interface OptimizerFormProps {
   setResults: (results: any) => void;
@@ -66,8 +76,7 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
     feedAdditiveValue === "Jefo Pro Solution" ||
     feedAdditiveValue === "Jefo Xylanase";
 
-  useEffect(() => {
-    // Set default inclusion rate based on additive
+  React.useEffect(() => {
     if (feedAdditiveValue) {
       let newInclusionRate = 0;
       switch (feedAdditiveValue) {
@@ -80,7 +89,6 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
       }
     }
 
-    // FCR Calculation
     if (feedAdditiveValue && baselineFCRValue > 0) {
       let fcrReduction = 0;
       switch (feedAdditiveValue) {
@@ -92,7 +100,6 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
       setValue("feedConversionRatioAfter", parseFloat(newFCR.toFixed(3)), { shouldValidate: true });
     }
 
-    // Mortality Rate Calculation
     if (feedAdditiveValue && baselineMortalityRateValue > 0) {
       let mortalityReduction = 0;
       switch (feedAdditiveValue) {
