@@ -81,8 +81,8 @@ const estimateGHGSavingsFlow = ai.defineFlow(
     outputSchema: EstimateGHGSavingsOutputSchema,
   },
   async (input) => {
-    // Matrix application with Jefo Pro Solution
-    if (input.applicationType === 'Matrix' && input.feedAdditive === 'Jefo Pro Solution') {
+    // Matrix application
+    if (input.applicationType === 'Matrix' && (input.feedAdditive === 'Jefo Pro Solution' || input.feedAdditive === 'Jefo Xylanase')) {
       const regionFeed = feedData.find(d => d.region === input.region);
       if (!regionFeed) {
         throw new Error(`Feed data for region ${input.region} not found.`);
@@ -92,17 +92,32 @@ const estimateGHGSavingsFlow = ai.defineFlow(
         return total + ing.quantity * ing.carbonFootprint;
       }, 0);
       
-      const reformulatedIngredients = regionFeed.ingredients.map(ing => {
-        let newQuantity = ing.quantity;
-        switch (ing.name) {
-          case 'Corn': newQuantity *= 1.031; break;
-          case 'Soybean Meal': newQuantity *= (1 - 0.045); break;
-          case 'Soybean Oil': newQuantity *= (1 - 0.06); break;
-          case 'Synthetic Amino Acid': newQuantity *= (1 - 0.031); break;
-          case 'Other Raw Materials': newQuantity *= 1.007; break;
-        }
-        return { ...ing, quantity: newQuantity };
-      });
+      let reformulatedIngredients;
+      if (input.feedAdditive === 'Jefo Pro Solution') {
+        reformulatedIngredients = regionFeed.ingredients.map(ing => {
+          let newQuantity = ing.quantity;
+          switch (ing.name) {
+            case 'Corn': newQuantity *= 1.031; break;
+            case 'Soybean Meal': newQuantity *= (1 - 0.045); break;
+            case 'Soybean Oil': newQuantity *= (1 - 0.06); break;
+            case 'Synthetic Amino Acid': newQuantity *= (1 - 0.031); break;
+            case 'Other Raw Materials': newQuantity *= 1.007; break;
+          }
+          return { ...ing, quantity: newQuantity };
+        });
+      } else { // Jefo Xylanase
+        reformulatedIngredients = regionFeed.ingredients.map(ing => {
+          let newQuantity = ing.quantity;
+          switch (ing.name) {
+            case 'Corn': newQuantity *= 1.034; break;
+            case 'Soybean Meal': newQuantity *= (1 - 0.007); break;
+            case 'Soybean Oil': newQuantity *= (1 - 0.342); break;
+            case 'Synthetic Amino Acid': newQuantity *= 1.005; break;
+            case 'Other Raw Materials': newQuantity *= (1 - 0.003); break;
+          }
+          return { ...ing, quantity: newQuantity };
+        });
+      }
       
       const reformulatedGHGPerTon = reformulatedIngredients.reduce((total, ing) => {
         return total + ing.quantity * ing.carbonFootprint;

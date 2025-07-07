@@ -73,7 +73,7 @@ Follow the user's formulas precisely.
     a. First, calculate **Average Feed per Bird (Baseline)** = \`{{{feedConversionRatioBefore}}} * {{{broilerLiveWeight}}}\`.
     b. Next, calculate the **Survival Rate (Baseline)** = \`1 - ({{{mortalityRateBefore}}} / 100)\`.
     c. Now, calculate the **Total Baseline Cost** using this exact formula: \`( ({{{numberOfBirds}}} * Average Feed per Bird (Baseline) * {{{costMetrics.feedCost}}}) / Survival Rate (Baseline) )\`.
-    d. Calculate \`feedCostPerLiveWeightBefore\` = \`Total Baseline Cost / ({{{numberOfBirds}}} * Survival Rate (Baseline))\`.
+    d. Calculate \`feedCostPerLiveWeightBefore\` = \`Total Baseline Cost / ({{{numberOfBirds}}} * Survival Rate (Baseline) * {{{broilerLiveWeight}}})\`.
 
 2.  **Calculate New Costs (With Additive):**
     a. First, calculate the **Average Feed per Bird (After)** = \`{{{feedConversionRatioAfter}}} * {{{broilerLiveWeight}}}\`.
@@ -82,7 +82,7 @@ Follow the user's formulas precisely.
     d. Calculate the **Total Feed Consumed After**: This is the feed portion of the cost calculation: \`( ({{{numberOfBirds}}} * Average Feed per Bird (After)) / Survival Rate (After) )\`.
     e. Calculate **Total Investment in Additive** = \`(Total Feed Consumed After / 1000) * {{{inclusionRate}}} * {{{costMetrics.additiveCost}}}\`.
     f. Calculate **Total Cost With Additive** = \`Total Feed Cost After + Total Investment in Additive\`.
-    g. Calculate \`feedCostPerLiveWeightAfter\` = \`Total Cost With Additive / ({{{numberOfBirds}}} * Survival Rate (After))\`.
+    g. Calculate \`feedCostPerLiveWeightAfter\` = \`Total Cost With Additive / ({{{numberOfBirds}}} * Survival Rate (After) * {{{broilerLiveWeight}}})\`.
 
 3.  **Calculate Savings and ROI:**
     a. Calculate **Total Cost Savings (\`feedCostSavings\`)** = \`Total Baseline Cost - Total Cost With Additive\`.
@@ -100,7 +100,7 @@ const calculateROIFlow = ai.defineFlow(
     outputSchema: ROIOutputSchema,
   },
   async (input) => {
-    if (input.applicationType === 'Matrix' && input.feedAdditiveType === 'Jefo Pro Solution') {
+    if (input.applicationType === 'Matrix' && (input.feedAdditiveType === 'Jefo Pro Solution' || input.feedAdditiveType === 'Jefo Xylanase')) {
       const regionFeed = feedData.find(d => d.region === input.region);
       if (!regionFeed) {
         throw new Error(`Feed data for region ${input.region} not found.`);
@@ -110,19 +110,32 @@ const calculateROIFlow = ai.defineFlow(
         return total + (ing.quantity / 1000) * ing.cost;
       }, 0);
       
-      const reformulatedIngredients = regionFeed.ingredients.map(ing => {
-        let newQuantity = ing.quantity;
-        // The reformulation logic is based on the user request.
-        // It's currently the same for all regions as no other logic was provided.
-        switch (ing.name) {
-          case 'Corn': newQuantity *= 1.031; break;
-          case 'Soybean Meal': newQuantity *= (1 - 0.045); break;
-          case 'Soybean Oil': newQuantity *= (1 - 0.06); break;
-          case 'Synthetic Amino Acid': newQuantity *= (1 - 0.031); break;
-          case 'Other Raw Materials': newQuantity *= 1.007; break;
-        }
-        return { ...ing, quantity: newQuantity };
-      });
+      let reformulatedIngredients;
+      if (input.feedAdditiveType === 'Jefo Pro Solution') {
+          reformulatedIngredients = regionFeed.ingredients.map(ing => {
+            let newQuantity = ing.quantity;
+            switch (ing.name) {
+              case 'Corn': newQuantity *= 1.031; break;
+              case 'Soybean Meal': newQuantity *= (1 - 0.045); break;
+              case 'Soybean Oil': newQuantity *= (1 - 0.06); break;
+              case 'Synthetic Amino Acid': newQuantity *= (1 - 0.031); break;
+              case 'Other Raw Materials': newQuantity *= 1.007; break;
+            }
+            return { ...ing, quantity: newQuantity };
+          });
+      } else { // Jefo Xylanase
+          reformulatedIngredients = regionFeed.ingredients.map(ing => {
+            let newQuantity = ing.quantity;
+            switch (ing.name) {
+              case 'Corn': newQuantity *= 1.034; break;
+              case 'Soybean Meal': newQuantity *= (1 - 0.007); break;
+              case 'Soybean Oil': newQuantity *= (1 - 0.342); break;
+              case 'Synthetic Amino Acid': newQuantity *= 1.005; break;
+              case 'Other Raw Materials': newQuantity *= (1 - 0.003); break;
+            }
+            return { ...ing, quantity: newQuantity };
+          });
+      }
       
       const reformulatedCostPerTon = reformulatedIngredients.reduce((total, ing) => {
         return total + (ing.quantity / 1000) * ing.cost;
