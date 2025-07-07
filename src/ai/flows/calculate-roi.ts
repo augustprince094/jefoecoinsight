@@ -52,9 +52,9 @@ const prompt = ai.definePrompt({
   name: 'calculateROIPrompt',
   input: {schema: ROIInputSchema},
   output: {schema: ROIOutputSchema},
-  prompt: `You are an expert in broiler economics. Your main task is to calculate the return on investment (ROI) and related financial metrics for using a feed additive with an 'On-top' application.
+  prompt: `You are an expert in broiler economics. Your main task is to calculate the return on investment (ROI) and related financial metrics for using a feed additive.
 
-Use the following data and perform the calculation by following the steps precisely.
+Follow the user's formulas precisely.
 
 **Input Data:**
 - Number of birds per cycle: {{{numberOfBirds}}}
@@ -70,25 +70,25 @@ Use the following data and perform the calculation by following the steps precis
 **Calculation Steps:**
 
 1.  **Calculate Total Baseline Cost:**
-    a. First, calculate the **Average Feed per Bird (Baseline)** = \`{{{feedConversionRatioBefore}}} * {{{broilerLiveWeight}}}\`.
+    a. First, calculate **Average Feed per Bird (Baseline)** = \`{{{feedConversionRatioBefore}}} * {{{broilerLiveWeight}}}\`.
     b. Next, calculate the **Survival Rate (Baseline)** = \`1 - ({{{mortalityRateBefore}}} / 100)\`.
     c. Now, calculate the **Total Baseline Cost** using this exact formula: \`( ({{{numberOfBirds}}} * Average Feed per Bird (Baseline) * {{{costMetrics.feedCost}}}) / Survival Rate (Baseline) )\`.
-    d. Calculate **Total Live Weight Before** = {{{numberOfBirds}}} * (1 - ({{{mortalityRateBefore}}} / 100)) * {{{broilerLiveWeight}}}.
-    e. Calculate \`feedCostPerLiveWeightBefore\` = Total Baseline Cost / Total Live Weight Before.
+    d. Calculate **Total Live Weight Before** = \`{{{numberOfBirds}}} * Survival Rate (Baseline) * {{{broilerLiveWeight}}}\`.
+    e. Calculate \`feedCostPerLiveWeightBefore\` = \`Total Baseline Cost / Total Live Weight Before\`.
 
 2.  **Calculate New Costs (With Additive):**
     a. First, calculate the **Average Feed per Bird (After)** = \`{{{feedConversionRatioAfter}}} * {{{broilerLiveWeight}}}\`.
     b. Next, calculate the **Survival Rate (After)** = \`1 - ({{{mortalityRateAfter}}} / 100)\`.
     c. Now, calculate the **Total Feed Cost After** using this exact formula: \`( ({{{numberOfBirds}}} * Average Feed per Bird (After) * {{{costMetrics.feedCost}}}) / Survival Rate (After) )\`.
     d. Calculate the **Total Feed Consumed After**: This is the feed portion of the cost calculation: \`( ({{{numberOfBirds}}} * Average Feed per Bird (After)) / Survival Rate (After) )\`.
-    e. Calculate **Total Investment in Additive** = (Total Feed Consumed After / 1000) * {{{inclusionRate}}} * {{{costMetrics.additiveCost}}}.
-    f. Calculate **Total Cost With Additive** = Total Feed Cost After + Total Investment in Additive.
-    g. Calculate **Total Live Weight After** = {{{numberOfBirds}}} * (1 - ({{{mortalityRateAfter}}} / 100)) * {{{broilerLiveWeight}}}.
-    h. Calculate \`feedCostPerLiveWeightAfter\` = Total Cost With Additive / Total Live Weight After.
+    e. Calculate **Total Investment in Additive** = \`(Total Feed Consumed After / 1000) * {{{inclusionRate}}} * {{{costMetrics.additiveCost}}}\`.
+    f. Calculate **Total Cost With Additive** = \`Total Feed Cost After + Total Investment in Additive\`.
+    g. Calculate **Total Live Weight After** = \`{{{numberOfBirds}}} * Survival Rate (After) * {{{broilerLiveWeight}}}\`.
+    h. Calculate \`feedCostPerLiveWeightAfter\` = \`Total Cost With Additive / Total Live Weight After\`.
 
 3.  **Calculate Savings and ROI:**
-    a. Calculate **Total Cost Savings (\`feedCostSavings\`)** = Total Baseline Cost - Total Cost With Additive.
-    b. If Total Investment in Additive is zero or less, the ROI is infinite. Otherwise, calculate **\`roi\`** = \`feedCostSavings\` / Total Investment in Additive.
+    a. Calculate **Total Cost Savings (\`feedCostSavings\`)** = \`Total Baseline Cost - Total Cost With Additive\`.
+    b. If Total Investment in Additive is zero or less, the ROI is infinite. Otherwise, calculate **\`roi\`** = \`feedCostSavings / Total Investment in Additive\`.
 
 Provide a detailed step-by-step explanation following the structure above, showing the result of each calculation.
 Return all the required fields in the output schema.
@@ -145,7 +145,7 @@ const calculateROIFlow = ai.defineFlow(
       const totalLiveWeightBefore = input.numberOfBirds * (1 - (input.mortalityRateBefore / 100)) * input.broilerLiveWeight;
 
       const feedCostPerLiveWeightAfter = totalLiveWeightAfter > 0 ? (totalFeedCostAfter + totalInvestmentInAdditive) / totalLiveWeightAfter : 0;
-      const feedCostPerLiveWeightBefore = totalLiveWeightBefore > 0 ? totalFeedCostBefore / totalLiveWeightBefore : 0;
+      const feedCostPerLiveWeightBefore = totalLiveWeightBefore > 0 ? totalFeedCostBefore / totalLiveweightBefore : 0;
       
       const explanation = `For a 'Matrix' application with ${input.feedAdditiveType}, savings are calculated from feed reformulation:\n\n` +
         `1. Baseline Feed Cost: The cost for the standard feed in ${input.region} is $${baselineCostPerTon.toFixed(2)} per ton.\n` +
