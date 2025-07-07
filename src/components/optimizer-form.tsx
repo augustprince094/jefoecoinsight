@@ -57,7 +57,7 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
       broilerLiveWeight: 2.5,
       baselineMortalityRate: 4.5,
       baselineFCR: 1.75,
-      feedCost: 0.80,
+      feedCost: 0.45,
       feedAdditive: "Jefo Pro Solution",
       applicationType: "Matrix",
       inclusionRate: 125,
@@ -237,14 +237,14 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
               render={({ field }) => (
                 <FormItem>
                    <FormLabel className="flex items-center gap-1.5">
-                    Feed cost ($/ kg live weight)
+                    Feed cost ($/kg of feed)
                     <TooltipProvider delayDuration={100}>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
                         </TooltipTrigger>
                         <TooltipContent>
-                          <p>The cost of feed to produce 1kg of live weight.</p>
+                          <p>The cost of 1kg of feed.</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
