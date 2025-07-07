@@ -5,7 +5,7 @@ import type { OptimizationResult } from "@/lib/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, Leaf, TrendingUp, Car, DollarSign, Sparkles, HelpCircle, PiggyBank } from "lucide-react";
+import { AlertCircle, Leaf, TrendingUp, Car, DollarSign, Sparkles, HelpCircle, PiggyBank, Lightbulb } from "lucide-react";
 import Image from "next/image";
 import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts"
 import {
@@ -31,7 +31,7 @@ const baselineColor = "#AEAEAE"; // neutral gray
 const defaultAdditiveColor = "hsl(var(--primary))";
 
 const AdvisoryCard = ({ advisoryData, additiveColor }: { advisoryData: ProvideAdvisoryOutput | undefined, additiveColor: string }) => {
-  if (!advisoryData?.advisoryText) return null;
+  if (!advisoryData?.summary && !advisoryData?.keyBenefit) return null;
 
   return (
     <Card style={{ backgroundColor: `${additiveColor}0D`, borderColor: `${additiveColor}33` }}>
@@ -41,10 +41,23 @@ const AdvisoryCard = ({ advisoryData, additiveColor }: { advisoryData: ProvideAd
           Smart Advisory
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed">
-          {advisoryData.advisoryText}
-        </div>
+      <CardContent className="space-y-4">
+        {advisoryData.summary && (
+            <p className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed">
+                {advisoryData.summary}
+            </p>
+        )}
+        {advisoryData.keyBenefit && (
+            <div className="border-t pt-4" style={{ borderColor: `${additiveColor}33` }}>
+                <h4 className="flex items-center gap-2 text-sm font-semibold mb-2" style={{ color: additiveColor }}>
+                    <Lightbulb className="h-5 w-5" />
+                    Key Benefit
+                </h4>
+                <p className="text-sm text-foreground/90 leading-relaxed">
+                    {advisoryData.keyBenefit}
+                </p>
+            </div>
+        )}
       </CardContent>
     </Card>
   );

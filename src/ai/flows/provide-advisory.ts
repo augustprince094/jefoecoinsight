@@ -27,7 +27,8 @@ const AdvisoryInputSchema = z.object({
 export type ProvideAdvisoryInput = z.infer<typeof AdvisoryInputSchema>;
 
 const ProvideAdvisoryOutputSchema = z.object({
-  advisoryText: z.string().describe('The AI-generated advisory text.'),
+  summary: z.string().describe('A concise, one-to-two line summary of the ROI and GHG savings.'),
+  keyBenefit: z.string().describe('A single, concise key benefit of the selected additive.'),
 });
 export type ProvideAdvisoryOutput = z.infer<typeof ProvideAdvisoryOutputSchema>;
 
@@ -39,7 +40,7 @@ const prompt = ai.definePrompt({
   name: 'provideAdvisoryPrompt',
   input: {schema: AdvisoryInputSchema},
   output: {schema: ProvideAdvisoryOutputSchema},
-  prompt: `You are a Jefo expert poultry consultant. Your task is to provide a very concise, two-part advisory based on calculator results.
+  prompt: `You are a Jefo expert poultry consultant. Your task is to provide a concise, two-part advisory based on calculator results.
 
 **Input Data:**
 - Feed Additive: {{{inputs.feedAdditive}}}
@@ -49,14 +50,12 @@ const prompt = ai.definePrompt({
 
 **Instructions:**
 
-1.  **Craft a Summary (1-2 lines):**
-    *   Begin with a positive, engaging sentence summarizing the excellent ROI and GHG savings.
+1.  **Craft a Summary (for the 'summary' field):**
+    *   Create a positive, engaging sentence summarizing the excellent ROI and GHG savings. This summary must be no more than two lines.
     *   Calculate the equivalent kilometers driven for the GHG savings (Total GHG Savings * 4100).
-    *   Example opening: "Impressive results! Using {{{inputs.feedAdditive}}} not only delivers a strong {{{roiData.roi}}}:1 return on investment but also reduces emissions equivalent to driving [calculated km] km."
-    *   This summary must be no more than two lines.
+    *   Example: "Impressive results! Using {{{inputs.feedAdditive}}} not only delivers a strong {{{roiData.roi}}}:1 return on investment but also reduces emissions equivalent to driving [calculated km] km."
 
-2.  **Add a Key Benefit (1 sentence):**
-    *   After the summary, add a new paragraph containing a single, concise key benefit for the selected additive.
+2.  **Select a Key Benefit (for the 'keyBenefit' field):**
     *   Choose the *exact* sentence from the "Key Benefit Options" below that matches the user's selected \`feedAdditive\` and \`applicationType\`.
 
 **Key Benefit Options (Use one of these verbatim):**
@@ -73,8 +72,8 @@ const prompt = ai.definePrompt({
     *   And \`applicationType\` is 'On-top': "It is a reliable solution for achieving better performance, improved footpad quality, and greater economic returns."
 
 **Final Output:**
-- The \`advisoryText\` field should contain the final combined text.
-- Do not use bullet points, headers, or any extra formatting.
+- Populate the \`summary\` and \`keyBenefit\` fields in the output schema.
+- Do not use bullet points, headers, or any extra formatting in the strings.
 `,
 });
 
