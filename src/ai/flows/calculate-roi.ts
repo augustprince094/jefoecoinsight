@@ -71,14 +71,14 @@ Use the following formulas and data to perform the calculation. This method is d
 
 1.  **Calculate Baseline Performance & Costs (Before Additive):**
     a. Calculate **Survival Rate Before** = 1 - ({{{mortalityRateBefore}}} / 100).
-    b. Calculate **Total Feed Consumed Before** using the formula: (Total Number of Birds * Baseline FCR * Broiler Live Weight) / Survival Rate Before. This formula accounts for feed consumed by the entire flock.
+    b. Calculate **Total Feed Consumed Before** = ({{{numberOfBirds}}} * {{{feedConversionRatioBefore}}} * {{{broilerLiveWeight}}}) / Survival Rate Before.
     c. Calculate **Total Baseline Cost** = Total Feed Consumed Before * {{{costMetrics.feedCost}}}.
     d. Calculate **Total Live Weight Before** = {{{numberOfBirds}}} * Survival Rate Before * {{{broilerLiveWeight}}}.
     e. Calculate \`feedCostPerLiveWeightBefore\` = Total Baseline Cost / Total Live Weight Before.
 
 2.  **Calculate New Performance & Costs (With Additive):**
     a. Calculate **Survival Rate After** = 1 - ({{{mortalityRateAfter}}} / 100).
-    b. Calculate **Total Feed Consumed After** using the formula: (Total Number of Birds * New FCR * Broiler Live Weight) / Survival Rate After.
+    b. Calculate **Total Feed Consumed After** = ({{{numberOfBirds}}} * {{{feedConversionRatioAfter}}} * {{{broilerLiveWeight}}}) / Survival Rate After.
     c. Calculate **Total Feed Cost After** = Total Feed Consumed After * {{{costMetrics.feedCost}}}.
     d. Calculate **Total Investment in Additive** = (Total Feed Consumed After / 1000) * {{{inclusionRate}}} * {{{costMetrics.additiveCost}}}.
     e. Calculate **Total Cost With Additive** = Total Feed Cost After + Total Investment in Additive.
