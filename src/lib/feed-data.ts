@@ -18,11 +18,11 @@ export const feedData: RegionFeedData[] = [
   {
     region: 'Canada',
     ingredients: [
-      { name: 'Corn', quantity: 579.2, cost: 232, carbonFootprint: 0.61 },
-      { name: 'Soybean Meal', quantity: 343.3, cost: 624, carbonFootprint: 5 },
-      { name: 'Soybean Oil', quantity: 44.6, cost: 1600, carbonFootprint: 5 },
-      { name: 'Synthetic Amino Acid', quantity: 6.5, cost: 2854, carbonFootprint: 5 },
-      { name: 'Other Raw Materials', quantity: 26.4, cost: 572, carbonFootprint: 5 },
+      { name: 'Corn', quantity: 579.2, cost: 232, carbonFootprint: 0.35 },
+      { name: 'Soybean Meal', quantity: 343.3, cost: 624, carbonFootprint: 1.27 },
+      { name: 'Soybean Oil', quantity: 44.6, cost: 1600, carbonFootprint: 0.91 },
+      { name: 'Synthetic Amino Acid', quantity: 6.5, cost: 2854, carbonFootprint: 3.66 },
+      { name: 'Other Raw Materials', quantity: 26.4, cost: 572, carbonFootprint: 3.28 },
     ],
   },
   {
