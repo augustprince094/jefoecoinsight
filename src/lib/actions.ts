@@ -12,10 +12,14 @@ export async function getOptimizationResults(data: FormValues): Promise<{ data?:
         feedCost: data.feedCost,
         additiveCost: data.additiveCost,
     };
+
+    // Jefo P(OA+EO) is always an "On-top" application.
+    // We set it here to ensure the correct calculation paths are followed in the flows.
+    const applicationType = data.feedAdditive === "Jefo P(OA+EO)" ? "On-top" : data.applicationType;
     
     const roiInput: ROIInput = {
       region: data.region,
-      applicationType: data.applicationType,
+      applicationType: applicationType,
       feedAdditiveType: data.feedAdditive,
       inclusionRate: data.inclusionRate / 1000,
       numberOfBirds: data.numberOfBirds,
@@ -29,7 +33,7 @@ export async function getOptimizationResults(data: FormValues): Promise<{ data?:
     
     const ghgInput: EstimateGHGSavingsInput = {
       region: data.region,
-      applicationType: data.applicationType,
+      applicationType: applicationType,
       feedAdditive: data.feedAdditive,
       inclusionRate: data.inclusionRate / 1000,
       numberOfBirds: data.numberOfBirds,
@@ -52,7 +56,7 @@ export async function getOptimizationResults(data: FormValues): Promise<{ data?:
     const advisoryInput: ProvideAdvisoryInput = {
       inputs: {
         feedAdditive: data.feedAdditive,
-        applicationType: data.applicationType,
+        applicationType: applicationType,
         numberOfBirds: data.numberOfBirds,
       },
       roiData: {
@@ -69,7 +73,10 @@ export async function getOptimizationResults(data: FormValues): Promise<{ data?:
         throw new Error("Failed to get advisory from the AI model.");
     }
 
-    return { data: { roiData, ghgData, advisoryData, inputs: data } };
+    // Pass the modified applicationType back with the results so the dashboard can be consistent
+    const updatedInputs = { ...data, applicationType: applicationType };
+
+    return { data: { roiData, ghgData, advisoryData, inputs: updatedInputs } };
   } catch (e: any) {
     console.error("Error in getOptimizationResults:", e);
     return { error: e.message || "An unexpected error occurred while processing your request." };
