@@ -83,7 +83,7 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
 
     return (
         <div className="space-y-6 animate-in fade-in-50 duration-500">
-            <Card>
+            <Card className="bg-white dark:bg-card">
                 <CardHeader>
                     <CardTitle>Matrix Application Results</CardTitle>
                     <CardDescription>
