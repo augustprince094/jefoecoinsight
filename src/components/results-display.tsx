@@ -5,7 +5,7 @@ import type { OptimizationResult } from "@/lib/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, Leaf, TrendingUp, Car, DollarSign, Sparkles, HelpCircle, Zap, PiggyBank } from "lucide-react";
+import { AlertCircle, Leaf, TrendingUp, Car, DollarSign, Sparkles, HelpCircle, PiggyBank } from "lucide-react";
 import Image from "next/image";
 import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts"
 import {
@@ -93,7 +93,20 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
                 <CardContent className="grid gap-6">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <Card className="p-4 flex flex-col items-center justify-center text-center">
-                             <CardDescription>Total Feed Cost Savings</CardDescription>
+                            <CardDescription className="flex items-center justify-center gap-1.5">
+                                Total Feed Cost Savings
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                                        </TooltipTrigger>
+                                        <TooltipContent className="w-80 max-w-sm whitespace-pre-wrap text-xs">
+                                            <p className="font-bold mb-2">Calculation Breakdown:</p>
+                                            <p>{roiData.explanation}</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                            </CardDescription>
                              <p className="text-2xl font-bold">
                                 {formatCurrency(roiData.feedCostSavings)}
                             </p>
@@ -261,7 +274,6 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
             <Card>
                 <CardHeader>
                     <CardTitle className="text-lg">Economic Performance Summary</CardTitle>
-                    <CardDescription>Key financial and efficiency metrics.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
@@ -280,6 +292,17 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                         <div className="p-3 rounded-lg border bg-card shadow-sm">
                             <p className="text-sm text-muted-foreground flex items-center justify-center gap-1.5 mb-1">
                                 <PiggyBank className="h-4 w-4" /> Total Savings
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                                        </TooltipTrigger>
+                                        <TooltipContent className="w-80 max-w-sm whitespace-pre-wrap text-xs">
+                                            <p className="font-bold mb-2">Calculation Breakdown:</p>
+                                            <p>{roiData.explanation}</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
                             </p>
                             <p className="text-2xl font-bold">{formatCurrency(roiData.feedCostSavings)}</p>
                         </div>
@@ -305,9 +328,9 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                     </p>
                     <p className="text-muted-foreground mb-4">Total greenhouse gas savings.</p>
                     
-                    <div className="relative h-14 w-full mb-4 mt-8">
+                    <div className="relative h-20 w-full mb-4 mt-8">
                         <div className="absolute inset-x-0 top-1/2 w-full -translate-y-1/2 border-t-2 border-dashed border-muted-foreground/30" />
-                        <Car className="h-12 w-12 text-accent absolute bottom-0 animate-drive-and-wobble" style={{ animationDelay: '-3s, 0s' }}/>
+                        <Car className="h-16 w-16 text-accent absolute bottom-0 animate-drive-and-wobble" style={{ animationDelay: '-3s, 0s' }}/>
                     </div>
                     <p className="text-sm text-muted-foreground">
                         This is equivalent to driving <span className="font-bold text-accent">{equivalentKm} km</span> in a standard gasoline car.

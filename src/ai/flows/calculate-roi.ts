@@ -90,7 +90,7 @@ Follow the user's formulas precisely.
     a. Calculate **Total Cost Savings (\`feedCostSavings\`)** = \`Total Baseline Cost - Total Cost With Additive\`.
     b. If Total Investment in Additive is zero or less, the ROI is infinite. Otherwise, calculate **\`roi\`** = \`feedCostSavings / Total Investment in Additive\`.
 
-Provide a detailed step-by-step explanation following the structure above, showing the result of each calculation.
+Provide a detailed step-by-step explanation following the structure above, showing the result of each calculation. The explanation should be a clear, multi-line string, perfect for display in a tooltip. For each step, clearly label the calculation and show the resulting number.
 Return all the required fields in the output schema.
 `,
 });
@@ -145,7 +145,7 @@ const calculateROIFlow = ai.defineFlow(
       const totalLiveWeightBefore = input.numberOfBirds * (1 - (input.mortalityRateBefore / 100)) * input.broilerLiveWeight;
 
       const feedCostPerLiveWeightAfter = totalLiveWeightAfter > 0 ? (totalFeedCostAfter + totalInvestmentInAdditive) / totalLiveWeightAfter : 0;
-      const feedCostPerLiveWeightBefore = totalLiveWeightBefore > 0 ? totalFeedCostBefore / totalLiveweightBefore : 0;
+      const feedCostPerLiveWeightBefore = totalLiveWeightBefore > 0 ? totalFeedCostBefore / totalLiveWeightBefore : 0;
       
       const explanation = `For a 'Matrix' application with ${input.feedAdditiveType}, savings are calculated from feed reformulation:\n\n` +
         `1. Baseline Feed Cost: The cost for the standard feed in ${input.region} is $${baselineCostPerTon.toFixed(2)} per ton.\n` +
