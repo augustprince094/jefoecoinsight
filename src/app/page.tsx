@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from 'react';
@@ -44,9 +45,43 @@ const livestockData = [
   },
 ]
 
+const abstractData = [
+  {
+    image: "https://placehold.co/600x400.png",
+    alt: "Graphical abstract of a scientific paper on poultry nutrition.",
+    dataAiHint: "abstract chart",
+    title: "Innovations in Poultry Feed",
+    description: "A study on how new additives improve nutrient absorption and growth.",
+  },
+  {
+    image: "https://placehold.co/600x400.png",
+    alt: "Graphical abstract of a scientific paper on swine health.",
+    dataAiHint: "scientific abstract",
+    title: "Swine Gut Health Optimization",
+    description: "Exploring the effects of probiotics on digestive health in pigs.",
+  },
+  {
+    image: "https://placehold.co/600x400.png",
+    alt: "Graphical abstract of a scientific paper on dairy production.",
+    dataAiHint: "abstract graph",
+    title: "Enhancing Dairy Cow Productivity",
+    description: "Research into feed efficiency and milk yield improvements.",
+  },
+  {
+    image: "https://placehold.co/600x400.png",
+    alt: "Graphical abstract of a scientific paper on sustainable farming.",
+    dataAiHint: "science abstract",
+    title: "Sustainable Livestock Farming",
+    description: "An overview of practices that reduce environmental impact.",
+  },
+]
+
 
 export default function HomePage() {
-  const plugin = React.useRef(
+  const heroPlugin = React.useRef(
+    Autoplay({ delay: 4000, stopOnInteraction: true, stopOnMouseEnter: true })
+  )
+  const downloadPlugin = React.useRef(
     Autoplay({ delay: 5000, stopOnInteraction: true, stopOnMouseEnter: true })
   )
 
@@ -82,9 +117,44 @@ export default function HomePage() {
                  <h1 className="text-3xl md:text-4xl font-bold text-primary mb-4">
                   Lower your carbon footprint with Jefo solutions
                 </h1>
-                <p className="text-muted-foreground mb-8">
-                  Incorporating the protected organic acid and essential oils could lower your carbon footprint by -4.8%
+                <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
+                  Incorporating the protected organic acid and essential oils could lower your carbon footprint by -4.8%. Discover how our research leads to tangible results.
                 </p>
+
+                <div className="max-w-2xl mx-auto mb-8">
+                    <Carousel
+                      plugins={[heroPlugin.current]}
+                      opts={{
+                        align: "start",
+                        loop: true,
+                      }}
+                      className="w-full"
+                    >
+                      <CarouselContent>
+                        {abstractData.map((item, index) => (
+                          <CarouselItem key={index}>
+                            <Card className="overflow-hidden">
+                              <CardContent className="flex flex-col items-center justify-center p-6 aspect-video bg-background">
+                                  <Image
+                                    src={item.image}
+                                    alt={item.alt}
+                                    width={200}
+                                    height={120}
+                                    className="rounded-md object-cover mb-4 shadow-md"
+                                    data-ai-hint={item.dataAiHint}
+                                  />
+                                  <h3 className="font-semibold text-foreground text-base">{item.title}</h3>
+                                  <p className="text-xs text-muted-foreground text-center max-w-xs">{item.description}</p>
+                              </CardContent>
+                            </Card>
+                          </CarouselItem>
+                        ))}
+                      </CarouselContent>
+                      <CarouselPrevious className="hidden md:flex left-[-50px]" />
+                      <CarouselNext className="hidden md:flex right-[-50px]" />
+                    </Carousel>
+                </div>
+
                 <div className="text-center">
                   <Button asChild size="lg" className="rounded-full">
                     <Link href="/calculator">Calculate your savings</Link>
@@ -124,7 +194,7 @@ export default function HomePage() {
             <Card>
               <CardContent className="p-8">
                 <Carousel
-                  plugins={[plugin.current]}
+                  plugins={[downloadPlugin.current]}
                   opts={{
                     align: "start",
                     loop: true,
