@@ -138,7 +138,7 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <Card>
+        <Card className="bg-white dark:bg-card">
           <CardHeader>
             <CardTitle>1. Production Details</CardTitle>
           </CardHeader>
