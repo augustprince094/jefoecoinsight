@@ -205,10 +205,9 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
         ? ((roiData.feedCostPerLiveWeightBefore - roiData.feedCostPerLiveWeightAfter) / roiData.feedCostPerLiveWeightBefore) * 100
         : 0;
     
-    // The cost per bird is the cost per kg live weight * live weight
     const chartData = [
-        { name: "Baseline", cost: roiData.feedCostPerLiveWeightBefore },
-        { name: "With Additive", cost: roiData.feedCostPerLiveWeightAfter },
+        { name: "Baseline", cost: roiData.feedCostPerLiveWeightBefore * inputs.broilerLiveWeight },
+        { name: "With Additive", cost: roiData.feedCostPerLiveWeightAfter * inputs.broilerLiveWeight },
     ];
     
     const costs = chartData.map(d => d.cost);
@@ -398,3 +397,5 @@ export function ResultsDisplay({ results, isLoading, error }: { results: Optimiz
     
     return <OnTopDashboard results={results} />;
 }
+
+    
