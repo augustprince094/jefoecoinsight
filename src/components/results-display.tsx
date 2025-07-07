@@ -22,13 +22,21 @@ import {
 } from "@/components/ui/tooltip";
 import type { ProvideAdvisoryOutput } from "@/ai/flows/provide-advisory";
 
-const AdvisoryCard = ({ advisoryData }: { advisoryData: ProvideAdvisoryOutput | undefined }) => {
+const additiveColorMap: { [key: string]: string } = {
+    "Jefo Pro Solution": "#FCB839", // golden yellow
+    "Jefo P(OA+EO)": "#C00000",   // dark red
+    "Jefo Xylanase": "#EB5C41",    // orange-red (Belfeed)
+};
+const baselineColor = "#AEAEAE"; // neutral gray
+const defaultAdditiveColor = "hsl(var(--primary))";
+
+const AdvisoryCard = ({ advisoryData, additiveColor }: { advisoryData: ProvideAdvisoryOutput | undefined, additiveColor: string }) => {
   if (!advisoryData?.advisoryText) return null;
 
   return (
-    <Card className="bg-primary/5 border-primary/20">
+    <Card style={{ backgroundColor: `${additiveColor}0D`, borderColor: `${additiveColor}33` }}>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-primary">
+        <CardTitle className="flex items-center gap-2" style={{ color: additiveColor }}>
           <Sparkles className="h-6 w-6" />
           Smart Advisory
         </CardTitle>
@@ -44,6 +52,7 @@ const AdvisoryCard = ({ advisoryData }: { advisoryData: ProvideAdvisoryOutput | 
 
 function MatrixDashboard({ results }: { results: OptimizationResult }) {
     const { roiData, ghgData, advisoryData, inputs } = results;
+    const additiveColor = additiveColorMap[inputs.feedAdditive as keyof typeof additiveColorMap] || defaultAdditiveColor;
 
     const formatCurrency = (value: number, options: Intl.NumberFormatOptions = {}) => {
         return new Intl.NumberFormat('en-US', {
@@ -89,9 +98,9 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
                                 {formatCurrency(roiData.feedCostSavings)}
                             </p>
                         </Card>
-                        <Card className="p-4 flex flex-col items-center justify-center text-center bg-primary/10 border-primary/20">
-                           <CardDescription className="text-primary">Return on Investment</CardDescription>
-                            <p className="text-2xl font-bold text-primary">
+                        <Card className="p-4 flex flex-col items-center justify-center text-center" style={{ backgroundColor: `${additiveColor}1A`, borderColor: `${additiveColor}33`}}>
+                           <CardDescription style={{color: additiveColor}}>Return on Investment</CardDescription>
+                            <p className="text-2xl font-bold" style={{color: additiveColor}}>
                                 {roiData.roi.toFixed(1)} : 1
                             </p>
                         </Card>
@@ -119,7 +128,7 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
                     <div className="border-t pt-6">
                          <div className="text-center mb-4">
                             <p className="text-sm text-muted-foreground">Feed Cost per Ton</p>
-                            <p className="text-xl font-bold text-primary">
+                            <p className="text-xl font-bold" style={{color: additiveColor}}>
                                Saving of {formatCurrency(savingsPerTon)} per ton of feed
                             </p>
                         </div>
@@ -153,15 +162,15 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
                                     />}
                                 />
                                 <Bar dataKey="cost" radius={4}>
-                                   <Cell fill="hsl(var(--secondary))" />
-                                   <Cell fill="hsl(var(--primary))" />
+                                   <Cell fill={baselineColor} />
+                                   <Cell fill={additiveColor} />
                                 </Bar>
                             </BarChart>
                         </ChartContainer>
                     </div>
                 </CardContent>
             </Card>
-            <AdvisoryCard advisoryData={advisoryData} />
+            <AdvisoryCard advisoryData={advisoryData} additiveColor={additiveColor}/>
         </div>
     );
 }
@@ -169,6 +178,7 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
 
 function OnTopDashboard({ results }: { results: OptimizationResult }) {
     const { roiData, ghgData, advisoryData, inputs } = results;
+    const additiveColor = additiveColorMap[inputs.feedAdditive as keyof typeof additiveColorMap] || defaultAdditiveColor;
 
     const formatCurrency = (value: number, options: Intl.NumberFormatOptions = {}) => {
         return new Intl.NumberFormat('en-US', {
@@ -239,8 +249,8 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                                 />}
                             />
                             <Bar dataKey="cost" radius={4}>
-                               <Cell fill="hsl(var(--secondary))" />
-                               <Cell fill="hsl(var(--primary))" />
+                               <Cell fill={baselineColor} />
+                               <Cell fill={additiveColor} />
                             </Bar>
                         </BarChart>
                     </ChartContainer>
@@ -259,7 +269,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                             <p className="text-sm text-muted-foreground flex items-center justify-center gap-1.5 mb-1">
                                 <TrendingUp className="h-4 w-4" /> ROI
                             </p>
-                            <p className="text-2xl font-bold text-primary">{roiData.roi.toFixed(1)} : 1</p>
+                            <p className="text-2xl font-bold" style={{ color: additiveColor }}>{roiData.roi.toFixed(1)} : 1</p>
                         </div>
                         <div className="p-3 rounded-lg border bg-card shadow-sm">
                             <p className="text-sm text-muted-foreground flex items-center justify-center gap-1.5 mb-1">
@@ -312,7 +322,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                 </CardContent>
             </Card>
             
-            <AdvisoryCard advisoryData={advisoryData} />
+            <AdvisoryCard advisoryData={advisoryData} additiveColor={additiveColor} />
         </div>
     );
 }
