@@ -329,7 +329,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                     
                     <div className="relative h-20 w-full mb-4 mt-8">
                         <div className="absolute inset-x-0 top-1/2 w-full -translate-y-1/2 border-t-2 border-dashed border-muted-foreground/30" />
-                        <Car className="h-20 w-20 text-accent absolute bottom-0 animate-drive-and-wobble" style={{ animationDelay: '-3s, 0s' }}/>
+                        <Car className="h-20 w-20 text-accent absolute bottom-1/2 animate-drive-and-wobble" style={{ animationDelay: '-3s, 0s' }}/>
                     </div>
                     <p className="text-sm text-muted-foreground">
                         This is equivalent to driving <span className="font-bold text-accent">{equivalentKm} km</span> in a standard gasoline car.
