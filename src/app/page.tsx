@@ -14,6 +14,7 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
+  type CarouselApi,
 } from "@/components/ui/carousel"
 import Autoplay from "embla-carousel-autoplay"
 
@@ -78,12 +79,40 @@ const abstractData = [
 
 
 export default function HomePage() {
+  const [api, setApi] = React.useState<CarouselApi>()
+  const [current, setCurrent] = React.useState(0)
+  const [count, setCount] = React.useState(0)
+
   const heroPlugin = React.useRef(
-    Autoplay({ delay: 4000, stopOnInteraction: true, stopOnMouseEnter: true })
+    Autoplay({ delay: 10000, stopOnInteraction: true, stopOnMouseEnter: true })
   )
   const downloadPlugin = React.useRef(
     Autoplay({ delay: 5000, stopOnInteraction: true, stopOnMouseEnter: true })
   )
+
+  React.useEffect(() => {
+    if (!api) {
+      return
+    }
+
+    setCount(api.scrollSnapList().length)
+    setCurrent(api.selectedScrollSnap())
+
+    const onSelect = () => {
+      setCurrent(api.selectedScrollSnap())
+    }
+
+    api.on("select", onSelect)
+
+    return () => {
+      api.off("select", onSelect)
+    }
+  }, [api])
+
+  const scrollTo = React.useCallback((index: number) => {
+    api?.scrollTo(index)
+  }, [api])
+
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
@@ -123,6 +152,7 @@ export default function HomePage() {
 
                 <div className="max-w-2xl mx-auto mb-8">
                     <Carousel
+                      setApi={setApi}
                       plugins={[heroPlugin.current]}
                       opts={{
                         align: "start",
@@ -150,9 +180,17 @@ export default function HomePage() {
                           </CarouselItem>
                         ))}
                       </CarouselContent>
-                      <CarouselPrevious className="hidden md:flex left-[-50px]" />
-                      <CarouselNext className="hidden md:flex right-[-50px]" />
                     </Carousel>
+                    <div className="flex justify-center gap-2 mt-4">
+                      {Array.from({ length: count }).map((_, index) => (
+                        <button
+                          key={index}
+                          onClick={() => scrollTo(index)}
+                          className={`h-2 w-2 rounded-full transition-colors ${current === index ? 'bg-primary' : 'bg-muted'}`}
+                          aria-label={`Go to slide ${index + 1}`}
+                        />
+                      ))}
+                    </div>
                 </div>
 
                 <div className="text-center">
