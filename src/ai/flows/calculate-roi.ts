@@ -54,7 +54,7 @@ const prompt = ai.definePrompt({
   output: {schema: ROIOutputSchema},
   prompt: `You are an expert in broiler economics. Your main task is to calculate the return on investment (ROI) and related financial metrics for using a feed additive with an 'On-top' application.
 
-Use the following formulas and data to perform the calculation. This method is designed to accurately account for mortality.
+Use the following formulas and data to perform the calculation. You must follow these steps precisely.
 
 **Input Data:**
 - Number of birds per cycle: {{{numberOfBirds}}}
@@ -69,28 +69,24 @@ Use the following formulas and data to perform the calculation. This method is d
 
 **Calculation Steps:**
 
-1.  **Calculate Baseline Performance & Costs (Before Additive):**
-    a. Calculate **Survival Rate Before** = 1 - ({{{mortalityRateBefore}}} / 100).
-    b. Calculate **Total Feed Consumed Before** = ({{{numberOfBirds}}} * {{{feedConversionRatioBefore}}} * {{{broilerLiveWeight}}}) / Survival Rate Before.
-    c. Calculate **Total Baseline Cost** = Total Feed Consumed Before * {{{costMetrics.feedCost}}}.
-    d. Calculate **Total Live Weight Before** = {{{numberOfBirds}}} * Survival Rate Before * {{{broilerLiveWeight}}}.
-    e. Calculate \`feedCostPerLiveWeightBefore\` = Total Baseline Cost / Total Live Weight Before.
+1.  **Calculate Baseline Cost:**
+    a. Calculate **Total Baseline Cost** using this exact formula: \`({{{numberOfBirds}}} * {{{feedConversionRatioBefore}}} * {{{broilerLiveWeight}}} * {{{costMetrics.feedCost}}}) / (1 - ({{{mortalityRateBefore}}} / 100))\`.
+    b. Calculate **Total Live Weight Before** = {{{numberOfBirds}}} * (1 - ({{{mortalityRateBefore}}} / 100)) * {{{broilerLiveWeight}}}.
+    c. Calculate \`feedCostPerLiveWeightBefore\` = Total Baseline Cost / Total Live Weight Before.
 
-2.  **Calculate New Performance & Costs (With Additive):**
-    a. Calculate **Survival Rate After** = 1 - ({{{mortalityRateAfter}}} / 100).
-    b. Calculate **Total Feed Consumed After** = ({{{numberOfBirds}}} * {{{feedConversionRatioAfter}}} * {{{broilerLiveWeight}}}) / Survival Rate After.
-    c. Calculate **Total Feed Cost After** = Total Feed Consumed After * {{{costMetrics.feedCost}}}.
-    d. Calculate **Total Investment in Additive** = (Total Feed Consumed After / 1000) * {{{inclusionRate}}} * {{{costMetrics.additiveCost}}}.
-    e. Calculate **Total Cost With Additive** = Total Feed Cost After + Total Investment in Additive.
-    f. Calculate **Total Live Weight After** = {{{numberOfBirds}}} * Survival Rate After * {{{broilerLiveWeight}}}.
-    g. Calculate \`feedCostPerLiveWeightAfter\` = Total Cost With Additive / Total Live Weight After.
+2.  **Calculate New Costs (With Additive):**
+    a. Calculate **Total Feed Cost After** using this exact formula: \`({{{numberOfBirds}}} * {{{feedConversionRatioAfter}}} * {{{broilerLiveWeight}}} * {{{costMetrics.feedCost}}}) / (1 - ({{{mortalityRateAfter}}} / 100))\`.
+    b. To calculate the investment, first find **Total Feed Consumed After**: \`({{{numberOfBirds}}} * {{{feedConversionRatioAfter}}} * {{{broilerLiveWeight}}}) / (1 - ({{{mortalityRateAfter}}} / 100))\`.
+    c. Calculate **Total Investment in Additive** = (Total Feed Consumed After / 1000) * {{{inclusionRate}}} * {{{costMetrics.additiveCost}}}.
+    d. Calculate **Total Cost With Additive** = Total Feed Cost After + Total Investment in Additive.
+    e. Calculate **Total Live Weight After** = {{{numberOfBirds}}} * (1 - ({{{mortalityRateAfter}}} / 100)) * {{{broilerLiveWeight}}}.
+    f. Calculate \`feedCostPerLiveWeightAfter\` = Total Cost With Additive / Total Live Weight After.
 
 3.  **Calculate Savings and ROI:**
     a. Calculate **Total Cost Savings (\`feedCostSavings\`)** = Total Baseline Cost - Total Cost With Additive.
     b. If Total Investment in Additive is zero or less, the ROI is infinite. Otherwise, calculate **\`roi\`** = \`feedCostSavings\` / Total Investment in Additive.
-    c. Store all calculated values in their respective output fields.
 
-Provide a detailed step-by-step explanation following the structure above.
+Provide a detailed step-by-step explanation following the structure above, showing the result of each calculation.
 Return all the required fields in the output schema.
 `,
 });
