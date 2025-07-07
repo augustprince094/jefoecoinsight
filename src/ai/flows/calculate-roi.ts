@@ -87,9 +87,8 @@ Use the following formulas and data to perform the calculation. This method is d
 
 3.  **Calculate Savings and ROI:**
     a. Calculate **Total Cost Savings (\`feedCostSavings\`)** = Total Baseline Cost - Total Cost With Additive.
-    b. Calculate **Gross Feed Savings** = Total Baseline Cost - Total Feed Cost After. This represents the total savings before accounting for the additive's cost.
-    c. If Total Investment in Additive is zero or less, the ROI is infinite. Otherwise, calculate **\`roi\`** = Gross Feed Savings / Total Investment in Additive.
-    d. Store all calculated values in their respective output fields.
+    b. If Total Investment in Additive is zero or less, the ROI is infinite. Otherwise, calculate **\`roi\`** = \`feedCostSavings\` / Total Investment in Additive.
+    c. Store all calculated values in their respective output fields.
 
 Provide a detailed step-by-step explanation following the structure above.
 Return all the required fields in the output schema.
