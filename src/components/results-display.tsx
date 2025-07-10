@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, Leaf, TrendingUp, Car, DollarSign, Sparkles, HelpCircle, PiggyBank, Lightbulb } from "lucide-react";
 import Image from "next/image";
-import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts"
+import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis, LabelList } from "recharts"
 import {
     ChartContainer,
     ChartTooltip,
@@ -80,7 +80,7 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
 
     const chartData = [
         { name: "Baseline", cost: baselineCostPerTon ?? 0 },
-        { name: "With Additive", cost: reformulatedCostPerTon ?? 0 },
+        { name: inputs.feedAdditive, cost: reformulatedCostPerTon ?? 0 },
     ];
     
     const costs = chartData.map(d => d.cost);
@@ -197,7 +197,7 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
                                             tickLine={false}
                                             axisLine={false}
                                             tickMargin={8}
-                                            tickFormatter={(value) => `$${value.toFixed(0)}`}
+                                            tickFormatter={(value) => formatCurrency(value as number, { notation: 'compact' })}
                                             domain={[yAxisDomainMin, 'auto']}
                                         />
                                         <XAxis
@@ -215,6 +215,13 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
                                             />}
                                         />
                                         <Bar dataKey="cost" radius={4}>
+                                            <LabelList
+                                                dataKey="cost"
+                                                position="top"
+                                                offset={8}
+                                                className="fill-foreground text-xs"
+                                                formatter={(value: number) => formatCurrency(value, {minimumFractionDigits: 2})}
+                                            />
                                             <Cell fill={baselineColor} />
                                             <Cell fill={additiveColor} />
                                         </Bar>
