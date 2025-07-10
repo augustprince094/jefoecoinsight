@@ -5,7 +5,7 @@ import type { OptimizationResult } from "@/lib/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, Leaf, TrendingUp, Car, DollarSign, Sparkles, HelpCircle, PiggyBank, Lightbulb } from "lucide-react";
+import { AlertCircle, Leaf, TrendingUp, Car, DollarSign, Sparkles, HelpCircle, PiggyBank, Lightbulb, Bird } from "lucide-react";
 import Image from "next/image";
 import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis, LabelList } from "recharts"
 import {
@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/tooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { ProvideAdvisoryOutput } from "@/ai/flows/provide-advisory";
+import { regionalBaselineGHG } from "@/lib/additive-data";
+
 
 const additiveColorMap: { [key: string]: string } = {
     "Jefo Pro Solution": "#FCB839", // golden yellow
@@ -293,7 +295,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
     
     const chartData = [
         { name: "Baseline", cost: roiData.feedCostPerLiveWeightBefore * inputs.broilerLiveWeight },
-        { name: "With Additive", cost: roiData.feedCostPerLiveWeightAfter * inputs.broilerLiveWeight },
+        { name: inputs.feedAdditive, cost: roiData.feedCostPerLiveWeightAfter * inputs.broilerLiveWeight },
     ];
     
     const costs = chartData.map(d => d.cost);
@@ -307,6 +309,9 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
     } satisfies ChartConfig;
 
     const equivalentKm = (ghgData.ghgSavings * 4.1).toFixed(0);
+
+    const ghgPerKgLiveWeight = regionalBaselineGHG[inputs.region as keyof typeof regionalBaselineGHG] || regionalBaselineGHG.Canada;
+    const equivalentBirds = (ghgData.ghgSavings / (inputs.broilerLiveWeight * ghgPerKgLiveWeight)).toFixed(0);
 
     return (
         <div className="space-y-6 animate-in fade-in-50 duration-500">
@@ -333,12 +338,12 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                     </CardHeader>
                     <TabsContent value="ghg">
                        <CardContent className="pt-0 text-center flex flex-col justify-between min-h-[400px]">
-                            <div>
+                            <div className="space-y-2">
                                 <p className="text-3xl font-bold text-accent">
                                     {(ghgData.ghgSavings / 1000).toFixed(2)}
                                     <span className="text-lg font-normal ml-2">tons CO₂e</span>
                                 </p>
-                                <p className="text-muted-foreground mb-4 flex items-center justify-center gap-1.5">
+                                <p className="text-muted-foreground flex items-center justify-center gap-1.5">
                                 Total greenhouse gas savings
                                     <TooltipProvider>
                                         <Tooltip>
@@ -353,14 +358,24 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                                 </p>
                             </div>
                             
-                            <div className="mt-8">
-                                <div className="relative h-20 w-full mb-4">
-                                    <div className="absolute inset-x-0 top-1/2 w-full -translate-y-1/2 border-t-2 border-dashed border-muted-foreground/30" />
-                                    <Car className="h-20 w-20 text-accent absolute bottom-0 animate-drive-and-wobble" style={{ animationDelay: '-3s, 0s' }}/>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mt-8">
+                                <div className="space-y-4">
+                                    <div className="relative h-16 w-full mb-2">
+                                        <div className="absolute inset-x-0 top-1/2 w-full -translate-y-1/2 border-t-2 border-dashed border-muted-foreground/30" />
+                                        <Car className="h-16 w-16 text-accent absolute bottom-0 animate-drive-and-wobble" style={{ animationDelay: '-3s, 0s' }}/>
+                                    </div>
+                                    <p className="text-sm text-muted-foreground">
+                                        Equivalent to driving <br/><span className="font-bold text-accent">{equivalentKm} km</span> in a standard car.
+                                    </p>
                                 </div>
-                                <p className="text-sm text-muted-foreground">
-                                    This is equivalent to driving <span className="font-bold text-accent">{equivalentKm} km</span> in a standard car.
-                                </p>
+                                <div className="space-y-4">
+                                    <div className="relative h-16 w-full mb-2 flex justify-center items-center">
+                                       <Bird className="h-16 w-16 text-accent" />
+                                    </div>
+                                    <p className="text-sm text-muted-foreground">
+                                        Emission savings to produce <br/><span className="font-bold text-accent">{equivalentBirds} birds</span>.
+                                    </p>
+                                </div>
                             </div>
                         </CardContent>
                     </TabsContent>
@@ -402,7 +417,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                                 <div className="text-center mb-4">
                                      <p className="text-sm text-muted-foreground">Feed Cost per Bird</p>
                                     <p className="text-lg font-bold" style={{color: additiveColor}}>
-                                        Reduction of {formatCurrency(roiData.feedCostPerLiveWeightBefore - roiData.feedCostPerLiveWeightAfter)} per bird
+                                        Reduction of {formatCurrency(roiData.feedCostPerLiveWeightBefore * inputs.broilerLiveWeight - roiData.feedCostPerLiveWeightAfter * inputs.broilerLiveWeight)} per bird
                                     </p>
                                 </div>
                                 <ChartContainer config={chartConfig} className="h-[150px] w-full">
@@ -430,6 +445,13 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                                             />}
                                         />
                                         <Bar dataKey="cost" radius={4}>
+                                           <LabelList
+                                                dataKey="cost"
+                                                position="top"
+                                                offset={8}
+                                                className="fill-foreground text-xs"
+                                                formatter={(value: number) => formatCurrency(value, {minimumFractionDigits: 2})}
+                                            />
                                            <Cell fill={baselineColor} />
                                            <Cell fill={additiveColor} />
                                         </Bar>
@@ -501,3 +523,5 @@ export function ResultsDisplay({ results, isLoading, error }: { results: Optimiz
     
     return <OnTopDashboard results={results} />;
 }
+
+    
