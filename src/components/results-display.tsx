@@ -78,23 +78,33 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
     
     const { baselineCostPerTon, reformulatedCostPerTon } = roiData;
 
-    const chartData = [
+    const economicChartData = [
         { name: "Baseline", cost: baselineCostPerTon ?? 0 },
         { name: inputs.feedAdditive, cost: reformulatedCostPerTon ?? 0 },
     ];
     
-    const costs = chartData.map(d => d.cost);
+    const costs = economicChartData.map(d => d.cost);
     const minCost = Math.min(...costs);
     const yAxisDomainMin = Math.max(0, Math.floor(minCost * 0.95));
 
-    const chartConfig = {
+    const economicChartConfig = {
         cost: {
             label: "Cost per Ton",
         },
     } satisfies ChartConfig;
 
     const savingsPerTon = (baselineCostPerTon ?? 0) - (reformulatedCostPerTon ?? 0);
-    const equivalentKm = (ghgData.ghgSavings * 4.1).toFixed(0);
+    
+    const ghgChartData = [
+        { name: "Baseline", ghg: ghgData.baselineGHG ? ghgData.baselineGHG / 1000 : 0 },
+        { name: inputs.feedAdditive, ghg: ghgData.ghgWithAdditive ? ghgData.ghgWithAdditive / 1000 : 0 },
+    ];
+    const ghgChartConfig = {
+        ghg: { label: "GHG (tons CO₂e)" }
+    } satisfies ChartConfig;
+    const ghgValues = ghgChartData.map(d => d.ghg);
+    const minGhg = Math.min(...ghgValues);
+    const ghgYAxisDomainMin = Math.max(0, Math.floor(minGhg * 0.95));
 
     return (
         <div className="space-y-6 animate-in fade-in-50 duration-500">
@@ -120,35 +130,69 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
                         </TabsList>
                     </CardHeader>
                     <TabsContent value="ghg">
-                        <CardContent className="pt-0 text-center flex flex-col justify-between min-h-[400px]">
-                            <div>
-                                <p className="text-3xl font-bold text-accent">
-                                    {(ghgData.ghgSavings / 1000).toFixed(2)}
-                                    <span className="text-lg font-normal ml-2">tons CO₂e</span>
-                                </p>
-                                <p className="text-muted-foreground mb-4 flex items-center justify-center gap-1.5">
-                                Total greenhouse gas savings
-                                    <TooltipProvider>
+                       <CardContent className="space-y-6 pt-0">
+                             <div className="p-3 rounded-lg border bg-card/50 shadow-sm text-center">
+                                <CardDescription className="flex items-center justify-center gap-1.5 text-xs mb-1">
+                                    Total GHG Savings
+                                     <TooltipProvider>
                                         <Tooltip>
                                             <TooltipTrigger asChild>
-                                                <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                                                <HelpCircle className="h-3 w-3 text-muted-foreground cursor-help" />
                                             </TooltipTrigger>
-                                            <TooltipContent className="w-64 whitespace-pre-wrap">
+                                            <TooltipContent className="w-80 max-w-sm whitespace-pre-wrap text-xs">
+                                                <p className="font-bold mb-2">Calculation Breakdown:</p>
                                                 <p>{ghgData.explanation}</p>
                                             </TooltipContent>
                                         </Tooltip>
                                     </TooltipProvider>
+                                </CardDescription>
+                                <p className="text-xl font-bold text-accent">
+                                    {(ghgData.ghgSavings / 1000).toFixed(2)} tons CO₂e
                                 </p>
                             </div>
-                            
-                            <div className="mt-8">
-                                <div className="relative h-20 w-full mb-4">
-                                    <div className="absolute inset-x-0 top-1/2 w-full -translate-y-1/2 border-t-2 border-dashed border-muted-foreground/30" />
-                                    <Car className="h-20 w-20 text-accent absolute bottom-0 animate-drive-and-wobble" style={{ animationDelay: '-3s, 0s' }}/>
+
+                            <div className="border-t pt-6">
+                                <div className="text-center mb-4">
+                                    <p className="text-sm text-muted-foreground">Total GHG Emissions (tons CO₂e)</p>
                                 </div>
-                                <p className="text-sm text-muted-foreground">
-                                    This is equivalent to driving <span className="font-bold text-accent">{equivalentKm} km</span> in a standard car.
-                                </p>
+                                <ChartContainer config={ghgChartConfig} className="h-[200px] w-full">
+                                    <BarChart accessibilityLayer data={ghgChartData} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
+                                        <CartesianGrid vertical={false} />
+                                        <YAxis
+                                            dataKey="ghg"
+                                            tickLine={false}
+                                            axisLine={false}
+                                            tickMargin={8}
+                                            tickFormatter={(value) => `${value.toFixed(0)} t`}
+                                            domain={[ghgYAxisDomainMin, 'auto']}
+                                        />
+                                        <XAxis
+                                            dataKey="name"
+                                            tickLine={false}
+                                            axisLine={false}
+                                            tickMargin={10}
+                                            className="text-xs"
+                                        />
+                                        <ChartTooltip
+                                            cursor={false}
+                                            content={<ChartTooltipContent 
+                                                indicator="line"
+                                                formatter={(value, name) => `${(value as number).toFixed(2)} tons CO₂e`}
+                                            />}
+                                        />
+                                        <Bar dataKey="ghg" radius={4}>
+                                            <LabelList
+                                                dataKey="ghg"
+                                                position="top"
+                                                offset={8}
+                                                className="fill-foreground text-xs"
+                                                formatter={(value: number) => `${value.toFixed(2)} t`}
+                                            />
+                                            <Cell fill={baselineColor} />
+                                            <Cell fill={additiveColor} />
+                                        </Bar>
+                                    </BarChart>
+                                </ChartContainer>
                             </div>
                         </CardContent>
                     </TabsContent>
@@ -189,8 +233,8 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
                                         Saving of {formatCurrency(savingsPerTon)} per ton
                                     </p>
                                 </div>
-                                <ChartContainer config={chartConfig} className="h-[200px] w-full">
-                                    <BarChart accessibilityLayer data={chartData} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
+                                <ChartContainer config={economicChartConfig} className="h-[200px] w-full">
+                                    <BarChart accessibilityLayer data={economicChartData} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
                                         <CartesianGrid vertical={false} />
                                         <YAxis
                                             dataKey="cost"

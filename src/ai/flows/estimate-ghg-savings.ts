@@ -31,6 +31,8 @@ export type EstimateGHGSavingsInput = z.infer<typeof EstimateGHGSavingsInputSche
 const EstimateGHGSavingsOutputSchema = z.object({
   ghgSavings: z.number().describe('The estimated greenhouse gas emission reductions in kg CO2e.'),
   explanation: z.string().describe('An explanation of how the GHG savings were estimated.'),
+  baselineGHG: z.number().optional().describe('The baseline total GHG emissions in kg CO2e.'),
+  ghgWithAdditive: z.number().optional().describe('The total GHG emissions with the additive in kg CO2e.'),
 });
 export type EstimateGHGSavingsOutput = z.infer<typeof EstimateGHGSavingsOutputSchema>;
 
@@ -67,10 +69,14 @@ const prompt = ai.definePrompt({
   1.  Calculate total feed consumed for the 'Before' scenario. Formula: Total Feed Consumed (Before) = (Number of Birds * FCR Before * Live Weight) / (1 - (Mortality Rate Before / 100)).
   2.  Calculate total feed consumed for the 'After' scenario. Formula: Total Feed Consumed (After) = (Number of Birds * FCR After * Live Weight) / (1 - (Mortality Rate After / 100)).
   3.  Calculate total feed saved = Total Feed Consumed (Before) - Total Feed Consumed (After).
-  4.  Calculate GHG Savings = Total feed saved * 1.2 kg CO2e/kg feed.
+  4.  The GHG factor for feed is 1.2 kg CO2e/kg feed.
+  5.  Calculate Baseline GHG = Total Feed Consumed (Before) * 1.2.
+  6.  Calculate GHG With Additive = Total Feed Consumed (After) * 1.2.
+  7.  Calculate GHG Savings = Baseline GHG - GHG With Additive.
 
   Provide both the estimated GHG savings and a brief explanation of your calculation.
   Ensure that the units for ghgSavings are in kg CO2e.
+  Return all required fields, including baselineGHG and ghgWithAdditive.
   `,
 });
 
@@ -129,16 +135,25 @@ const estimateGHGSavingsFlow = ai.defineFlow(
       const ghgSavingsPerTon = baselineGHGPerTon - reformulatedGHGPerTon;
       const ghgSavings = ghgSavingsPerTon * totalFeedConsumedAfterInTons;
       
+      // Calculate total baseline and with-additive values
+      const totalFeedConsumedBefore = (input.numberOfBirds * input.feedConversionRatioBefore * input.broilerLiveWeight) / (1 - (input.mortalityRateBefore / 100));
+      const totalFeedConsumedBeforeInTons = totalFeedConsumedBefore / 1000;
+      
+      const baselineGHG = baselineGHGPerTon * totalFeedConsumedBeforeInTons;
+      const ghgWithAdditive = reformulatedGHGPerTon * totalFeedConsumedAfterInTons;
+
       const explanation = `For a 'Matrix' application with ${input.feedAdditive}, GHG savings are from feed reformulation based on GHG factors of ingredients:\n\n` +
         `1. Baseline Feed GHG: ${baselineGHGPerTon.toFixed(2)} kg CO2e per ton.\n` +
         `2. Reformulated Feed GHG: ${reformulatedGHGPerTon.toFixed(2)} kg CO2e per ton.\n` +
         `3. GHG Saving per Ton: ${ghgSavingsPerTon.toFixed(2)} kg CO2e.\n` +
-        `4. Total Feed Consumed: ${totalFeedConsumedAfterInTons.toFixed(2)} tons.\n` +
+        `4. Total Feed Consumed (After): ${totalFeedConsumedAfterInTons.toFixed(2)} tons.\n` +
         `5. Total GHG Savings: ${ghgSavings.toFixed(2)} kg CO2e.`;
 
       return {
         ghgSavings,
         explanation,
+        baselineGHG,
+        ghgWithAdditive,
       };
     } 
     // On-top application in Canada
@@ -157,6 +172,7 @@ const estimateGHGSavingsFlow = ai.defineFlow(
             
             const totalBaselineGHG = totalLiveWeightAfter * baselineGHGPerKg;
             const ghgSavings = totalBaselineGHG * reductionFactor;
+            const ghgWithAdditive = totalBaselineGHG - ghgSavings;
 
             const explanation = `For an 'On-top' application in Canada with ${input.feedAdditive}, GHG savings are based on reduced emissions per kg of live weight:\n\n` +
             `1. Total Live Weight Produced: ${totalLiveWeightAfter.toFixed(2)} kg.\n` +
@@ -167,6 +183,8 @@ const estimateGHGSavingsFlow = ai.defineFlow(
             return {
                 ghgSavings,
                 explanation,
+                baselineGHG: totalBaselineGHG,
+                ghgWithAdditive,
             };
         }
       }
