@@ -105,20 +105,53 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
                 </p>
             </div>
             
-             <Tabs defaultValue="economic" className="w-full">
+             <Tabs defaultValue="ghg" className="w-full">
                 <Card className="bg-white dark:bg-card">
                     <CardHeader>
                         <TabsList className="grid w-full grid-cols-2">
+                             <TabsTrigger value="ghg">
+                                <Leaf className="h-4 w-4 mr-2" />
+                                GHG Savings
+                            </TabsTrigger>
                             <TabsTrigger value="economic">
                                 <DollarSign className="h-4 w-4 mr-2" />
                                 Economic Performance
                             </TabsTrigger>
-                            <TabsTrigger value="ghg">
-                                <Leaf className="h-4 w-4 mr-2" />
-                                GHG Savings
-                            </TabsTrigger>
                         </TabsList>
                     </CardHeader>
+                    <TabsContent value="ghg">
+                        <CardContent className="pt-0 text-center flex flex-col justify-between min-h-[400px]">
+                            <div>
+                                <p className="text-3xl font-bold text-accent">
+                                    {(ghgData.ghgSavings / 1000).toFixed(2)}
+                                    <span className="text-lg font-normal ml-2">tons CO₂e</span>
+                                </p>
+                                <p className="text-muted-foreground mb-4 flex items-center justify-center gap-1.5">
+                                Total greenhouse gas savings
+                                    <TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                                            </TooltipTrigger>
+                                            <TooltipContent className="w-64 whitespace-pre-wrap">
+                                                <p>{ghgData.explanation}</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
+                                </p>
+                            </div>
+                            
+                            <div className="mt-8">
+                                <div className="relative h-20 w-full mb-4">
+                                    <div className="absolute inset-x-0 top-1/2 w-full -translate-y-1/2 border-t-2 border-dashed border-muted-foreground/30" />
+                                    <Car className="h-20 w-20 text-accent absolute bottom-0 animate-drive-and-wobble" style={{ animationDelay: '-3s, 0s' }}/>
+                                </div>
+                                <p className="text-sm text-muted-foreground">
+                                    This is equivalent to driving <span className="font-bold text-accent">{equivalentKm} km</span> in a standard car.
+                                </p>
+                            </div>
+                        </CardContent>
+                    </TabsContent>
                     <TabsContent value="economic">
                         <CardContent className="space-y-6">
                             <div className="grid grid-cols-2 gap-4">
@@ -187,39 +220,6 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
                                         </Bar>
                                     </BarChart>
                                 </ChartContainer>
-                            </div>
-                        </CardContent>
-                    </TabsContent>
-                    <TabsContent value="ghg">
-                        <CardContent className="pt-0 text-center flex flex-col justify-between min-h-[400px]">
-                            <div>
-                                <p className="text-3xl font-bold text-accent">
-                                    {(ghgData.ghgSavings / 1000).toFixed(2)}
-                                    <span className="text-lg font-normal ml-2">tons CO₂e</span>
-                                </p>
-                                <p className="text-muted-foreground mb-4 flex items-center justify-center gap-1.5">
-                                Total greenhouse gas savings
-                                    <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
-                                            </TooltipTrigger>
-                                            <TooltipContent className="w-64 whitespace-pre-wrap">
-                                                <p>{ghgData.explanation}</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
-                                </p>
-                            </div>
-                            
-                            <div className="mt-8">
-                                <div className="relative h-20 w-full mb-4">
-                                    <div className="absolute inset-x-0 top-1/2 w-full -translate-y-1/2 border-t-2 border-dashed border-muted-foreground/30" />
-                                    <Car className="h-20 w-20 text-accent absolute bottom-0 animate-drive-and-wobble" style={{ animationDelay: '-3s, 0s' }}/>
-                                </div>
-                                <p className="text-sm text-muted-foreground">
-                                    This is equivalent to driving <span className="font-bold text-accent">{equivalentKm} km</span> in a standard car.
-                                </p>
                             </div>
                         </CardContent>
                     </TabsContent>
@@ -427,5 +427,7 @@ export function ResultsDisplay({ results, isLoading, error }: { results: Optimiz
     
     return <OnTopDashboard results={results} />;
 }
+
+    
 
     
