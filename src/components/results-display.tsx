@@ -20,12 +20,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { ProvideAdvisoryOutput } from "@/ai/flows/provide-advisory";
 
 const additiveColorMap: { [key: string]: string } = {
@@ -110,136 +105,126 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
                 </p>
             </div>
             
-            <Accordion type="single" collapsible className="w-full space-y-4" defaultValue="item-1">
-              <AccordionItem value="item-1" className="border-b-0">
+             <Tabs defaultValue="economic" className="w-full">
                 <Card className="bg-white dark:bg-card">
-                  <AccordionTrigger className="p-6 text-lg hover:no-underline">
-                     <div className="flex items-center gap-3">
-                          <div className="p-2 bg-primary/10 rounded-md">
-                              <DollarSign className="h-5 w-5 text-primary" />
-                          </div>
-                          Economic Performance
-                      </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                      <CardContent className="space-y-6 pt-0">
-                          <div className="grid grid-cols-2 gap-4">
-                               <div className="p-3 rounded-lg border bg-card/50 shadow-sm text-center">
-                                  <CardDescription className="flex items-center justify-center gap-1.5 text-xs mb-1">
-                                      Total Savings
-                                      <TooltipProvider>
-                                          <Tooltip>
-                                              <TooltipTrigger asChild>
-                                                  <HelpCircle className="h-3 w-3 text-muted-foreground cursor-help" />
-                                              </TooltipTrigger>
-                                              <TooltipContent className="w-80 max-w-sm whitespace-pre-wrap text-xs">
-                                                  <p className="font-bold mb-2">Calculation Breakdown:</p>
-                                                  <p>{roiData.explanation}</p>
-                                              </TooltipContent>
-                                          </Tooltip>
-                                      </TooltipProvider>
-                                  </CardDescription>
-                                  <p className="text-xl font-bold">
-                                      {formatCurrency(roiData.feedCostSavings)}
-                                  </p>
-                              </div>
-                              <div className="p-3 rounded-lg border shadow-sm text-center" style={{ backgroundColor: `${additiveColor}1A`, borderColor: `${additiveColor}33`}}>
-                                 <CardDescription className="text-xs mb-1" style={{color: additiveColor}}>ROI</CardDescription>
-                                  <p className="text-xl font-bold" style={{color: additiveColor}}>
-                                      {roiData.roi.toFixed(1)} : 1
-                                  </p>
-                              </div>
-                          </div>
+                    <CardHeader>
+                        <TabsList className="grid w-full grid-cols-2">
+                            <TabsTrigger value="economic">
+                                <DollarSign className="h-4 w-4 mr-2" />
+                                Economic Performance
+                            </TabsTrigger>
+                            <TabsTrigger value="ghg">
+                                <Leaf className="h-4 w-4 mr-2" />
+                                GHG Savings
+                            </TabsTrigger>
+                        </TabsList>
+                    </CardHeader>
+                    <TabsContent value="economic">
+                        <CardContent className="space-y-6">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="p-3 rounded-lg border bg-card/50 shadow-sm text-center">
+                                    <CardDescription className="flex items-center justify-center gap-1.5 text-xs mb-1">
+                                        Total Savings
+                                        <TooltipProvider>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <HelpCircle className="h-3 w-3 text-muted-foreground cursor-help" />
+                                                </TooltipTrigger>
+                                                <TooltipContent className="w-80 max-w-sm whitespace-pre-wrap text-xs">
+                                                    <p className="font-bold mb-2">Calculation Breakdown:</p>
+                                                    <p>{roiData.explanation}</p>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>
+                                    </CardDescription>
+                                    <p className="text-xl font-bold">
+                                        {formatCurrency(roiData.feedCostSavings)}
+                                    </p>
+                                </div>
+                                <div className="p-3 rounded-lg border shadow-sm text-center" style={{ backgroundColor: `${additiveColor}1A`, borderColor: `${additiveColor}33`}}>
+                                    <CardDescription className="text-xs mb-1" style={{color: additiveColor}}>ROI</CardDescription>
+                                    <p className="text-xl font-bold" style={{color: additiveColor}}>
+                                        {roiData.roi.toFixed(1)} : 1
+                                    </p>
+                                </div>
+                            </div>
 
-                          <div className="border-t pt-6">
-                               <div className="text-center mb-4">
-                                  <p className="text-sm text-muted-foreground">Feed Cost per Ton</p>
-                                  <p className="text-lg font-bold" style={{color: additiveColor}}>
-                                     Saving of {formatCurrency(savingsPerTon)} per ton
-                                  </p>
-                              </div>
-                              <ChartContainer config={chartConfig} className="h-[200px] w-full">
-                                  <BarChart accessibilityLayer data={chartData} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
-                                      <CartesianGrid vertical={false} />
-                                      <YAxis
-                                          dataKey="cost"
-                                          tickLine={false}
-                                          axisLine={false}
-                                          tickMargin={8}
-                                          tickFormatter={(value) => `$${value.toFixed(0)}`}
-                                          domain={[yAxisDomainMin, 'auto']}
-                                      />
-                                      <XAxis
-                                          dataKey="name"
-                                          tickLine={false}
-                                          axisLine={false}
-                                          tickMargin={10}
-                                          className="text-xs"
-                                      />
-                                      <ChartTooltip
-                                          cursor={false}
-                                          content={<ChartTooltipContent 
-                                              indicator="line"
-                                              formatter={(value) => formatCurrency(value as number, {minimumFractionDigits: 2})}
-                                          />}
-                                      />
-                                      <Bar dataKey="cost" radius={4}>
-                                         <Cell fill={baselineColor} />
-                                         <Cell fill={additiveColor} />
-                                      </Bar>
-                                  </BarChart>
-                              </ChartContainer>
-                          </div>
-                      </CardContent>
-                  </AccordionContent>
-                </Card>
-              </AccordionItem>
-              <AccordionItem value="item-2" className="border-b-0">
-                 <Card className="bg-white dark:bg-card">
-                  <AccordionTrigger className="p-6 text-lg hover:no-underline">
-                     <div className="flex items-center gap-3">
-                            <div className="p-2 bg-accent/10 rounded-md">
-                                <Leaf className="h-5 w-5 text-accent" />
+                            <div className="border-t pt-6">
+                                <div className="text-center mb-4">
+                                    <p className="text-sm text-muted-foreground">Feed Cost per Ton</p>
+                                    <p className="text-lg font-bold" style={{color: additiveColor}}>
+                                        Saving of {formatCurrency(savingsPerTon)} per ton
+                                    </p>
+                                </div>
+                                <ChartContainer config={chartConfig} className="h-[200px] w-full">
+                                    <BarChart accessibilityLayer data={chartData} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
+                                        <CartesianGrid vertical={false} />
+                                        <YAxis
+                                            dataKey="cost"
+                                            tickLine={false}
+                                            axisLine={false}
+                                            tickMargin={8}
+                                            tickFormatter={(value) => `$${value.toFixed(0)}`}
+                                            domain={[yAxisDomainMin, 'auto']}
+                                        />
+                                        <XAxis
+                                            dataKey="name"
+                                            tickLine={false}
+                                            axisLine={false}
+                                            tickMargin={10}
+                                            className="text-xs"
+                                        />
+                                        <ChartTooltip
+                                            cursor={false}
+                                            content={<ChartTooltipContent 
+                                                indicator="line"
+                                                formatter={(value) => formatCurrency(value as number, {minimumFractionDigits: 2})}
+                                            />}
+                                        />
+                                        <Bar dataKey="cost" radius={4}>
+                                            <Cell fill={baselineColor} />
+                                            <Cell fill={additiveColor} />
+                                        </Bar>
+                                    </BarChart>
+                                </ChartContainer>
                             </div>
-                            GHG Savings
-                      </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <CardContent className="pt-0 text-center flex flex-col justify-between">
-                        <div>
-                             <p className="text-3xl font-bold text-accent">
-                                {(ghgData.ghgSavings / 1000).toFixed(2)}
-                                <span className="text-lg font-normal ml-2">tons CO₂e</span>
-                            </p>
-                            <p className="text-muted-foreground mb-4 flex items-center justify-center gap-1.5">
-                              Total greenhouse gas savings
-                                <TooltipProvider>
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
-                                        </TooltipTrigger>
-                                        <TooltipContent className="w-64 whitespace-pre-wrap">
-                                            <p>{ghgData.explanation}</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
-                            </p>
-                        </div>
-                        
-                        <div className="mt-8">
-                            <div className="relative h-20 w-full mb-4">
-                                <div className="absolute inset-x-0 top-1/2 w-full -translate-y-1/2 border-t-2 border-dashed border-muted-foreground/30" />
-                                <Car className="h-20 w-20 text-accent absolute bottom-0 animate-drive-and-wobble" style={{ animationDelay: '-3s, 0s' }}/>
+                        </CardContent>
+                    </TabsContent>
+                    <TabsContent value="ghg">
+                        <CardContent className="pt-0 text-center flex flex-col justify-between min-h-[400px]">
+                            <div>
+                                <p className="text-3xl font-bold text-accent">
+                                    {(ghgData.ghgSavings / 1000).toFixed(2)}
+                                    <span className="text-lg font-normal ml-2">tons CO₂e</span>
+                                </p>
+                                <p className="text-muted-foreground mb-4 flex items-center justify-center gap-1.5">
+                                Total greenhouse gas savings
+                                    <TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                                            </TooltipTrigger>
+                                            <TooltipContent className="w-64 whitespace-pre-wrap">
+                                                <p>{ghgData.explanation}</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
+                                </p>
                             </div>
-                            <p className="text-sm text-muted-foreground">
-                                This is equivalent to driving <span className="font-bold text-accent">{equivalentKm} km</span> in a standard car.
-                            </p>
-                        </div>
-                    </CardContent>
-                  </AccordionContent>
+                            
+                            <div className="mt-8">
+                                <div className="relative h-20 w-full mb-4">
+                                    <div className="absolute inset-x-0 top-1/2 w-full -translate-y-1/2 border-t-2 border-dashed border-muted-foreground/30" />
+                                    <Car className="h-20 w-20 text-accent absolute bottom-0 animate-drive-and-wobble" style={{ animationDelay: '-3s, 0s' }}/>
+                                </div>
+                                <p className="text-sm text-muted-foreground">
+                                    This is equivalent to driving <span className="font-bold text-accent">{equivalentKm} km</span> in a standard car.
+                                </p>
+                            </div>
+                        </CardContent>
+                    </TabsContent>
                 </Card>
-              </AccordionItem>
-            </Accordion>
+            </Tabs>
 
             <AdvisoryCard advisoryData={advisoryData} additiveColor={additiveColor}/>
         </div>
@@ -442,3 +427,5 @@ export function ResultsDisplay({ results, isLoading, error }: { results: Optimiz
     
     return <OnTopDashboard results={results} />;
 }
+
+    
