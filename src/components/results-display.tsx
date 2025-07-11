@@ -23,6 +23,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { ProvideAdvisoryOutput } from "@/ai/flows/provide-advisory";
 import { regionalBaselineGHG } from "@/lib/additive-data";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 
 const additiveColorMap: { [key: string]: string } = {
@@ -293,25 +294,34 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
         ? ((roiData.feedCostPerLiveWeightBefore - roiData.feedCostPerLiveWeightAfter) / roiData.feedCostPerLiveWeightBefore) * 100
         : 0;
     
-    const chartData = [
+    const economicChartData = [
         { name: "Baseline", cost: roiData.feedCostPerLiveWeightBefore * inputs.broilerLiveWeight },
         { name: inputs.feedAdditive, cost: roiData.feedCostPerLiveWeightAfter * inputs.broilerLiveWeight },
     ];
     
-    const costs = chartData.map(d => d.cost);
+    const costs = economicChartData.map(d => d.cost);
     const minCost = Math.min(...costs);
     const yAxisDomainMin = Math.max(0, Math.floor(minCost * 0.95 * 100) / 100);
 
-    const chartConfig = {
+    const economicChartConfig = {
         cost: {
             label: "Cost",
         },
     } satisfies ChartConfig;
 
-    const equivalentKm = (ghgData.ghgSavings * 4.1).toFixed(0);
+    const ghgChartData = [
+        { name: "Baseline", ghg: ghgData.baselineGHG ? ghgData.baselineGHG / 1000 : 0 },
+        { name: inputs.feedAdditive, ghg: ghgData.ghgWithAdditive ? ghgData.ghgWithAdditive / 1000 : 0 },
+    ];
 
-    const ghgPerKgLiveWeight = regionalBaselineGHG[inputs.region as keyof typeof regionalBaselineGHG] || regionalBaselineGHG.Canada;
-    const equivalentBirds = (ghgData.ghgSavings / (inputs.broilerLiveWeight * ghgPerKgLiveWeight)).toFixed(0);
+    const ghgChartConfig = {
+        ghg: { label: "GHG (tons CO₂e)" }
+    } satisfies ChartConfig;
+    
+    const ghgValues = ghgChartData.map(d => d.ghg);
+    const minGhg = Math.min(...ghgValues);
+    const ghgYAxisDomainMin = Math.max(0, Math.floor(minGhg * 0.95));
+
 
     return (
         <div className="space-y-6 animate-in fade-in-50 duration-500">
@@ -337,45 +347,68 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                         </TabsList>
                     </CardHeader>
                     <TabsContent value="ghg">
-                       <CardContent className="pt-0 text-center flex flex-col justify-between min-h-[400px]">
-                            <div className="space-y-2">
-                                <p className="text-3xl font-bold text-accent">
-                                    {(ghgData.ghgSavings / 1000).toFixed(2)}
-                                    <span className="text-lg font-normal ml-2">tons CO₂e</span>
-                                </p>
-                                <p className="text-muted-foreground flex items-center justify-center gap-1.5">
-                                Total greenhouse gas savings
-                                    <TooltipProvider>
+                       <CardContent className="space-y-6 pt-0">
+                            <div className="p-3 rounded-lg border bg-card/50 shadow-sm text-center">
+                                <CardDescription className="flex items-center justify-center gap-1.5 text-xs mb-1">
+                                    Total GHG Savings
+                                     <TooltipProvider>
                                         <Tooltip>
                                             <TooltipTrigger asChild>
-                                                <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                                                <HelpCircle className="h-3 w-3 text-muted-foreground cursor-help" />
                                             </TooltipTrigger>
-                                            <TooltipContent className="w-64 whitespace-pre-wrap">
+                                            <TooltipContent className="w-80 max-w-sm whitespace-pre-wrap text-xs">
+                                                <p className="font-bold mb-2">Calculation Breakdown:</p>
                                                 <p>{ghgData.explanation}</p>
                                             </TooltipContent>
                                         </Tooltip>
                                     </TooltipProvider>
+                                </CardDescription>
+                                <p className="text-xl font-bold text-accent">
+                                    {(ghgData.ghgSavings / 1000).toFixed(2)} tons CO₂e
                                 </p>
                             </div>
-                            
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mt-8">
-                                <div className="space-y-4">
-                                    <div className="relative h-16 w-full mb-2">
-                                        <div className="absolute inset-x-0 top-1/2 w-full -translate-y-1/2 border-t-2 border-dashed border-muted-foreground/30" />
-                                        <Car className="h-16 w-16 text-accent absolute bottom-0 animate-drive-and-wobble" style={{ animationDelay: '-3s, 0s' }}/>
-                                    </div>
-                                    <p className="text-sm text-muted-foreground">
-                                        Equivalent to driving <br/><span className="font-bold text-accent">{equivalentKm} km</span> in a standard car.
-                                    </p>
+                             <div className="border-t pt-6">
+                                <div className="text-center mb-4">
+                                    <p className="text-sm text-muted-foreground">Total GHG Emissions (tons CO₂e)</p>
                                 </div>
-                                <div className="space-y-4">
-                                    <div className="relative h-16 w-full mb-2 flex justify-center items-center">
-                                       <Bird className="h-16 w-16 text-accent" />
-                                    </div>
-                                    <p className="text-sm text-muted-foreground">
-                                        Emission savings to produce <br/><span className="font-bold text-accent">{equivalentBirds} birds</span>.
-                                    </p>
-                                </div>
+                                <ChartContainer config={ghgChartConfig} className="h-[200px] w-full">
+                                    <BarChart accessibilityLayer data={ghgChartData} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
+                                        <CartesianGrid vertical={false} />
+                                        <YAxis
+                                            dataKey="ghg"
+                                            tickLine={false}
+                                            axisLine={false}
+                                            tickMargin={8}
+                                            tickFormatter={(value) => `${value.toFixed(0)} t`}
+                                            domain={[ghgYAxisDomainMin, 'auto']}
+                                        />
+                                        <XAxis
+                                            dataKey="name"
+                                            tickLine={false}
+                                            axisLine={false}
+                                            tickMargin={10}
+                                            className="text-xs"
+                                        />
+                                        <ChartTooltip
+                                            cursor={false}
+                                            content={<ChartTooltipContent 
+                                                indicator="line"
+                                                formatter={(value, name) => `${(value as number).toFixed(2)} tons CO₂e`}
+                                            />}
+                                        />
+                                        <Bar dataKey="ghg" radius={4}>
+                                            <LabelList
+                                                dataKey="ghg"
+                                                position="top"
+                                                offset={8}
+                                                className="fill-foreground text-xs"
+                                                formatter={(value: number) => `${value.toFixed(2)} t`}
+                                            />
+                                            <Cell fill={baselineColor} />
+                                            <Cell fill={additiveColor} />
+                                        </Bar>
+                                    </BarChart>
+                                </ChartContainer>
                             </div>
                         </CardContent>
                     </TabsContent>
@@ -420,8 +453,8 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                                         Reduction of {formatCurrency(roiData.feedCostPerLiveWeightBefore * inputs.broilerLiveWeight - roiData.feedCostPerLiveWeightAfter * inputs.broilerLiveWeight)} per bird
                                     </p>
                                 </div>
-                                <ChartContainer config={chartConfig} className="h-[150px] w-full">
-                                    <BarChart accessibilityLayer data={chartData} margin={{ top: 20, right: 20, left: 0, bottom: 0 }}>
+                                <ChartContainer config={economicChartConfig} className="h-[150px] w-full">
+                                    <BarChart accessibilityLayer data={economicChartData} margin={{ top: 20, right: 20, left: 0, bottom: 0 }}>
                                         <CartesianGrid vertical={false} />
                                         <YAxis
                                             dataKey="cost"
@@ -523,5 +556,7 @@ export function ResultsDisplay({ results, isLoading, error }: { results: Optimiz
     
     return <OnTopDashboard results={results} />;
 }
+
+    
 
     
