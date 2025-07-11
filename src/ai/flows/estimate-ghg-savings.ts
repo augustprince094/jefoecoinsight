@@ -132,21 +132,19 @@ const estimateGHGSavingsFlow = ai.defineFlow(
       const totalFeedConsumedAfter = (input.numberOfBirds * input.feedConversionRatioAfter * input.broilerLiveWeight) / (1 - (input.mortalityRateAfter / 100));
       const totalFeedConsumedAfterInTons = totalFeedConsumedAfter / 1000;
       
-      const ghgSavingsPerTon = baselineGHGPerTon - reformulatedGHGPerTon;
-      const ghgSavings = ghgSavingsPerTon * totalFeedConsumedAfterInTons;
-      
-      // Calculate total baseline and with-additive values
       const totalFeedConsumedBefore = (input.numberOfBirds * input.feedConversionRatioBefore * input.broilerLiveWeight) / (1 - (input.mortalityRateBefore / 100));
       const totalFeedConsumedBeforeInTons = totalFeedConsumedBefore / 1000;
       
       const baselineGHG = baselineGHGPerTon * totalFeedConsumedBeforeInTons;
       const ghgWithAdditive = reformulatedGHGPerTon * totalFeedConsumedAfterInTons;
+      const ghgSavings = baselineGHG - ghgWithAdditive;
 
-      const explanation = `For a 'Matrix' application with ${input.feedAdditive}, GHG savings are from feed reformulation based on GHG factors of ingredients:\n\n` +
-        `1. Baseline Feed GHG: ${baselineGHGPerTon.toFixed(2)} kg CO2e per ton.\n` +
-        `2. Reformulated Feed GHG: ${reformulatedGHGPerTon.toFixed(2)} kg CO2e per ton.\n` +
-        `3. GHG Saving per Ton: ${ghgSavingsPerTon.toFixed(2)} kg CO2e.\n` +
-        `4. Total Feed Consumed (After): ${totalFeedConsumedAfterInTons.toFixed(2)} tons.\n` +
+
+      const explanation = `For a 'Matrix' application with ${input.feedAdditive}, GHG savings are from feed reformulation and performance improvements:\n\n` +
+        `1. Baseline Feed GHG Factor: ${baselineGHGPerTon.toFixed(2)} kg CO2e per ton.\n` +
+        `2. Total Baseline Emissions: ${baselineGHG.toFixed(2)} kg CO2e.\n` +
+        `3. Reformulated Feed GHG Factor: ${reformulatedGHGPerTon.toFixed(2)} kg CO2e per ton.\n` +
+        `4. Total Emissions with Additive: ${ghgWithAdditive.toFixed(2)} kg CO2e.\n` +
         `5. Total GHG Savings: ${ghgSavings.toFixed(2)} kg CO2e.`;
 
       return {
