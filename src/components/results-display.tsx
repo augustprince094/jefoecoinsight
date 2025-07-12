@@ -5,7 +5,7 @@ import type { OptimizationResult } from "@/lib/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, Leaf, TrendingUp, Car, DollarSign, Sparkles, HelpCircle, PiggyBank, Lightbulb, Bird } from "lucide-react";
+import { AlertCircle, Leaf, TrendingUp, Car, DollarSign, Sparkles, HelpCircle, PiggyBank, Lightbulb, Chicken } from "lucide-react";
 import Image from "next/image";
 import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis, LabelList } from "recharts"
 import {
@@ -215,7 +215,7 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
                                         <p className="text-xs text-muted-foreground">driven by a car</p>
                                     </div>
                                     <div className="p-4 rounded-lg border bg-card/50 shadow-sm">
-                                        <Bird className="h-8 w-8 text-accent mx-auto mb-1 animate-wobble" />
+                                        <Chicken className="h-8 w-8 text-accent mx-auto mb-1 animate-wobble" />
                                         <p className="text-sm font-semibold">Equivalent Production</p>
                                         <p className="text-xl font-bold text-accent">{equivalentBirds.toLocaleString('en-US', { maximumFractionDigits: 0 })} chickens</p>
                                         <p className="text-xs text-muted-foreground">produced with the same emissions</p>
@@ -459,7 +459,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                                         <p className="text-xs text-muted-foreground">driven by a car</p>
                                     </div>
                                     <div className="p-4 rounded-lg border bg-card/50 shadow-sm">
-                                        <Bird className="h-8 w-8 text-accent mx-auto mb-1 animate-wobble" />
+                                        <Chicken className="h-8 w-8 text-accent mx-auto mb-1 animate-wobble" />
                                         <p className="text-sm font-semibold">Equivalent Production</p>
                                         <p className="text-xl font-bold text-accent">{equivalentBirds.toLocaleString('en-US', { maximumFractionDigits: 0 })} chickens</p>
                                         <p className="text-xs text-muted-foreground">produced with the same emissions</p>
