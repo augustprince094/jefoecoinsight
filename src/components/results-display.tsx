@@ -24,7 +24,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { ProvideAdvisoryOutput } from "@/ai/flows/provide-advisory";
 import { regionalBaselineGHG } from "@/lib/additive-data";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { ChickenIcon } from "@/components/icons/chicken-icon";
+import { GiRoastChicken } from "react-icons/gi";
 
 
 const additiveColorMap: { [key: string]: string } = {
@@ -216,7 +216,7 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
                                         <p className="text-xs text-muted-foreground">driven by a car</p>
                                     </div>
                                     <div className="p-4 rounded-lg border bg-card/50 shadow-sm">
-                                        <ChickenIcon className="h-8 w-8 text-accent mx-auto mb-1 animate-wobble" />
+                                        <GiRoastChicken className="h-8 w-8 text-accent mx-auto mb-1 animate-wobble" />
                                         <p className="text-sm font-semibold">Equivalent Production</p>
                                         <p className="text-xl font-bold text-accent">{equivalentChickens.toLocaleString('en-US', { maximumFractionDigits: 0 })} chickens</p>
                                         <p className="text-xs text-muted-foreground">produced with the same emissions</p>
@@ -460,7 +460,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                                         <p className="text-xs text-muted-foreground">driven by a car</p>
                                     </div>
                                     <div className="p-4 rounded-lg border bg-card/50 shadow-sm">
-                                        <ChickenIcon className="h-8 w-8 text-accent mx-auto mb-1 animate-wobble" />
+                                        <GiRoastChicken className="h-8 w-8 text-accent mx-auto mb-1 animate-wobble" />
                                         <p className="text-sm font-semibold">Equivalent Production</p>
                                         <p className="text-xl font-bold text-accent">{equivalentChickens.toLocaleString('en-US', { maximumFractionDigits: 0 })} chickens</p>
                                         <p className="text-xs text-muted-foreground">produced with the same emissions</p>
@@ -625,5 +625,6 @@ export function ResultsDisplay({ results, isLoading, error }: { results: Optimiz
     
 
     
+
 
 
