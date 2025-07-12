@@ -386,28 +386,25 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                     </CardHeader>
                     <TabsContent value="ghg">
                        <CardContent className="space-y-6 pt-0">
-                            <div className="p-3 rounded-lg border bg-card/50 shadow-sm text-center">
-                                <CardDescription className="flex items-center justify-center gap-1.5 text-xs mb-1">
-                                    Total GHG Savings
-                                     <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <HelpCircle className="h-3 w-3 text-muted-foreground cursor-help" />
-                                            </TooltipTrigger>
-                                            <TooltipContent className="w-80 max-w-sm whitespace-pre-wrap text-xs">
-                                                <p className="font-bold mb-2">Calculation Breakdown:</p>
-                                                <p>{ghgData.explanation}</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
-                                </CardDescription>
-                                <p className="text-xl font-bold text-accent">
-                                    {(ghgData.ghgSavings / 1000).toFixed(2)} tons CO₂e
-                                </p>
-                            </div>
-                             <div className="border-t pt-6">
+                             <div className="border-b pb-6">
                                 <div className="text-center mb-4">
-                                    <p className="text-sm text-muted-foreground">Total GHG Emissions (tons CO₂e)</p>
+                                    <p className="text-sm text-muted-foreground">
+                                        Total GHG savings 
+                                        <TooltipProvider>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <HelpCircle className="inline h-3 w-3 ml-1.5 text-muted-foreground cursor-help" />
+                                                </TooltipTrigger>
+                                                <TooltipContent className="w-80 max-w-sm whitespace-pre-wrap text-xs">
+                                                    <p className="font-bold mb-2">Calculation Breakdown:</p>
+                                                    <p>{ghgData.explanation}</p>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>
+                                    </p>
+                                    <p className="text-lg font-bold text-accent">
+                                        {(ghgData.ghgSavings / 1000).toFixed(2)} tons CO₂e per production cycle
+                                    </p>
                                 </div>
                                 <ChartContainer config={ghgChartConfig} className="h-[200px] w-full">
                                     <BarChart accessibilityLayer data={ghgChartData} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
@@ -449,7 +446,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                                 </ChartContainer>
                             </div>
 
-                            <div className="border-t pt-6">
+                            <div className="pt-0">
                                 <p className="text-center text-sm text-muted-foreground mb-4">Practical Meaning</p>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
                                     <div className="p-4 rounded-lg border bg-card/50 shadow-sm relative overflow-hidden">
@@ -625,6 +622,7 @@ export function ResultsDisplay({ results, isLoading, error }: { results: Optimiz
     
 
     
+
 
 
 
