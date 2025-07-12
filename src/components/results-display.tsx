@@ -113,6 +113,7 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
     const ghgPerKgLiveWeight = regionalBaselineGHG[region] || regionalBaselineGHG.Canada;
     const equivalentBirds = ghgData.ghgSavings > 0 ? ghgData.ghgSavings / (inputs.broilerLiveWeight * ghgPerKgLiveWeight) : 0;
     const equivalentKm = ghgData.ghgSavings > 0 ? (ghgData.ghgSavings / 1000) * 4100 : 0;
+    const carbonCreditRevenue = ghgData.ghgSavings > 0 ? (ghgData.ghgSavings / 1000) * 167 : 0;
 
     return (
         <div className="space-y-6 animate-in fade-in-50 duration-500">
@@ -205,18 +206,25 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
                             
                             <div className="border-t pt-6">
                                 <p className="text-center text-sm text-muted-foreground mb-4">Practical Meaning</p>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-center">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
                                     <div className="p-4 rounded-lg border bg-card/50 shadow-sm relative overflow-hidden">
-                                        <Car className="absolute -left-2 -bottom-2 h-16 w-16 text-muted -z-10 animate-drive-and-wobble" />
+                                        <div className="absolute inset-x-0 bottom-4 h-0.5 bg-gray-300"></div>
+                                        <Car className="absolute -left-2 bottom-4 h-12 w-12 text-muted z-10 animate-drive" />
                                         <p className="text-sm font-semibold">Equivalent Distance</p>
-                                        <p className="text-2xl font-bold text-accent">{equivalentKm.toLocaleString('en-US', { maximumFractionDigits: 0 })} km</p>
-                                        <p className="text-xs text-muted-foreground">driven by a passenger car</p>
+                                        <p className="text-xl font-bold text-accent">{equivalentKm.toLocaleString('en-US', { maximumFractionDigits: 0 })} km</p>
+                                        <p className="text-xs text-muted-foreground">driven by a car</p>
                                     </div>
                                     <div className="p-4 rounded-lg border bg-card/50 shadow-sm">
-                                        <Bird className="h-8 w-8 text-accent mx-auto mb-2 animate-wobble" />
+                                        <Bird className="h-8 w-8 text-accent mx-auto mb-1 animate-wobble" />
                                         <p className="text-sm font-semibold">Equivalent Production</p>
-                                        <p className="text-2xl font-bold text-accent">{equivalentBirds.toLocaleString('en-US', { maximumFractionDigits: 0 })} birds</p>
+                                        <p className="text-xl font-bold text-accent">{equivalentBirds.toLocaleString('en-US', { maximumFractionDigits: 0 })} chickens</p>
                                         <p className="text-xs text-muted-foreground">produced with the same emissions</p>
+                                    </div>
+                                     <div className="p-4 rounded-lg border bg-card/50 shadow-sm">
+                                        <Leaf className="h-8 w-8 text-accent mx-auto mb-1 animate-wobble" />
+                                        <p className="text-sm font-semibold">Carbon Credit Revenue</p>
+                                        <p className="text-xl font-bold text-accent">{formatCurrency(carbonCreditRevenue)}</p>
+                                        <p className="text-xs text-muted-foreground">from GHG savings</p>
                                     </div>
                                 </div>
                             </div>
@@ -349,6 +357,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
     const ghgPerKgLiveWeight = regionalBaselineGHG[region] || regionalBaselineGHG.Canada;
     const equivalentBirds = ghgData.ghgSavings > 0 ? ghgData.ghgSavings / (inputs.broilerLiveWeight * ghgPerKgLiveWeight) : 0;
     const equivalentKm = ghgData.ghgSavings > 0 ? (ghgData.ghgSavings / 1000) * 4100 : 0;
+    const carbonCreditRevenue = ghgData.ghgSavings > 0 ? (ghgData.ghgSavings / 1000) * 167 : 0;
 
 
     return (
@@ -441,18 +450,25 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
 
                             <div className="border-t pt-6">
                                 <p className="text-center text-sm text-muted-foreground mb-4">Practical Meaning</p>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-center">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
                                     <div className="p-4 rounded-lg border bg-card/50 shadow-sm relative overflow-hidden">
-                                        <Car className="absolute -left-2 -bottom-2 h-16 w-16 text-muted -z-10 animate-drive-and-wobble" />
+                                        <div className="absolute inset-x-0 bottom-4 h-0.5 bg-gray-300"></div>
+                                        <Car className="absolute -left-2 bottom-4 h-12 w-12 text-muted z-10 animate-drive" />
                                         <p className="text-sm font-semibold">Equivalent Distance</p>
-                                        <p className="text-2xl font-bold text-accent">{equivalentKm.toLocaleString('en-US', { maximumFractionDigits: 0 })} km</p>
-                                        <p className="text-xs text-muted-foreground">driven by a passenger car</p>
+                                        <p className="text-xl font-bold text-accent">{equivalentKm.toLocaleString('en-US', { maximumFractionDigits: 0 })} km</p>
+                                        <p className="text-xs text-muted-foreground">driven by a car</p>
                                     </div>
                                     <div className="p-4 rounded-lg border bg-card/50 shadow-sm">
-                                        <Bird className="h-8 w-8 text-accent mx-auto mb-2 animate-wobble" />
+                                        <Bird className="h-8 w-8 text-accent mx-auto mb-1 animate-wobble" />
                                         <p className="text-sm font-semibold">Equivalent Production</p>
-                                        <p className="text-2xl font-bold text-accent">{equivalentBirds.toLocaleString('en-US', { maximumFractionDigits: 0 })} birds</p>
+                                        <p className="text-xl font-bold text-accent">{equivalentBirds.toLocaleString('en-US', { maximumFractionDigits: 0 })} chickens</p>
                                         <p className="text-xs text-muted-foreground">produced with the same emissions</p>
+                                    </div>
+                                    <div className="p-4 rounded-lg border bg-card/50 shadow-sm">
+                                        <Leaf className="h-8 w-8 text-accent mx-auto mb-1 animate-wobble" />
+                                        <p className="text-sm font-semibold">Carbon Credit Revenue</p>
+                                        <p className="text-xl font-bold text-accent">{formatCurrency(carbonCreditRevenue)}</p>
+                                        <p className="text-xs text-muted-foreground">from GHG savings</p>
                                     </div>
                                 </div>
                             </div>
