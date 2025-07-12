@@ -5,7 +5,7 @@ import type { OptimizationResult } from "@/lib/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, Leaf, TrendingUp, Car, DollarSign, Sparkles, HelpCircle, PiggyBank, Lightbulb, Chicken } from "lucide-react";
+import { AlertCircle, Leaf, TrendingUp, Car, DollarSign, Sparkles, HelpCircle, PiggyBank, Lightbulb } from "lucide-react";
 import Image from "next/image";
 import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis, LabelList } from "recharts"
 import {
@@ -24,6 +24,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { ProvideAdvisoryOutput } from "@/ai/flows/provide-advisory";
 import { regionalBaselineGHG } from "@/lib/additive-data";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { ChickenIcon } from "@/components/icons/chicken-icon";
 
 
 const additiveColorMap: { [key: string]: string } = {
@@ -111,7 +112,7 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
 
     const region = inputs.region as keyof typeof regionalBaselineGHG;
     const ghgPerKgLiveWeight = regionalBaselineGHG[region] || regionalBaselineGHG.Canada;
-    const equivalentBirds = ghgData.ghgSavings > 0 ? ghgData.ghgSavings / (inputs.broilerLiveWeight * ghgPerKgLiveWeight) : 0;
+    const equivalentChickens = ghgData.ghgSavings > 0 ? ghgData.ghgSavings / (inputs.broilerLiveWeight * ghgPerKgLiveWeight) : 0;
     const equivalentKm = ghgData.ghgSavings > 0 ? (ghgData.ghgSavings / 1000) * 4100 : 0;
     const carbonCreditRevenue = ghgData.ghgSavings > 0 ? (ghgData.ghgSavings / 1000) * 167 : 0;
 
@@ -215,9 +216,9 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
                                         <p className="text-xs text-muted-foreground">driven by a car</p>
                                     </div>
                                     <div className="p-4 rounded-lg border bg-card/50 shadow-sm">
-                                        <Chicken className="h-8 w-8 text-accent mx-auto mb-1 animate-wobble" />
+                                        <ChickenIcon className="h-8 w-8 text-accent mx-auto mb-1 animate-wobble" />
                                         <p className="text-sm font-semibold">Equivalent Production</p>
-                                        <p className="text-xl font-bold text-accent">{equivalentBirds.toLocaleString('en-US', { maximumFractionDigits: 0 })} chickens</p>
+                                        <p className="text-xl font-bold text-accent">{equivalentChickens.toLocaleString('en-US', { maximumFractionDigits: 0 })} chickens</p>
                                         <p className="text-xs text-muted-foreground">produced with the same emissions</p>
                                     </div>
                                      <div className="p-4 rounded-lg border bg-card/50 shadow-sm">
@@ -355,7 +356,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
 
     const region = inputs.region as keyof typeof regionalBaselineGHG;
     const ghgPerKgLiveWeight = regionalBaselineGHG[region] || regionalBaselineGHG.Canada;
-    const equivalentBirds = ghgData.ghgSavings > 0 ? ghgData.ghgSavings / (inputs.broilerLiveWeight * ghgPerKgLiveWeight) : 0;
+    const equivalentChickens = ghgData.ghgSavings > 0 ? ghgData.ghgSavings / (inputs.broilerLiveWeight * ghgPerKgLiveWeight) : 0;
     const equivalentKm = ghgData.ghgSavings > 0 ? (ghgData.ghgSavings / 1000) * 4100 : 0;
     const carbonCreditRevenue = ghgData.ghgSavings > 0 ? (ghgData.ghgSavings / 1000) * 167 : 0;
 
@@ -459,9 +460,9 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                                         <p className="text-xs text-muted-foreground">driven by a car</p>
                                     </div>
                                     <div className="p-4 rounded-lg border bg-card/50 shadow-sm">
-                                        <Chicken className="h-8 w-8 text-accent mx-auto mb-1 animate-wobble" />
+                                        <ChickenIcon className="h-8 w-8 text-accent mx-auto mb-1 animate-wobble" />
                                         <p className="text-sm font-semibold">Equivalent Production</p>
-                                        <p className="text-xl font-bold text-accent">{equivalentBirds.toLocaleString('en-US', { maximumFractionDigits: 0 })} chickens</p>
+                                        <p className="text-xl font-bold text-accent">{equivalentChickens.toLocaleString('en-US', { maximumFractionDigits: 0 })} chickens</p>
                                         <p className="text-xs text-muted-foreground">produced with the same emissions</p>
                                     </div>
                                     <div className="p-4 rounded-lg border bg-card/50 shadow-sm">
