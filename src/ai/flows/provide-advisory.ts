@@ -27,7 +27,6 @@ const AdvisoryInputSchema = z.object({
 export type ProvideAdvisoryInput = z.infer<typeof AdvisoryInputSchema>;
 
 const ProvideAdvisoryOutputSchema = z.object({
-  summary: z.string().describe('A concise, one-to-two line summary of the ROI and GHG savings.'),
   keyBenefit: z.string().describe('A single, concise key benefit of the selected additive.'),
 });
 export type ProvideAdvisoryOutput = z.infer<typeof ProvideAdvisoryOutputSchema>;
@@ -40,23 +39,15 @@ const prompt = ai.definePrompt({
   name: 'provideAdvisoryPrompt',
   input: {schema: AdvisoryInputSchema},
   output: {schema: ProvideAdvisoryOutputSchema},
-  prompt: `You are a Jefo expert poultry consultant. Your task is to provide a concise, two-part advisory based on calculator results.
+  prompt: `You are a Jefo expert poultry consultant. Your task is to provide a concise key benefit based on the user's selected additive.
 
 **Input Data:**
 - Feed Additive: {{{inputs.feedAdditive}}}
 - Application Type: {{{inputs.applicationType}}}
-- Calculated ROI: {{{roiData.roi}}}:1
-- Total GHG Savings: {{{ghgData.ghgSavings}}} tons CO2e
 
 **Instructions:**
 
-1.  **Craft a Summary (for the 'summary' field):**
-    *   Create a positive, engaging sentence summarizing the ROI and GHG savings. This summary must be no more than two lines.
-    *   **Important: Format the ROI value to one decimal place.**
-    *   Calculate the equivalent kilometers driven for the GHG savings (Total GHG Savings * 4100).
-    *   Example: "Impressive results! Using {{{inputs.feedAdditive}}} not only delivers a strong 8.5:1 return on investment but also reduces emissions equivalent to driving [calculated km] km."
-
-2.  **Select a Key Benefit (for the 'keyBenefit' field):**
+1.  **Select a Key Benefit (for the 'keyBenefit' field):**
     *   Choose the *exact* sentence from the "Key Benefit Options" below that matches the user's selected \`feedAdditive\` and \`applicationType\`.
 
 **Key Benefit Options (Use one of these verbatim):**
@@ -73,8 +64,8 @@ const prompt = ai.definePrompt({
     *   And \`applicationType\` is 'On-top': "Jefo Xylanase is a reliable solution for better performance, improves footpad quality and economic returns."
 
 **Final Output:**
-- Populate the \`summary\` and \`keyBenefit\` fields in the output schema.
-- Do not use bullet points, headers, or any extra formatting in the strings.
+- Populate the \`keyBenefit\` field in the output schema.
+- Do not use bullet points, headers, or any extra formatting in the string.
 `,
 });
 

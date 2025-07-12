@@ -43,33 +43,22 @@ const formatCurrency = (value: number, options: Intl.NumberFormatOptions = {}) =
     }).format(value);
 }
 
-const AdvisoryCard = ({ advisoryData, additiveColor }: { advisoryData: ProvideAdvisoryOutput | undefined, additiveColor: string }) => {
-  if (!advisoryData?.summary && !advisoryData?.keyBenefit) return null;
+const KeyBenefitCard = ({ advisoryData, additiveColor }: { advisoryData: ProvideAdvisoryOutput | undefined, additiveColor: string }) => {
+  if (!advisoryData?.keyBenefit) return null;
 
   return (
     <Card style={{ backgroundColor: `${additiveColor}0D`, borderColor: `${additiveColor}33` }}>
       <CardHeader>
         <CardTitle className="flex items-center gap-2" style={{ color: additiveColor }}>
-          <Sparkles className="h-6 w-6" />
-          Smart Advisory
+          <Lightbulb className="h-6 w-6" />
+          Key Benefit
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {advisoryData.summary && (
-            <p className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed">
-                {advisoryData.summary}
-            </p>
-        )}
+      <CardContent>
         {advisoryData.keyBenefit && (
-            <div className="border-t pt-4" style={{ borderColor: `${additiveColor}33` }}>
-                <h4 className="flex items-center gap-2 text-sm font-semibold mb-2" style={{ color: additiveColor }}>
-                    <Lightbulb className="h-5 w-5" />
-                    Key Benefit
-                </h4>
-                <p className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed">
-                    {advisoryData.keyBenefit}
-                </p>
-            </div>
+            <p className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed">
+                {advisoryData.keyBenefit}
+            </p>
         )}
       </CardContent>
     </Card>
@@ -308,7 +297,7 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
                 </Card>
             </Tabs>
 
-            <AdvisoryCard advisoryData={advisoryData} additiveColor={additiveColor}/>
+            <KeyBenefitCard advisoryData={advisoryData} additiveColor={additiveColor}/>
         </div>
     );
 }
@@ -552,7 +541,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                 </Card>
             </Tabs>
             
-            <AdvisoryCard advisoryData={advisoryData} additiveColor={additiveColor} />
+            <KeyBenefitCard advisoryData={advisoryData} additiveColor={additiveColor} />
         </div>
     );
 }
@@ -618,6 +607,7 @@ export function ResultsDisplay({ results, isLoading, error }: { results: Optimiz
     
 
     
+
 
 
 
