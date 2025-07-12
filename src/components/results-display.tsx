@@ -187,7 +187,7 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
                                             cursor={false}
                                             content={<ChartTooltipContent 
                                                 indicator="line"
-                                                formatter={(value, name) => `${(value as number).toFixed(2)} tons CO₂e`}
+                                                formatter={(value) => `${(value as number).toFixed(2)} tons CO₂e`}
                                             />}
                                         />
                                         <Bar dataKey="ghg" radius={4}>
@@ -210,7 +210,7 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
                                     <div className="p-4 rounded-lg border bg-card/50 shadow-sm relative overflow-hidden">
                                         <div className="absolute inset-x-0 bottom-4 h-0.5 bg-gray-300"></div>
-                                        <Car className="absolute -left-2 bottom-4 h-12 w-12 text-muted z-10 animate-drive" />
+                                        <Car className="absolute -left-2 bottom-4 h-12 w-12 z-10 animate-drive" style={{ color: additiveColor }} />
                                         <p className="text-sm font-semibold">Equivalent Distance</p>
                                         <p className="text-xl font-bold text-accent">{equivalentKm.toLocaleString('en-US', { maximumFractionDigits: 0 })} km</p>
                                         <p className="text-xs text-muted-foreground">driven by a car</p>
@@ -431,7 +431,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                                             cursor={false}
                                             content={<ChartTooltipContent 
                                                 indicator="line"
-                                                formatter={(value, name) => `${(value as number).toFixed(2)} tons CO₂e`}
+                                                formatter={(value) => `${(value as number).toFixed(2)} tons CO₂e`}
                                             />}
                                         />
                                         <Bar dataKey="ghg" radius={4}>
@@ -454,7 +454,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
                                     <div className="p-4 rounded-lg border bg-card/50 shadow-sm relative overflow-hidden">
                                         <div className="absolute inset-x-0 bottom-4 h-0.5 bg-gray-300"></div>
-                                        <Car className="absolute -left-2 bottom-4 h-12 w-12 text-muted z-10 animate-drive" />
+                                        <Car className="absolute -left-2 bottom-4 h-12 w-12 z-10 animate-drive" style={{ color: additiveColor }} />
                                         <p className="text-sm font-semibold">Equivalent Distance</p>
                                         <p className="text-xl font-bold text-accent">{equivalentKm.toLocaleString('en-US', { maximumFractionDigits: 0 })} km</p>
                                         <p className="text-xs text-muted-foreground">driven by a car</p>
@@ -625,6 +625,7 @@ export function ResultsDisplay({ results, isLoading, error }: { results: Optimiz
     
 
     
+
 
 
 
