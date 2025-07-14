@@ -144,10 +144,11 @@ const calculateROIFlow = ai.defineFlow(
       const totalFeedConsumedAfter = (input.numberOfBirds * input.feedConversionRatioAfter * input.broilerLiveWeight) / (1 - (input.mortalityRateAfter / 100));
       const totalFeedConsumedAfterInTons = totalFeedConsumedAfter / 1000;
       
-      const feedCostSavings = (baselineCostPerTon - reformulatedCostPerTon) * totalFeedConsumedAfterInTons;
+      const grossFeedCostSavings = (baselineCostPerTon - reformulatedCostPerTon) * totalFeedConsumedAfterInTons;
       const totalInvestmentInAdditive = totalFeedConsumedAfterInTons * input.inclusionRate * input.costMetrics.additiveCost;
+      const netFeedCostSavings = grossFeedCostSavings - totalInvestmentInAdditive;
       
-      const roi = totalInvestmentInAdditive > 0 ? feedCostSavings / totalInvestmentInAdditive : Infinity;
+      const roi = totalInvestmentInAdditive > 0 ? netFeedCostSavings / totalInvestmentInAdditive : Infinity;
       
       const totalFeedCostAfter = totalFeedConsumedAfterInTons * reformulatedCostPerTon;
       const totalFeedCostBefore = ((input.numberOfBirds * input.feedConversionRatioBefore * input.broilerLiveWeight) / (1 - (input.mortalityRateBefore / 100))) / 1000 * baselineCostPerTon;
@@ -158,21 +159,21 @@ const calculateROIFlow = ai.defineFlow(
       const feedCostPerLiveWeightAfter = totalLiveWeightAfter > 0 ? (totalFeedCostAfter + totalInvestmentInAdditive) / totalLiveWeightAfter : 0;
       const feedCostPerLiveWeightBefore = totalLiveWeightBefore > 0 ? totalFeedCostBefore / totalLiveWeightBefore : 0;
       
-      const explanation = `For a 'Matrix' application with ${input.feedAdditiveType}, savings are calculated from feed reformulation:\n\n` +
-        `1. Baseline Feed Cost: The cost for the standard feed in ${input.region} is $${baselineCostPerTon.toFixed(2)} per ton.\n` +
-        `2. Reformulated Feed Cost: With the additive, the new feed cost is $${reformulatedCostPerTon.toFixed(2)} per ton.\n` +
-        `3. Saving per Ton: $${(baselineCostPerTon - reformulatedCostPerTon).toFixed(2)}.\n` +
-        `4. Total Feed Consumed: ${totalFeedConsumedAfterInTons.toFixed(2)} tons.\n` +
-        `5. Total Feed Cost Savings: $${feedCostSavings.toFixed(2)}.\n` +
-        `6. Total Additive Investment: $${totalInvestmentInAdditive.toFixed(2)}.\n` +
-        `7. Return on Investment (ROI): The final ROI is ${roi.toFixed(1)}:1.`;
+      const explanation = `For a 'Matrix' application with ${input.feedAdditiveType}, savings are calculated from feed reformulation, accounting for the additive cost:\n\n` +
+        `1. Baseline Feed Cost: $${baselineCostPerTon.toFixed(2)} per ton.\n` +
+        `2. Reformulated Feed Cost: $${reformulatedCostPerTon.toFixed(2)} per ton.\n` +
+        `3. Gross Saving per Ton: $${(baselineCostPerTon - reformulatedCostPerTon).toFixed(2)}.\n` +
+        `4. Total Gross Feed Savings: $${grossFeedCostSavings.toFixed(2)}.\n` +
+        `5. Total Additive Investment: $${totalInvestmentInAdditive.toFixed(2)}.\n` +
+        `6. Net Savings (Gross Savings - Investment): $${netFeedCostSavings.toFixed(2)}.\n` +
+        `7. Return on Investment (ROI): The final ROI, based on Net Savings, is ${roi.toFixed(1)}:1.`;
       
       return {
         roi: roi,
         explanation: explanation,
         feedCostPerLiveWeightBefore: feedCostPerLiveWeightBefore,
         feedCostPerLiveWeightAfter: feedCostPerLiveWeightAfter,
-        feedCostSavings: feedCostSavings,
+        feedCostSavings: netFeedCostSavings, // Return the NET savings
         baselineCostPerTon: baselineCostPerTon,
         reformulatedCostPerTon: reformulatedCostPerTon,
       };
