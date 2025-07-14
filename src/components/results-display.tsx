@@ -146,7 +146,7 @@ function MatrixDashboard({ results }: { results: OptimizationResult }) {
                                             </Tooltip>
                                         </TooltipProvider>
                                     </p>
-                                    <p className="text-xl font-bold text-accent">
+                                    <p className="text-2xl font-bold text-accent">
                                         {(ghgData.ghgSavings / 1000).toFixed(2)} tons CO₂e per production cycle
                                     </p>
                                 </div>
@@ -387,7 +387,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                                             </Tooltip>
                                         </TooltipProvider>
                                     </p>
-                                    <p className="text-xl font-bold text-accent">
+                                    <p className="text-2xl font-bold text-accent">
                                         {(ghgData.ghgSavings / 1000).toFixed(2)} tons CO₂e per production cycle
                                     </p>
                                 </div>
@@ -615,3 +615,6 @@ export function ResultsDisplay({ results, isLoading, error }: { results: Optimiz
 
 
 
+
+
+    
