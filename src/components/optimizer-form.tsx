@@ -92,9 +92,9 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
     if (feedAdditiveValue && baselineFCRValue > 0) {
       let fcrReduction = 0;
       switch (feedAdditiveValue) {
-        case "Jefo Pro Solution": fcrReduction = 0.04; break;
-        case "Jefo P(OA+EO)": fcrReduction = 0.05; break;
-        case "Jefo Xylanase": fcrReduction = 0.06; break;
+        case "Jefo Pro Solution": fcrReduction = 0.03; break;
+        case "Jefo P(OA+EO)": fcrReduction = 0.04; break;
+        case "Jefo Xylanase": fcrReduction = 0.04; break;
       }
       const newFCR = baselineFCRValue - fcrReduction;
       setValue("feedConversionRatioAfter", parseFloat(newFCR.toFixed(3)), { shouldValidate: true });
@@ -103,9 +103,9 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
     if (feedAdditiveValue && baselineMortalityRateValue > 0) {
       let mortalityReduction = 0;
       switch (feedAdditiveValue) {
-        case "Jefo Pro Solution": mortalityReduction = 1.5; break;
-        case "Jefo P(OA+EO)": mortalityReduction = 2.0; break;
-        case "Jefo Xylanase": mortalityReduction = 1.4; break;
+        case "Jefo Pro Solution": mortalityReduction = 1; break;
+        case "Jefo P(OA+EO)": mortalityReduction = 1.5; break;
+        case "Jefo Xylanase": mortalityReduction = 1; break;
       }
       const newMortalityRate = baselineMortalityRateValue - mortalityReduction;
       setValue("mortalityRateAfter", Math.max(0, parseFloat(newMortalityRate.toFixed(2))), { shouldValidate: true });
@@ -366,7 +366,7 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
               Calculating...
             </>
           ) : (
-            "Calculate ROI & GHG Savings"
+            "Calculate GHG savings & ROI"
           )}
         </Button>
       </form>
