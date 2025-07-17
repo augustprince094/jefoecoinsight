@@ -36,7 +36,6 @@ export default function FeedAdditivesPage() {
             <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
               <Link href="/about" className="text-muted-foreground hover:text-primary">About App</Link>
               <Link href="/feed-additives" className="font-semibold text-primary border-b-2 border-primary">Feed additives</Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary">Applications</Link>
               <Link href="/calculator" className="text-muted-foreground hover:text-primary">
                   Calculator
               </Link>

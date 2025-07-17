@@ -127,7 +127,6 @@ export default function HomePage() {
             <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
               <Link href="/about" className="text-muted-foreground hover:text-primary">About App</Link>
               <Link href="/feed-additives" className="text-muted-foreground hover:text-primary">Feed additives</Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary">Applications</Link>
               <Link href="/calculator" className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md">
                   Calculator
               </Link>
