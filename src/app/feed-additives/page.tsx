@@ -48,7 +48,7 @@ export default function FeedAdditivesPage() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-bold text-primary tracking-tight">
-              Our Feed Additive Solutions
+              Jefo Feed Additive Solutions
             </h1>
             <p className="text-muted-foreground mt-4 max-w-2xl mx-auto text-lg">
               Discover the science and sustainable impact behind Jefo's innovative feed additives.
