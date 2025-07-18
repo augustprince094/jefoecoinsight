@@ -20,6 +20,7 @@ export async function getOptimizationResults(data: FormValues): Promise<{ data?:
     const roiInput: ROIInput = {
       region: data.region,
       applicationType: applicationType,
+      dietPhase: data.dietPhase,
       feedAdditiveType: data.feedAdditive,
       inclusionRate: data.inclusionRate / 1000,
       numberOfBirds: data.numberOfBirds,
@@ -34,6 +35,7 @@ export async function getOptimizationResults(data: FormValues): Promise<{ data?:
     const ghgInput: EstimateGHGSavingsInput = {
       region: data.region,
       applicationType: applicationType,
+      dietPhase: data.dietPhase,
       feedAdditive: data.feedAdditive,
       inclusionRate: data.inclusionRate / 1000,
       numberOfBirds: data.numberOfBirds,

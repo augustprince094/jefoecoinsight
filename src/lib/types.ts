@@ -13,6 +13,9 @@ export type ApplicationType = (typeof applicationTypes)[number];
 export const regions = ["Canada", "Asia", "Europe"] as const;
 export type Region = (typeof regions)[number];
 
+export const dietPhases = ["Starter", "Grower", "Finisher"] as const;
+export type DietPhase = (typeof dietPhases)[number];
+
 export const formSchema = z.object({
   // Card 1: Broiler Production Cycle Details
   region: z.enum(regions, {
@@ -29,6 +32,7 @@ export const formSchema = z.object({
     required_error: "Please select a feed additive.",
   }),
   applicationType: z.enum(applicationTypes).optional(),
+  dietPhase: z.enum(dietPhases).optional(),
   inclusionRate: z.coerce.number().positive({ message: "Must be a positive number." }),
   additiveCost: z.coerce.number().positive({ message: "Must be a positive number." }),
   

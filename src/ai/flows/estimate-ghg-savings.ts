@@ -1,3 +1,4 @@
+
 // estimate-ghg-savings.ts
 'use server';
 
@@ -17,6 +18,7 @@ import { feedData } from '@/lib/feed-data';
 const EstimateGHGSavingsInputSchema = z.object({
   region: z.string().describe('The region of operation.'),
   applicationType: z.string().optional().describe('The application type (Matrix or On-top).'),
+  dietPhase: z.string().optional().describe('The diet phase (Starter, Grower, or Finisher).'),
   feedAdditive: z.string().describe('The type of feed additive used.'),
   inclusionRate: z.number().describe('The inclusion rate of the feed additive (e.g., in kg/ton).'),
   numberOfBirds: z.number().describe('Number of birds per production cycle.'),
@@ -89,18 +91,24 @@ const estimateGHGSavingsFlow = ai.defineFlow(
   async (input) => {
     // Matrix application
     if (input.applicationType === 'Matrix' && (input.feedAdditive === 'Jefo Pro Solution' || input.feedAdditive === 'Jefo Xylanase')) {
-      const regionFeed = feedData.find(d => d.region === input.region);
-      if (!regionFeed) {
+      const dietPhase = (input.dietPhase || 'Starter') as 'Starter' | 'Grower' | 'Finisher';
+      const regionFeedData = feedData.find(d => d.region === input.region);
+      if (!regionFeedData) {
         throw new Error(`Feed data for region ${input.region} not found.`);
       }
 
-      const baselineGHGPerTon = regionFeed.ingredients.reduce((total, ing) => {
+      const dietIngredients = regionFeedData.diets[dietPhase];
+      if (!dietIngredients) {
+        throw new Error(`Diet data for phase ${dietPhase} in region ${input.region} not found.`);
+      }
+
+      const baselineGHGPerTon = dietIngredients.reduce((total, ing) => {
         return total + ing.quantity * ing.carbonFootprint;
       }, 0);
       
       let reformulatedIngredients;
       if (input.feedAdditive === 'Jefo Pro Solution') {
-        reformulatedIngredients = regionFeed.ingredients.map(ing => {
+        reformulatedIngredients = dietIngredients.map(ing => {
           let newQuantity = ing.quantity;
           switch (ing.name) {
             case 'Corn': newQuantity *= 1.031; break;
@@ -112,7 +120,7 @@ const estimateGHGSavingsFlow = ai.defineFlow(
           return { ...ing, quantity: newQuantity };
         });
       } else { // Jefo Xylanase
-        reformulatedIngredients = regionFeed.ingredients.map(ing => {
+        reformulatedIngredients = dietIngredients.map(ing => {
           let newQuantity = ing.quantity;
           switch (ing.name) {
             case 'Corn': newQuantity *= 1.034; break;

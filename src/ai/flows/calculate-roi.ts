@@ -16,6 +16,7 @@ import { feedData } from '@/lib/feed-data';
 const ROIInputSchema = z.object({
   region: z.string().describe('The region of operation.'),
   applicationType: z.string().optional().describe('The application type (Matrix or On-top).'),
+  dietPhase: z.string().optional().describe('The diet phase (Starter, Grower, or Finisher).'),
   feedAdditiveType: z.string().describe('The type of feed additive used.'),
   inclusionRate: z.number().describe('The inclusion rate of the feed additive in kg/ton.'),
   numberOfBirds: z.number().describe('Number of birds per production cycle.'),
@@ -101,18 +102,25 @@ const calculateROIFlow = ai.defineFlow(
   },
   async (input) => {
     if (input.applicationType === 'Matrix' && (input.feedAdditiveType === 'Jefo Pro Solution' || input.feedAdditiveType === 'Jefo Xylanase')) {
-      const regionFeed = feedData.find(d => d.region === input.region);
-      if (!regionFeed) {
+      const dietPhase = (input.dietPhase || 'Starter') as 'Starter' | 'Grower' | 'Finisher';
+      const regionFeedData = feedData.find(d => d.region === input.region);
+
+      if (!regionFeedData) {
         throw new Error(`Feed data for region ${input.region} not found.`);
       }
+      
+      const dietIngredients = regionFeedData.diets[dietPhase];
+      if (!dietIngredients) {
+        throw new Error(`Diet data for phase ${dietPhase} in region ${input.region} not found.`);
+      }
 
-      const baselineCostPerTon = regionFeed.ingredients.reduce((total, ing) => {
+      const baselineCostPerTon = dietIngredients.reduce((total, ing) => {
         return total + (ing.quantity / 1000) * ing.cost;
       }, 0);
       
       let reformulatedIngredients;
       if (input.feedAdditiveType === 'Jefo Pro Solution') {
-          reformulatedIngredients = regionFeed.ingredients.map(ing => {
+          reformulatedIngredients = dietIngredients.map(ing => {
             let newQuantity = ing.quantity;
             switch (ing.name) {
               case 'Corn': newQuantity *= 1.031; break;
@@ -124,7 +132,7 @@ const calculateROIFlow = ai.defineFlow(
             return { ...ing, quantity: newQuantity };
           });
       } else { // Jefo Xylanase
-          reformulatedIngredients = regionFeed.ingredients.map(ing => {
+          reformulatedIngredients = dietIngredients.map(ing => {
             let newQuantity = ing.quantity;
             switch (ing.name) {
               case 'Corn': newQuantity *= 1.034; break;
@@ -160,12 +168,12 @@ const calculateROIFlow = ai.defineFlow(
       const feedCostPerLiveWeightBefore = totalLiveWeightBefore > 0 ? totalFeedCostBefore / totalLiveWeightBefore : 0;
       
       const explanation = `For a 'Matrix' application with ${input.feedAdditiveType}, savings are calculated from feed reformulation, accounting for the additive cost:\n\n` +
-        `1. Baseline Feed Cost: $${baselineCostPerTon.toFixed(2)} per ton.\n` +
-        `2. Reformulated Feed Cost: $${reformulatedCostPerTon.toFixed(2)} per ton.\n` +
-        `3. Gross Saving per Ton: $${(baselineCostPerTon - reformulatedCostPerTon).toFixed(2)}.\n` +
-        `4. Total Gross Feed Savings: $${grossFeedCostSavings.toFixed(2)}.\n` +
-        `5. Total Additive Investment: $${totalInvestmentInAdditive.toFixed(2)}.\n` +
-        `6. Net Savings (Gross Savings - Investment): $${netFeedCostSavings.toFixed(2)}.\n` +
+        `1. Baseline Feed Cost: ${formatCurrency(baselineCostPerTon)} per ton.\n` +
+        `2. Reformulated Feed Cost: ${formatCurrency(reformulatedCostPerTon)} per ton.\n` +
+        `3. Gross Saving per Ton: ${formatCurrency(baselineCostPerTon - reformulatedCostPerTon)}.\n` +
+        `4. Total Gross Feed Savings: ${formatCurrency(grossFeedCostSavings)}.\n` +
+        `5. Total Additive Investment: ${formatCurrency(totalInvestmentInAdditive)}.\n` +
+        `6. Net Savings (Gross Savings - Investment): ${formatCurrency(netFeedCostSavings)}.\n` +
         `7. Return on Investment (ROI): The final ROI, based on Net Savings, is ${roi.toFixed(1)}:1.`;
       
       return {
@@ -185,3 +193,7 @@ const calculateROIFlow = ai.defineFlow(
     }
   }
 );
+
+function formatCurrency(value: number) {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
+}
