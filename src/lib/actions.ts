@@ -4,10 +4,16 @@
 import { calculateROI, type ROIInput } from '@/ai/flows/calculate-roi';
 import { estimateGHGSavings, type EstimateGHGSavingsInput } from '@/ai/flows/estimate-ghg-savings';
 import { provideAdvisory, type ProvideAdvisoryInput } from '@/ai/flows/provide-advisory';
-import { type FormValues, type OptimizationResult } from '@/lib/types';
+import { type FormValues, type OptimizationResult, type DietPhase } from '@/lib/types';
 
-export async function getOptimizationResults(data: FormValues): Promise<{ data?: OptimizationResult; error?: string }> {
+export async function getOptimizationResults(
+  data: FormValues, 
+  recalculateDietPhase?: DietPhase
+): Promise<{ data?: OptimizationResult; error?: string }> {
   try {
+    // If recalculating, use the provided phase, otherwise default to Starter or the form's value.
+    const dietPhase = recalculateDietPhase || data.dietPhase || "Starter";
+
     const costMetrics = {
         feedCost: data.feedCost,
         additiveCost: data.additiveCost,
@@ -20,7 +26,7 @@ export async function getOptimizationResults(data: FormValues): Promise<{ data?:
     const roiInput: ROIInput = {
       region: data.region,
       applicationType: applicationType,
-      dietPhase: data.dietPhase,
+      dietPhase: dietPhase,
       feedAdditiveType: data.feedAdditive,
       inclusionRate: data.inclusionRate / 1000,
       numberOfBirds: data.numberOfBirds,
@@ -35,7 +41,7 @@ export async function getOptimizationResults(data: FormValues): Promise<{ data?:
     const ghgInput: EstimateGHGSavingsInput = {
       region: data.region,
       applicationType: applicationType,
-      dietPhase: data.dietPhase,
+      dietPhase: dietPhase,
       feedAdditive: data.feedAdditive,
       inclusionRate: data.inclusionRate / 1000,
       numberOfBirds: data.numberOfBirds,
@@ -75,8 +81,8 @@ export async function getOptimizationResults(data: FormValues): Promise<{ data?:
         throw new Error("Failed to get advisory from the AI model.");
     }
 
-    // Pass the modified applicationType back with the results so the dashboard can be consistent
-    const updatedInputs = { ...data, applicationType: applicationType };
+    // Pass the modified applicationType and current dietPhase back with the results 
+    const updatedInputs = { ...data, applicationType: applicationType, dietPhase: dietPhase };
 
     return { data: { roiData, ghgData, advisoryData, inputs: updatedInputs } };
   } catch (e: any) {

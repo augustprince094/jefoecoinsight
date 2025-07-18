@@ -336,39 +336,6 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
               </div>
             )}
             
-            {showDietPhase && (
-               <div className="md:col-span-2">
-                <FormField
-                  control={form.control}
-                  name="dietPhase"
-                  render={({ field }) => (
-                    <FormItem className="space-y-2">
-                      <FormLabel>Diet Phase</FormLabel>
-                       <FormControl>
-                        <RadioGroup
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          className="flex items-center space-x-4"
-                        >
-                          {dietPhases.map((phase) => (
-                            <FormItem key={phase} className="flex items-center space-x-2 space-y-0">
-                                <FormControl>
-                                  <RadioGroupItem value={phase} id={phase.toLowerCase()} />
-                                </FormControl>
-                                <FormLabel htmlFor={phase.toLowerCase()} className="font-normal cursor-pointer">
-                                  {phase}
-                                </FormLabel>
-                            </FormItem>
-                          ))}
-                        </RadioGroup>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            )}
-
             <FormField
               control={form.control}
               name="inclusionRate"
