@@ -110,12 +110,34 @@ const estimateGHGSavingsFlow = ai.defineFlow(
       if (input.feedAdditive === 'Jefo Pro Solution') {
         reformulatedIngredients = dietIngredients.map(ing => {
           let newQuantity = ing.quantity;
-          switch (ing.name) {
-            case 'Corn': newQuantity *= 1.031; break;
-            case 'Soybean Meal': newQuantity *= (1 - 0.045); break;
-            case 'Soybean Oil': newQuantity *= (1 - 0.06); break;
-            case 'Synthetic Amino Acid': newQuantity *= (1 - 0.031); break;
-            case 'Other Raw Materials': newQuantity *= 1.007; break;
+          switch (dietPhase) {
+            case 'Starter':
+              switch (ing.name) {
+                case 'Corn': newQuantity *= 1.031; break;
+                case 'Soybean Meal': newQuantity *= (1 - 0.045); break;
+                case 'Soybean Oil': newQuantity *= (1 - 0.06); break;
+                case 'Synthetic Amino Acid': newQuantity *= (1 - 0.031); break;
+                case 'Other Raw Materials': newQuantity *= 1.007; break;
+              }
+              break;
+            case 'Grower':
+              switch (ing.name) {
+                case 'Corn': newQuantity *= 1.033; break;
+                case 'Soybean Meal': newQuantity *= (1 - 0.044); break;
+                case 'Soybean Oil': newQuantity *= (1 - 0.06); break;
+                case 'Synthetic Amino Acid': newQuantity *= (1 - 0.021); break;
+                case 'Other Raw Materials': newQuantity *= 1.007; break;
+              }
+              break;
+            case 'Finisher':
+              switch (ing.name) {
+                case 'Corn': newQuantity *= 1.028; break;
+                case 'Soybean Meal': newQuantity *= (1 - 0.048); break;
+                case 'Soybean Oil': newQuantity *= (1 - 0.059); break;
+                case 'Synthetic Amino Acid': newQuantity *= (1 - 0.040); break;
+                case 'Other Raw Materials': newQuantity *= 1.007; break;
+              }
+              break;
           }
           return { ...ing, quantity: newQuantity };
         });

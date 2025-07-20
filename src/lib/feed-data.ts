@@ -36,7 +36,7 @@ export const feedData: RegionFeedData[] = [
         { name: 'Soybean Meal', quantity: 359.624, cost: 624, carbonFootprint: 1.27 },
         { name: 'Soybean Oil', quantity: 46.21, cost: 1600, carbonFootprint: 0.91 },
         { name: 'Synthetic Amino Acid', quantity: 6.27, cost: 2854, carbonFootprint: 3.66 },
-        { name: 'Other Raw Materials', quantity: 26.88, cost: 572, carbonFootprint: 3.28 },
+        { name: 'Other Raw Materials', quantity: 26.89, cost: 572, carbonFootprint: 3.28 },
       ],
       Finisher: [
         { name: 'Corn', quantity: 619.87, cost: 232, carbonFootprint: 0.35 },

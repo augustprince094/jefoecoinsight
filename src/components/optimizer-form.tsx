@@ -109,9 +109,9 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
     if (feedAdditiveValue && baselineMortalityRateValue > 0) {
       let mortalityReduction = 0;
       switch (feedAdditiveValue) {
-        case "Jefo Pro Solution": mortalityReduction = 1; break;
-        case "Jefo P(OA+EO)": mortalityReduction = 1.5; break;
-        case "Jefo Xylanase": mortalityReduction = 1; break;
+        case "Jefo Pro Solution": mortalityReduction = 0.5; break;
+        case "Jefo P(OA+EO)": mortalityReduction = 1; break;
+        case "Jefo Xylanase": mortalityReduction = 0.5; break;
       }
       const newMortalityRate = baselineMortalityRateValue - mortalityReduction;
       setValue("mortalityRateAfter", Math.max(0, parseFloat(newMortalityRate.toFixed(2))), { shouldValidate: true });
