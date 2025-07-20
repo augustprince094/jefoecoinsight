@@ -167,51 +167,83 @@ const calculateROIFlow = ai.defineFlow(
           });
       }
       
-      const reformulatedCostPerTon = reformulatedIngredients.reduce((total, ing) => {
+      const additiveCostPerTon = input.inclusionRate * input.costMetrics.additiveCost;
+      
+      const grossReformulatedCostPerTon = reformulatedIngredients.reduce((total, ing) => {
         return total + (ing.quantity / 1000) * ing.cost;
       }, 0);
       
+      const netReformulatedCostPerTon = grossReformulatedCostPerTon + additiveCostPerTon;
+
       const totalFeedConsumedAfter = (input.numberOfBirds * input.feedConversionRatioAfter * input.broilerLiveWeight) / (1 - (input.mortalityRateAfter / 100));
       const totalFeedConsumedAfterInTons = totalFeedConsumedAfter / 1000;
       
-      const grossFeedCostSavings = (baselineCostPerTon - reformulatedCostPerTon) * totalFeedConsumedAfterInTons;
-      const totalInvestmentInAdditive = totalFeedConsumedAfterInTons * input.inclusionRate * input.costMetrics.additiveCost;
-      const netFeedCostSavings = grossFeedCostSavings - totalInvestmentInAdditive;
+      const netSavingsPerTon = baselineCostPerTon - netReformulatedCostPerTon;
+      const totalNetFeedCostSavings = netSavingsPerTon * totalFeedConsumedAfterInTons;
+      const totalInvestmentInAdditive = totalFeedConsumedAfterInTons * additiveCostPerTon;
       
-      const roi = totalInvestmentInAdditive > 0 ? netFeedCostSavings / totalInvestmentInAdditive : Infinity;
+      const roi = totalInvestmentInAdditive > 0 ? totalNetFeedCostSavings / totalInvestmentInAdditive : Infinity;
       
-      const totalFeedCostAfter = totalFeedConsumedAfterInTons * reformulatedCostPerTon;
+      const totalFeedCostAfter = totalFeedConsumedAfterInTons * netReformulatedCostPerTon;
       const totalFeedCostBefore = ((input.numberOfBirds * input.feedConversionRatioBefore * input.broilerLiveWeight) / (1 - (input.mortalityRateBefore / 100))) / 1000 * baselineCostPerTon;
 
       const totalLiveWeightAfter = input.numberOfBirds * (1 - (input.mortalityRateAfter / 100)) * input.broilerLiveWeight;
       const totalLiveWeightBefore = input.numberOfBirds * (1 - (input.mortalityRateBefore / 100)) * input.broilerLiveWeight;
 
-      const feedCostPerLiveWeightAfter = totalLiveWeightAfter > 0 ? (totalFeedCostAfter + totalInvestmentInAdditive) / totalLiveWeightAfter : 0;
+      const feedCostPerLiveWeightAfter = totalLiveWeightAfter > 0 ? totalFeedCostAfter / totalLiveWeightAfter : 0;
       const feedCostPerLiveWeightBefore = totalLiveWeightBefore > 0 ? totalFeedCostBefore / totalLiveWeightBefore : 0;
       
-      const explanation = `For a 'Matrix' application with ${input.feedAdditiveType}, savings are calculated from feed reformulation, accounting for the additive cost:\n\n` +
+      const explanation = `For a 'Matrix' application with ${input.feedAdditiveType}, savings are calculated from the net change in feed cost per ton, factoring in both reformulation and additive cost:\n\n` +
         `1. Baseline Feed Cost: ${formatCurrency(baselineCostPerTon)} per ton.\n` +
-        `2. Reformulated Feed Cost: ${formatCurrency(reformulatedCostPerTon)} per ton.\n` +
-        `3. Gross Saving per Ton: ${formatCurrency(baselineCostPerTon - reformulatedCostPerTon)}.\n` +
-        `4. Total Gross Feed Savings: ${formatCurrency(grossFeedCostSavings)}.\n` +
-        `5. Total Additive Investment: ${formatCurrency(totalInvestmentInAdditive)}.\n` +
-        `6. Net Savings (Gross Savings - Investment): ${formatCurrency(netFeedCostSavings)}.\n` +
-        `7. Return on Investment (ROI): The final ROI, based on Net Savings, is ${roi.toFixed(1)}:1.`;
+        `2. Gross Reformulated Cost: ${formatCurrency(grossReformulatedCostPerTon)} per ton.\n` +
+        `3. Additive Cost: ${formatCurrency(additiveCostPerTon)} per ton.\n` +
+        `4. Net Reformulated Cost (Gross + Additive): ${formatCurrency(netReformulatedCostPerTon)} per ton.\n` +
+        `5. Net Saving per Ton: ${formatCurrency(netSavingsPerTon)}.\n` +
+        `6. Total Net Savings (over production cycle): ${formatCurrency(totalNetFeedCostSavings)}.\n` +
+        `7. Return on Investment (ROI): The final ROI, based on Total Net Savings versus Total Additive Investment, is ${roi.toFixed(1)}:1.`;
       
       return {
         roi: roi,
         explanation: explanation,
         feedCostPerLiveWeightBefore: feedCostPerLiveWeightBefore,
         feedCostPerLiveWeightAfter: feedCostPerLiveWeightAfter,
-        feedCostSavings: netFeedCostSavings, // Return the NET savings
+        feedCostSavings: totalNetFeedCostSavings,
         baselineCostPerTon: baselineCostPerTon,
-        reformulatedCostPerTon: reformulatedCostPerTon,
+        reformulatedCostPerTon: netReformulatedCostPerTon,
       };
 
     } else {
-      // For 'On-top' applications or other 'Matrix' cases, use the new prompt-based calculation.
-      const { output } = await prompt(input);
-      return output!;
+      // For 'On-top' applications, calculate net savings and ROI
+      const totalFeedConsumedAfter = (input.numberOfBirds * input.feedConversionRatioAfter * input.broilerLiveWeight) / (1 - (input.mortalityRateAfter / 100));
+      const totalFeedConsumedBefore = (input.numberOfBirds * input.feedConversionRatioBefore * input.broilerLiveWeight) / (1 - (input.mortalityRateBefore / 100));
+
+      const totalCostBefore = totalFeedConsumedBefore * input.costMetrics.feedCost;
+      const totalFeedCostAfter = totalFeedConsumedAfter * input.costMetrics.feedCost;
+      const totalInvestmentInAdditive = (totalFeedConsumedAfter / 1000) * input.inclusionRate * input.costMetrics.additiveCost;
+      const totalCostAfter = totalFeedCostAfter + totalInvestmentInAdditive;
+      
+      const netFeedCostSavings = totalCostBefore - totalCostAfter;
+      const roi = totalInvestmentInAdditive > 0 ? netFeedCostSavings / totalInvestmentInAdditive : Infinity;
+
+      const totalLiveWeightAfter = input.numberOfBirds * (1 - (input.mortalityRateAfter / 100)) * input.broilerLiveWeight;
+      const totalLiveWeightBefore = input.numberOfBirds * (1 - (input.mortalityRateBefore / 100)) * input.broilerLiveWeight;
+      
+      const feedCostPerLiveWeightAfter = totalLiveWeightAfter > 0 ? totalCostAfter / totalLiveWeightAfter : 0;
+      const feedCostPerLiveWeightBefore = totalLiveWeightBefore > 0 ? totalCostBefore / totalLiveWeightBefore : 0;
+
+      const explanation = `For an 'On-top' application with ${input.feedAdditiveType}, savings are based on improved performance (FCR and mortality) against the cost of the additive:\n\n` +
+        `1. Baseline Production Cost: ${formatCurrency(totalCostBefore)}.\n` +
+        `2. Production Cost with Additive: ${formatCurrency(totalCostAfter)} (includes ${formatCurrency(totalInvestmentInAdditive)} for the additive).\n` +
+        `3. Net Savings: ${formatCurrency(netFeedCostSavings)}.\n` +
+        `4. Return on Investment (ROI): ${roi.toFixed(1)}:1.`;
+
+      return {
+        roi: roi,
+        explanation: explanation,
+        feedCostPerLiveWeightBefore: feedCostPerLiveWeightBefore,
+        feedCostPerLiveWeightAfter: feedCostPerLiveWeightAfter,
+        feedCostSavings: netFeedCostSavings,
+      };
     }
   }
 );
