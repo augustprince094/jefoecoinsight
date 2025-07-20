@@ -88,7 +88,7 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
       switch (feedAdditiveValue) {
         case "Jefo Pro Solution": newInclusionRate = 125; break;
         case "Jefo Xylanase": newInclusionRate = 100; break;
-        case "Jefo P(OA+EO)": newInclusionRate = 200; break;
+        case "Jefo P(OA+EO)": newInclusionRate = 300; break;
       }
       if (newInclusionRate > 0) {
         setValue("inclusionRate", newInclusionRate, { shouldValidate: true });

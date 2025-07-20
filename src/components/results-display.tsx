@@ -141,10 +141,10 @@ function MatrixDashboard({ initialResults }: { initialResults: OptimizationResul
                 </p>
             </div>
              <Card>
-                <CardHeader>
+                <CardHeader className="py-2">
                     <CardTitle className="text-base font-medium text-center">Select Diet Phase</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pb-2 pt-0">
                     <RadioGroup
                         defaultValue={inputs.dietPhase}
                         onValueChange={(value) => handleDietPhaseChange(value as DietPhase)}

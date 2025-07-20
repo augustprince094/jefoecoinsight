@@ -32,18 +32,18 @@ export const feedData: RegionFeedData[] = [
         { name: 'Other Raw Materials', quantity: 26.4, cost: 572, carbonFootprint: 3.28 },
       ],
       Grower: [
-        { name: 'Corn', quantity: 620.5, cost: 232, carbonFootprint: 0.35 },
-        { name: 'Soybean Meal', quantity: 290.0, cost: 624, carbonFootprint: 1.27 },
-        { name: 'Soybean Oil', quantity: 55.0, cost: 1600, carbonFootprint: 0.91 },
-        { name: 'Synthetic Amino Acid', quantity: 5.5, cost: 2854, carbonFootprint: 3.66 },
-        { name: 'Other Raw Materials', quantity: 29.0, cost: 572, carbonFootprint: 3.28 },
+        { name: 'Corn', quantity: 561.001, cost: 232, carbonFootprint: 0.35 },
+        { name: 'Soybean Meal', quantity: 359.624, cost: 624, carbonFootprint: 1.27 },
+        { name: 'Soybean Oil', quantity: 46.21, cost: 1600, carbonFootprint: 0.91 },
+        { name: 'Synthetic Amino Acid', quantity: 6.27, cost: 2854, carbonFootprint: 3.66 },
+        { name: 'Other Raw Materials', quantity: 26.88, cost: 572, carbonFootprint: 3.28 },
       ],
       Finisher: [
-        { name: 'Corn', quantity: 655.0, cost: 232, carbonFootprint: 0.35 },
-        { name: 'Soybean Meal', quantity: 245.0, cost: 624, carbonFootprint: 1.27 },
-        { name: 'Soybean Oil', quantity: 65.0, cost: 1600, carbonFootprint: 0.91 },
-        { name: 'Synthetic Amino Acid', quantity: 4.5, cost: 2854, carbonFootprint: 3.66 },
-        { name: 'Other Raw Materials', quantity: 30.5, cost: 572, carbonFootprint: 3.28 },
+        { name: 'Corn', quantity: 619.87, cost: 232, carbonFootprint: 0.35 },
+        { name: 'Soybean Meal', quantity: 307.48, cost: 624, carbonFootprint: 1.27 },
+        { name: 'Soybean Oil', quantity: 43.14, cost: 1600, carbonFootprint: 0.91 },
+        { name: 'Synthetic Amino Acid', quantity: 6.26, cost: 2854, carbonFootprint: 3.66 },
+        { name: 'Other Raw Materials', quantity: 23.27, cost: 572, carbonFootprint: 3.28 },
       ]
     }
   },
