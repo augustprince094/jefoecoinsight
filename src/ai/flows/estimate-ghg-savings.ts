@@ -144,13 +144,20 @@ const estimateGHGSavingsFlow = ai.defineFlow(
       } else { // Jefo Xylanase
         reformulatedIngredients = dietIngredients.map(ing => {
           let newQuantity = ing.quantity;
-          switch (ing.name) {
-            case 'Corn': newQuantity *= 1.034; break;
-            case 'Soybean Meal': newQuantity *= (1 - 0.007); break;
-            case 'Soybean Oil': newQuantity *= (1 - 0.342); break;
-            case 'Synthetic Amino Acid': newQuantity *= 1.005; break;
-            case 'Other Raw Materials': newQuantity *= (1 - 0.003); break;
-          }
+            // The same factors are applied for all diet phases for Jefo Xylanase for now
+            switch (dietPhase) {
+                case 'Starter':
+                case 'Grower':
+                case 'Finisher':
+                    switch (ing.name) {
+                        case 'Corn': newQuantity *= 1.034; break;
+                        case 'Soybean Meal': newQuantity *= (1 - 0.007); break;
+                        case 'Soybean Oil': newQuantity *= (1 - 0.342); break;
+                        case 'Synthetic Amino Acid': newQuantity *= 1.005; break;
+                        case 'Other Raw Materials': newQuantity *= (1 - 0.003); break;
+                    }
+                    break;
+            }
           return { ...ing, quantity: newQuantity };
         });
       }
