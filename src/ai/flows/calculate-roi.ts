@@ -134,11 +134,11 @@ const calculateROIFlow = ai.defineFlow(
                 break;
               case 'Grower':
                 switch (ing.name) {
-                  case 'Corn': newQuantity *= 1.033; break;
-                  case 'Soybean Meal': newQuantity *= (1 - 0.044); break;
-                  case 'Soybean Oil': newQuantity *= (1 - 0.06); break;
-                  case 'Synthetic Amino Acid': newQuantity *= (1 - 0.021); break;
-                  case 'Other Raw Materials': newQuantity *= 1.007; break;
+                  case 'Corn': newQuantity *= 1.0327; break;
+                  case 'Soybean Meal': newQuantity *= (1 - 0.0438); break;
+                  case 'Soybean Oil': newQuantity *= (1 - 0.0596); break;
+                  case 'Synthetic Amino Acid': newQuantity *= (1 - 0.0209); break;
+                  case 'Other Raw Materials': newQuantity *= 1.0068; break;
                 }
                 break;
               case 'Finisher':
