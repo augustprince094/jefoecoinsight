@@ -129,7 +129,7 @@ function MatrixDashboard({ initialResults }: { initialResults: OptimizationResul
     const region = inputs.region as keyof typeof regionalBaselineGHG;
     const ghgPerKgLiveWeight = regionalBaselineGHG[region] || regionalBaselineGHG.Canada;
     const equivalentChickens = ghgData.ghgSavings > 0 ? ghgData.ghgSavings / (inputs.broilerLiveWeight * ghgPerKgLiveWeight) : 0;
-    const equivalentKm = ghgData.ghgSavings > 0 ? (ghgData.ghgSavings / 1000) * 4100 : 0;
+    const equivalentKm = ghgData.ghgSavings > 0 ? ghgData.ghgSavings / 252 : 0;
     const carbonCreditRevenue = ghgData.ghgSavings > 0 ? (ghgData.ghgSavings / 1000) * 167 : 0;
 
     return (
@@ -396,7 +396,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
     const region = inputs.region as keyof typeof regionalBaselineGHG;
     const ghgPerKgLiveWeight = regionalBaselineGHG[region] || regionalBaselineGHG.Canada;
     const equivalentChickens = ghgData.ghgSavings > 0 ? ghgData.ghgSavings / (inputs.broilerLiveWeight * ghgPerKgLiveWeight) : 0;
-    const equivalentKm = ghgData.ghgSavings > 0 ? (ghgData.ghgSavings / 1000) * 4100 : 0;
+    const equivalentKm = ghgData.ghgSavings > 0 ? ghgData.ghgSavings / 252 : 0;
     const carbonCreditRevenue = ghgData.ghgSavings > 0 ? (ghgData.ghgSavings / 1000) * 167 : 0;
 
 
@@ -549,7 +549,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                                 <div className="text-center mb-4">
                                      <p className="text-sm text-muted-foreground">Feed Cost per Bird</p>
                                     <p className="text-lg font-bold" style={{color: additiveColor}}>
-                                        Reduction of {formatCurrency(roiData.feedCostPerLiveWeightBefore * inputs.broilerLiveWeight - roiData.feedCostPerLiveWeightAfter * inputs.broilerLiveWeight)} per bird
+                                        Reduction of {formatCurrency(roiData.feedCostPerLiveWeightBefore * inputs.broilerLiveWeight - roiData.feedCostPerLiveweightAfter * inputs.broilerLiveWeight)} per bird
                                     </p>
                                 </div>
                                 <ChartContainer config={economicChartConfig} className="h-[150px] w-full">
@@ -655,3 +655,5 @@ export function ResultsDisplay({ results, isLoading, error }: { results: Optimiz
     
     return <OnTopDashboard results={results} />;
 }
+
+    
