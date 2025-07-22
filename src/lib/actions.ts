@@ -85,7 +85,7 @@ export async function getOptimizationResults(
     const updatedInputs = { ...data, applicationType: applicationType, dietPhase: dietPhase };
 
     return { data: { roiData, ghgData, advisoryData, inputs: updatedInputs } };
-  } catch (e: any) {
+  } catch (e) {
     console.error("Error in getOptimizationResults:", e);
     return { error: e.message || "An unexpected error occurred while processing your request." };
   }

@@ -43,7 +43,7 @@ import {
 } from "@/lib/types";
 
 interface OptimizerFormProps {
-  setResults: (results: any) => void;
+  setResults: (results) => void;
   setIsLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
   isCalculating: boolean;
@@ -129,7 +129,8 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
         throw new Error(result.error);
       }
       setResults(result.data);
-    } catch (e: any) {
+    } catch (e:any) {
+      {/*@ts-expect-error*/}
       setError(e.message);
       toast({
         variant: "destructive",

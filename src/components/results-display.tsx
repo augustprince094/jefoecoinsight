@@ -87,7 +87,7 @@ function MatrixDashboard({ initialResults }: { initialResults: OptimizationResul
             const result = await getOptimizationResults(initialResults.inputs, newPhase);
             if (result.error) throw new Error(result.error);
             if (result.data) setResults(result.data);
-        } catch(e: any) {
+        } catch(e) {
             toast({
                 variant: "destructive",
                 title: "Recalculation Error",

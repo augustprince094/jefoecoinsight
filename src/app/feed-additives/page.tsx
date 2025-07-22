@@ -51,7 +51,7 @@ export default function FeedAdditivesPage() {
               Jefo Feed Additive Solutions
             </h1>
             <p className="text-muted-foreground mt-4 max-w-2xl mx-auto text-lg">
-              Discover the science and sustainable impact behind Jefo's innovative feed additives.
+              Discover the science and sustainable impact behind Jefo&apos;s innovative feed additives.
             </p>
           </div>
 
