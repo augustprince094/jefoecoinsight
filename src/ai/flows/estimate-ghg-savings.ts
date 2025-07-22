@@ -131,11 +131,11 @@ const estimateGHGSavingsFlow = ai.defineFlow(
               break;
             case 'Finisher':
               switch (ing.name) {
-                case 'Corn': newQuantity *= 1.028; break;
-                case 'Soybean Meal': newQuantity *= (1 - 0.048); break;
-                case 'Soybean Oil': newQuantity *= (1 - 0.059); break;
-                case 'Synthetic Amino Acid': newQuantity *= (1 - 0.040); break;
-                case 'Other Raw Materials': newQuantity *= 1.007; break;
+                  case 'Corn': newQuantity *= 1.0279; break;
+                  case 'Soybean Meal': newQuantity *= (1 - 0.0481); break;
+                  case 'Soybean Oil': newQuantity *= (1 - 0.0589); break;
+                  case 'Synthetic Amino Acid': newQuantity *= (1 - 0.0398); break;
+                  case 'Other Raw Materials': newQuantity *= 1.0075; break;
               }
               break;
           }
