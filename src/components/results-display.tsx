@@ -130,7 +130,7 @@ function MatrixDashboard({ initialResults }: { initialResults: OptimizationResul
     const ghgPerKgLiveWeight = regionalBaselineGHG[region] || regionalBaselineGHG.Canada;
     const equivalentChickens = ghgData.ghgSavings > 0 ? ghgData.ghgSavings / (inputs.broilerLiveWeight * ghgPerKgLiveWeight) : 0;
     const equivalentKm = ghgData.ghgSavings > 0 ? ghgData.ghgSavings / 252 : 0;
-    const carbonCreditRevenue = ghgData.ghgSavings > 0 ? (ghgData.ghgSavings / 1000) * 167 : 0;
+    const carbonCreditRevenue = ghgData.ghgSavings > 0 ? (ghgData.ghgSavings / 1000) * 95  : 0;
 
     return (
         <div className="space-y-6 animate-in fade-in-50 duration-500">

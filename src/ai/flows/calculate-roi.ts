@@ -156,11 +156,20 @@ const calculateROIFlow = ai.defineFlow(
       } else { // Jefo Xylanase
           reformulatedIngredients = dietIngredients.map(ing => {
             let newQuantity = ing.quantity;
-            // The same factors are applied for all diet phases for Jefo Xylanase for now
             switch (dietPhase) {
                 case 'Starter':
+                    switch (ing.name) {
+                        case 'Corn': newQuantity *= 1.0343; break;
+                        case 'Soybean Meal': newQuantity *= (1 - 0.0073); break;
+                        case 'Soybean Oil': newQuantity *= (1 - 0.3421); break;
+                        case 'Synthetic Amino Acid': newQuantity *= 1.0051; break;
+                        case 'Other Raw Materials': newQuantity *= (1 - 0.0027); break;
+                    }
+                    break;
                 case 'Grower':
                 case 'Finisher':
+                    // TODO: Add specific factors for Grower and Finisher with Xylanase if they differ.
+                    // For now, using Starter as a fallback to prevent errors.
                     switch (ing.name) {
                         case 'Corn': newQuantity *= 1.034; break;
                         case 'Soybean Meal': newQuantity *= (1 - 0.007); break;
