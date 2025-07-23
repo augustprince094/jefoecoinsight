@@ -127,7 +127,7 @@ function MatrixDashboard({ initialResults }: { initialResults: OptimizationResul
     const ghgYAxisDomainMin = Math.max(0, Math.floor(minGhg * 0.95));
 
     const region = inputs.region as keyof typeof regionalBaselineGHG;
-    const ghgPerKgLiveWeight = regionalBaselineGHG[region] || regionalBaselineGHG.Canada;
+    const ghgPerKgLiveWeight = regionalBaselineGHG[region] || regionalBaselineGHG["North America (CA)"];
     const equivalentChickens = ghgData.ghgSavings > 0 ? ghgData.ghgSavings / (inputs.broilerLiveWeight * ghgPerKgLiveWeight) : 0;
     const equivalentKm = ghgData.ghgSavings > 0 ? ghgData.ghgSavings / 252 : 0;
     const carbonCreditRevenue = ghgData.ghgSavings > 0 ? (ghgData.ghgSavings / 1000) * 95  : 0;
@@ -394,7 +394,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
     const ghgYAxisDomainMin = Math.max(0, Math.floor(minGhg * 0.95));
 
     const region = inputs.region as keyof typeof regionalBaselineGHG;
-    const ghgPerKgLiveWeight = regionalBaselineGHG[region] || regionalBaselineGHG.Canada;
+    const ghgPerKgLiveWeight = regionalBaselineGHG[region] || regionalBaselineGHG["North America (CA)"];
     const equivalentChickens = ghgData.ghgSavings > 0 ? ghgData.ghgSavings / (inputs.broilerLiveWeight * ghgPerKgLiveWeight) : 0;
     const equivalentKm = ghgData.ghgSavings > 0 ? ghgData.ghgSavings / 252 : 0;
     const carbonCreditRevenue = ghgData.ghgSavings > 0 ? (ghgData.ghgSavings / 1000) * 167 : 0;
@@ -655,5 +655,3 @@ export function ResultsDisplay({ results, isLoading, error }: { results: Optimiz
     
     return <OnTopDashboard results={results} />;
 }
-
-    

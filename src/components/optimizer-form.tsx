@@ -53,7 +53,7 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      region: "Canada",
+      region: "North America (CA)",
       numberOfBirds: 50000,
       broilerLiveWeight: 2.5,
       baselineMortalityRate: 4.5,

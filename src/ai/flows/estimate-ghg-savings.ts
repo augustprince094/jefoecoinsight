@@ -92,14 +92,15 @@ const estimateGHGSavingsFlow = ai.defineFlow(
     // Matrix application
     if (input.applicationType === 'Matrix' && (input.feedAdditive === 'Jefo Pro Solution' || input.feedAdditive === 'Jefo Xylanase')) {
       const dietPhase = (input.dietPhase || 'Starter') as 'Starter' | 'Grower' | 'Finisher';
-      const regionFeedData = feedData.find(d => d.region === input.region);
+      const region = input.region as 'North America (CA)' | 'Asia (PH)' | 'Europe (FR)';
+      const regionFeedData = feedData.find(d => d.region === region);
       if (!regionFeedData) {
-        throw new Error(`Feed data for region ${input.region} not found.`);
+        throw new Error(`Feed data for region ${region} not found.`);
       }
 
       const dietIngredients = regionFeedData.diets[dietPhase];
       if (!dietIngredients) {
-        throw new Error(`Diet data for phase ${dietPhase} in region ${input.region} not found.`);
+        throw new Error(`Diet data for phase ${dietPhase} in region ${region} not found.`);
       }
 
       const baselineGHGPerTon = dietIngredients.reduce((total, ing) => {
@@ -206,37 +207,39 @@ const estimateGHGSavingsFlow = ai.defineFlow(
         ghgWithAdditive,
       };
     } 
-    // On-top application in Canada
-    else if (input.region === 'Canada' && input.applicationType === 'On-top') {
+    // On-top application
+    else if (input.applicationType === 'On-top') {
+      const region = input.region as keyof typeof regionalBaselineGHG;
+      if (!regionalBaselineGHG[region]) {
+        throw new Error(`On-top GHG reduction data not available for region: ${input.region}`);
+      }
+      
       const additiveKey = input.feedAdditive as keyof typeof feedAdditiveData;
-      const additiveHasData = additiveKey in feedAdditiveData && 'ghgReductionOnTop' in feedAdditiveData[additiveKey];
+      const additiveInfo = feedAdditiveData[additiveKey];
+      // @ts-ignore
+      const reductionFactor = additiveInfo.ghgReductionOnTop?.[region];
 
-      if (additiveHasData) {
-        const additiveInfo = feedAdditiveData[additiveKey];
-        const reductionFactor = additiveInfo.ghgReductionOnTop?.Canada;
+      if (reductionFactor) {
+          const survivingBirdsAfter = input.numberOfBirds * (1 - input.mortalityRateAfter / 100);
+          const totalLiveWeightAfter = survivingBirdsAfter * input.broilerLiveWeight;
+          const baselineGHGPerKg = regionalBaselineGHG[region];
+          
+          const totalBaselineGHG = totalLiveWeightAfter * baselineGHGPerKg;
+          const ghgSavings = totalBaselineGHG * reductionFactor;
+          const ghgWithAdditive = totalBaselineGHG - ghgSavings;
 
-        if (reductionFactor) {
-            const survivingBirdsAfter = input.numberOfBirds * (1 - input.mortalityRateAfter / 100);
-            const totalLiveWeightAfter = survivingBirdsAfter * input.broilerLiveWeight;
-            const baselineGHGPerKg = regionalBaselineGHG.Canada;
-            
-            const totalBaselineGHG = totalLiveWeightAfter * baselineGHGPerKg;
-            const ghgSavings = totalBaselineGHG * reductionFactor;
-            const ghgWithAdditive = totalBaselineGHG - ghgSavings;
+          const explanation = `For an 'On-top' application in ${region} with ${input.feedAdditive}, GHG savings are based on reduced emissions per kg of live weight:\n\n` +
+          `1. Total Live Weight Produced: ${totalLiveWeightAfter.toFixed(2)} kg.\n` +
+          `2. Baseline GHG Emissions: ${totalBaselineGHG.toFixed(2)} kg CO2e (at ${baselineGHGPerKg} kg CO2e per kg live weight).\n` +
+          `3. GHG Reduction with Additive: ${(reductionFactor * 100).toFixed(1)}%.\n` +
+          `4. Total GHG Savings: ${ghgSavings.toFixed(2)} kg CO2e.`;
 
-            const explanation = `For an 'On-top' application in Canada with ${input.feedAdditive}, GHG savings are based on reduced emissions per kg of live weight:\n\n` +
-            `1. Total Live Weight Produced: ${totalLiveWeightAfter.toFixed(2)} kg.\n` +
-            `2. Baseline GHG Emissions: ${totalBaselineGHG.toFixed(2)} kg CO2e (at ${baselineGHGPerKg} kg CO2e per kg live weight).\n` +
-            `3. GHG Reduction with Additive: ${(reductionFactor * 100).toFixed(1)}%.\n` +
-            `4. Total GHG Savings: ${ghgSavings.toFixed(2)} kg CO2e.`;
-
-            return {
-                ghgSavings,
-                explanation,
-                baselineGHG: totalBaselineGHG,
-                ghgWithAdditive,
-            };
-        }
+          return {
+              ghgSavings,
+              explanation,
+              baselineGHG: totalBaselineGHG,
+              ghgWithAdditive,
+          };
       }
     }
 

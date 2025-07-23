@@ -16,13 +16,13 @@ export interface Diets {
 }
 
 export interface RegionFeedData {
-  region: 'Canada' | 'Asia' | 'Europe';
+  region: 'North America (CA)' | 'Asia (PH)' | 'Europe (FR)';
   diets: Diets;
 }
 
 export const feedData: RegionFeedData[] = [
   {
-    region: 'Canada',
+    region: 'North America (CA)',
     diets: {
       Starter: [
         { name: 'Corn', quantity: 518.7, cost: 232, carbonFootprint: 0.35 },
@@ -48,7 +48,7 @@ export const feedData: RegionFeedData[] = [
     }
   },
   {
-    region: 'Asia',
+    region: 'Asia (PH)',
     diets: {
       Starter: [
         { name: 'Corn', quantity: 550, cost: 250, carbonFootprint: 3 },
@@ -74,7 +74,7 @@ export const feedData: RegionFeedData[] = [
     }
   },
   {
-    region: 'Europe',
+    region: 'Europe (FR)',
     diets: {
       Starter: [
         { name: 'Corn', quantity: 600, cost: 260, carbonFootprint: 1 },

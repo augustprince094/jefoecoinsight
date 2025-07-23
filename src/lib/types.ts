@@ -10,7 +10,7 @@ export type FeedAdditiveType = (typeof feedAdditiveTypes)[number];
 export const applicationTypes = ["Matrix", "On-top"] as const;
 export type ApplicationType = (typeof applicationTypes)[number];
 
-export const regions = ["Canada", "Asia", "Europe"] as const;
+export const regions = ["North America (CA)", "Asia (PH)", "Europe (FR)"] as const;
 export type Region = (typeof regions)[number];
 
 export const dietPhases = ["Starter", "Grower", "Finisher"] as const;
