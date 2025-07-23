@@ -167,8 +167,16 @@ const calculateROIFlow = ai.defineFlow(
                     }
                     break;
                 case 'Grower':
+                    switch (ing.name) {
+                        case 'Corn': newQuantity *= 1.0328; break;
+                        case 'Soybean Meal': newQuantity *= (1 - 0.0083); break;
+                        case 'Soybean Oil': newQuantity *= (1 - 0.3343); break;
+                        case 'Synthetic Amino Acid': newQuantity *= 1.0040; break;
+                        case 'Other Raw Materials': newQuantity *= (1 - 0.0032); break;
+                    }
+                    break;
                 case 'Finisher':
-                    // TODO: Add specific factors for Grower and Finisher with Xylanase if they differ.
+                    // TODO: Add specific factors for Finisher with Xylanase if they differ.
                     // For now, using Starter as a fallback to prevent errors.
                     switch (ing.name) {
                         case 'Corn': newQuantity *= 1.034; break;
