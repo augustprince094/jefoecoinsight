@@ -43,7 +43,7 @@ import {
 } from "@/lib/types";
 
 interface OptimizerFormProps {
-  setResults: (results: any) => void;
+  setResults: (results) => void;
   setIsLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
   isCalculating: boolean;
