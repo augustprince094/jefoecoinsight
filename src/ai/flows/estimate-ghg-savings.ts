@@ -216,7 +216,7 @@ const estimateGHGSavingsFlow = ai.defineFlow(
       
       const additiveKey = input.feedAdditive as keyof typeof feedAdditiveData;
       const additiveInfo = feedAdditiveData[additiveKey];
-      // @ts-ignore
+      // @ts-expect-error This is a valid check, but TypeScript cannot infer the nested structure perfectly.
       const reductionFactor = additiveInfo.ghgReductionOnTop?.[region];
 
       if (reductionFactor) {
