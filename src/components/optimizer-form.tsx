@@ -43,7 +43,7 @@ import {
 } from "@/lib/types";
 
 interface OptimizerFormProps {
-  setResults: (results) => void;
+  setResults: (results: any) => void;
   setIsLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
   isCalculating: boolean;
@@ -129,13 +129,13 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
         throw new Error(result.error);
       }
       setResults(result.data);
-    } catch (e: any) {
-      // @ts-expect-error The error object's type is unknown, but we expect a message property.
-      setError(e.message);
+    } catch (e) {
+      const errorMessage = e instanceof Error ? e.message : "An unexpected error occurred.";
+      setError(errorMessage);
       toast({
         variant: "destructive",
         title: "Calculation Error",
-        description: e.message,
+        description: errorMessage,
       });
     } finally {
       setIsLoading(false);
