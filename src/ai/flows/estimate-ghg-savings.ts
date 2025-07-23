@@ -164,14 +164,12 @@ const estimateGHGSavingsFlow = ai.defineFlow(
                 }
                 break;
               case 'Finisher':
-                  // TODO: Add specific factors for Grower and Finisher with Xylanase if they differ.
-                  // For now, using Starter as a fallback to prevent errors.
                   switch (ing.name) {
-                      case 'Corn': newQuantity *= 1.034; break;
-                      case 'Soybean Meal': newQuantity *= (1 - 0.007); break;
-                      case 'Soybean Oil': newQuantity *= (1 - 0.342); break;
-                      case 'Synthetic Amino Acid': newQuantity *= 1.005; break;
-                      case 'Other Raw Materials': newQuantity *= (1 - 0.003); break;
+                      case 'Corn': newQuantity *= 1.0314; break;
+                      case 'Soybean Meal': newQuantity *= (1 - 0.0103); break;
+                      case 'Soybean Oil': newQuantity *= (1 - 0.3792); break;
+                      case 'Synthetic Amino Acid': newQuantity *= 1.0043; break;
+                      case 'Other Raw Materials': newQuantity *= (1 - 0.0036); break;
                   }
                   break;
           }
