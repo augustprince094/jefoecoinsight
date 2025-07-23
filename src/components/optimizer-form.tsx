@@ -129,8 +129,8 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
         throw new Error(result.error);
       }
       setResults(result.data);
-    } catch (e:any) {
-      {/*@ts-expect-error*/}
+    } catch (e: any) {
+      // @ts-expect-error The error object's type is unknown, but we expect a message property.
       setError(e.message);
       toast({
         variant: "destructive",
