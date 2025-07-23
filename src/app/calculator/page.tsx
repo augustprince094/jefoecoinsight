@@ -66,7 +66,7 @@ export default function CalculatorPage() {
             GHG Impact & ROI Calculator
           </h2>
           <p className="text-muted-foreground mt-3 max-w-2xl mx-auto text-base">
-            Analyze the financial and environmental benefits of feed additives in your livestock operation.
+            Analyze the environmental and financial benefits of Jefo feed additives in your livestock operation.
           </p>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
