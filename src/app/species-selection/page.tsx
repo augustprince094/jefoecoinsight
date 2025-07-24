@@ -25,10 +25,10 @@ const speciesList = [
   },
   {
     name: 'Dairy',
-    icon: <CowIcon className="h-10 w-10 text-muted-foreground" />,
-    description: 'Coming soon: Insights for sustainable dairy operations.',
-    link: '#',
-    enabled: false,
+    icon: <CowIcon className="h-10 w-10 text-primary" />,
+    description: 'Insights for sustainable dairy operations.',
+    link: '/calculator?species=dairy',
+    enabled: true,
   },
 ];
 

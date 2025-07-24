@@ -36,37 +36,59 @@ import { useToast } from "@/hooks/use-toast";
 import { getOptimizationResults } from "@/lib/actions";
 import {
   formSchema,
-  feedAdditiveTypes,
-  regions,
+  broilerFeedAdditiveTypes,
+  dairyFeedAdditiveTypes,
+  broilerRegions,
+  dairyRegions,
   dietPhases,
   type FormValues,
 } from "@/lib/types";
 
 interface OptimizerFormProps {
+  species: string;
   setResults: (results: any) => void;
   setIsLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
   isCalculating: boolean;
 }
 
-export function OptimizerForm({ setResults, setIsLoading, setError, isCalculating }: OptimizerFormProps) {
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
+export function OptimizerForm({ species, setResults, setIsLoading, setError, isCalculating }: OptimizerFormProps) {
+  const isDairy = species === 'dairy';
+
+  const defaultValues: Partial<FormValues> = {
+    // Shared defaults
+    feedCost: 0.45,
+    additiveCost: 12.50,
+    // Species-specific defaults
+    ...(isDairy ? {
+      region: "Canada",
+      numberOfBirds: 100, // Represents number of cows
+      broilerLiveWeight: 40, // Represents daily milk yield in kg
+      baselineMortalityRate: 5, // Represents cull rate
+      baselineFCR: 1.5, // Represents feed efficiency
+      feedAdditive: "Lactation VB",
+      applicationType: "On-top", // Dairy is always on-top for now
+      inclusionRate: 10,
+      feedConversionRatioAfter: 0,
+      mortalityRateAfter: 0,
+    } : { // Broiler defaults
       region: "North America (CA)",
       numberOfBirds: 50000,
       broilerLiveWeight: 2.5,
       baselineMortalityRate: 4.5,
       baselineFCR: 1.75,
-      feedCost: 0.45,
       feedAdditive: "Jefo Pro Solution",
       applicationType: "Matrix",
       dietPhase: "Starter",
       inclusionRate: 125,
-      additiveCost: 12.50,
       feedConversionRatioAfter: 0,
       mortalityRateAfter: 0,
-    },
+    })
+  };
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: defaultValues as FormValues,
   });
   const { toast } = useToast();
   const { watch, setValue } = form;
@@ -76,13 +98,20 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
   const baselineFCRValue = watch("baselineFCR");
   const baselineMortalityRateValue = watch("baselineMortalityRate");
   
-  const showApplicationType =
-    feedAdditiveValue === "Jefo Pro Solution" ||
-    feedAdditiveValue === "Jefo Xylanase";
+  const showApplicationType = !isDairy &&
+    (feedAdditiveValue === "Jefo Pro Solution" ||
+    feedAdditiveValue === "Jefo Xylanase");
 
   const showDietPhase = showApplicationType && applicationTypeValue === "Matrix";
 
   React.useEffect(() => {
+    // Reset form when species changes
+    form.reset(defaultValues as FormValues);
+  }, [species]);
+
+  React.useEffect(() => {
+    if (isDairy) return; // Logic below is for broilers
+
     if (feedAdditiveValue) {
       let newInclusionRate = 0;
       switch (feedAdditiveValue) {
@@ -106,7 +135,6 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
         } else if (baselineFCRValue > 1.65) {
             fcrReduction = 0.04;
         } else {
-            // Default reduction for Jefo Pro Solution if outside specified ranges
             fcrReduction = 0.03; 
         }
       } else {
@@ -132,7 +160,7 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
       setValue("mortalityRateAfter", Math.max(0, parseFloat(newMortalityRate.toFixed(2))), { shouldValidate: true });
     }
 
-  }, [feedAdditiveValue, applicationTypeValue, baselineFCRValue, baselineMortalityRateValue, setValue]);
+  }, [feedAdditiveValue, applicationTypeValue, baselineFCRValue, baselineMortalityRateValue, setValue, isDairy]);
 
   async function onSubmit(data: FormValues) {
     setIsLoading(true);
@@ -156,6 +184,16 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
       setIsLoading(false);
     }
   }
+  
+  const regions = isDairy ? dairyRegions : broilerRegions;
+  const feedAdditives = isDairy ? dairyFeedAdditiveTypes : broilerFeedAdditiveTypes;
+
+  const labels = {
+    numberOfUnits: isDairy ? "Number of cows" : "Number of birds",
+    unitWeight: isDairy ? "Daily milk yield (kg/cow)" : "Broiler Live Weight (kg)",
+    mortalityRate: isDairy ? "Baseline cull rate (%)" : "Baseline Mortality Rate (%)",
+    fcr: isDairy ? "Baseline Feed Efficiency" : "Baseline FCR",
+  };
 
   return (
     <Form {...form}>
@@ -194,9 +232,9 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
               name="numberOfBirds"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Number of birds</FormLabel>
+                  <FormLabel>{labels.numberOfUnits}</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="e.g., 50000" {...field} />
+                    <Input type="number" placeholder={isDairy ? "e.g., 100" : "e.g., 50000"} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -207,9 +245,9 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
               name="broilerLiveWeight"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Broiler Live Weight (kg)</FormLabel>
+                  <FormLabel>{labels.unitWeight}</FormLabel>
                   <FormControl>
-                    <Input type="number" step="0.01" placeholder="e.g., 2.5" {...field} />
+                    <Input type="number" step="0.01" placeholder={isDairy ? "e.g., 40" : "e.g., 2.5"} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -220,9 +258,9 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
               name="baselineMortalityRate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Baseline Mortality Rate (%)</FormLabel>
+                  <FormLabel>{labels.mortalityRate}</FormLabel>
                   <FormControl>
-                    <Input type="number" step="0.1" placeholder="e.g., 4.5" {...field} />
+                    <Input type="number" step="0.1" placeholder={isDairy ? "e.g., 5" : "e.g., 4.5"} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -233,10 +271,10 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
               name="baselineFCR"
               render={({ field }) => (
                 <FormItem>
-                   <FormLabel>Baseline FCR</FormLabel>
+                   <FormLabel>{labels.fcr}</FormLabel>
                    <div className="relative">
                     <FormControl>
-                      <Input type="number" step="0.01" placeholder="e.g., 1.75" {...field} />
+                      <Input type="number" step="0.01" placeholder={isDairy ? "e.g., 1.5" : "e.g., 1.75"} {...field} />
                     </FormControl>
                     <TooltipProvider delayDuration={100}>
                       <Tooltip>
@@ -244,7 +282,11 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
                           <HelpCircle className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground cursor-help" />
                         </TooltipTrigger>
                         <TooltipContent>
-                          <p>Feed Conversion Ratio (before additive).</p>
+                          <p>
+                            {isDairy
+                              ? "Feed efficiency (kg milk / kg dry matter intake)"
+                              : "Feed Conversion Ratio (before additive)."}
+                          </p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -300,7 +342,7 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {feedAdditiveTypes.map((type) => (
+                        {feedAdditives.map((type) => (
                           <SelectItem key={type} value={type}>
                             {type}
                           </SelectItem>
@@ -388,7 +430,7 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
                 <FormItem>
                   <FormLabel>Inclusion Rate (g/ton)</FormLabel>
                   <FormControl>
-                    <Input type="number" step="0.1" placeholder="e.g., 125" {...field} />
+                    <Input type="number" step="0.1" placeholder={isDairy ? "e.g., 10" : "e.g., 125"} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

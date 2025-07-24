@@ -24,6 +24,11 @@ export function CalculatorPageContent({
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
+  const speciesTitle = species.charAt(0).toUpperCase() + species.slice(1);
+  const title = species === 'broilers' 
+    ? `GHG Impact & ROI Calculator for ${speciesTitle}`
+    : `Sustainability & ROI Calculator for ${speciesTitle}`;
+
   return (
     <div className="min-h-screen flex flex-col">
       <header className="bg-card/80 backdrop-blur-sm border-b sticky top-0 z-10">
@@ -47,7 +52,7 @@ export function CalculatorPageContent({
       <main className="flex-grow container mx-auto p-4 sm:p-6 lg:p-8">
         <div className="text-center mb-10">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
-            GHG Impact & ROI Calculator for {species.charAt(0).toUpperCase() + species.slice(1)}
+            {title}
           </h2>
           <p className="text-muted-foreground mt-3 max-w-2xl mx-auto text-base">
             Analyze the environmental and financial benefits of Jefo feed additives in your livestock operation.
@@ -56,6 +61,7 @@ export function CalculatorPageContent({
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
           <div className="lg:col-span-2">
             <OptimizerForm 
+              species={species}
               setResults={setResults} 
               setIsLoading={setIsLoading} 
               setError={setError} 
