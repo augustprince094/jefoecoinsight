@@ -258,7 +258,7 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
               name="feedCost"
               render={({ field }) => (
                 <FormItem>
-                   <FormLabel>Feed Cost ($/kg)</FormLabel>
+                   <FormLabel>Feed cost ($/kg of feed)</FormLabel>
                    <div className="relative">
                     <FormControl>
                       <Input type="number" step="0.01" placeholder="e.g. 0.45" {...field} />
