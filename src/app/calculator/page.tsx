@@ -1,9 +1,9 @@
 
 import { Suspense } from 'react';
-import { CalculatorPageContent } from '@/components/calculator-page-content';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
 import { JefoLogo } from '@/components/icons/jefo-logo';
+import { WrapperCalculatorPageContent } from '@/components/wrapper-calculator-page-content';
 
 function CalculatorLoading() {
   return (
@@ -48,7 +48,7 @@ function CalculatorLoading() {
 export default function Page() {
   return (
     <Suspense fallback={<CalculatorLoading />}>
-      <CalculatorPageContent />
+      <WrapperCalculatorPageContent />
     </Suspense>
   );
 }

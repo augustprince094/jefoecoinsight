@@ -43,7 +43,7 @@ import {
 } from "@/lib/types";
 
 interface OptimizerFormProps {
-  setResults: (results) => void;
+  setResults: (results: any) => void;
   setIsLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
   isCalculating: boolean;
@@ -129,7 +129,7 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
         throw new Error(result.error);
       }
       setResults(result.data);
-    } catch (e) {
+    } catch (e: unknown) {
       const errorMessage = e instanceof Error ? e.message : "An unexpected error occurred.";
       setError(errorMessage);
       toast({

@@ -9,7 +9,6 @@ import Link from 'next/link';
 import { JefoLogo } from '@/components/icons/jefo-logo';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useSearchParams } from 'next/navigation';
 
 // Dynamically import the ResultsDisplay component to optimize initial page load
 const ResultsDisplay = dynamic(
@@ -36,12 +35,10 @@ const ResultsDisplay = dynamic(
 );
 
 
-export function CalculatorPageContent() {
+export function CalculatorPageContent({ species }: { species: string }) {
   const [results, setResults] = useState<OptimizationResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const searchParams = useSearchParams();
-  const species = searchParams.get('species') || 'broilers';
 
   return (
     <div className="min-h-screen flex flex-col">
