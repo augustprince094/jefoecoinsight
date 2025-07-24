@@ -1,44 +1,28 @@
 
 "use client";
 
-import { useState } from 'react';
-import dynamic from 'next/dynamic';
+import * as React from 'react';
 import { OptimizerForm } from '@/components/optimizer-form';
 import type { OptimizationResult } from '@/lib/types';
 import Link from 'next/link';
 import { JefoLogo } from '@/components/icons/jefo-logo';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
 
-// Dynamically import the ResultsDisplay component to optimize initial page load
-const ResultsDisplay = dynamic(
-  () => import('@/components/results-display').then((mod) => mod.ResultsDisplay),
-  {
-    ssr: false, // This component uses recharts which is client-side only
-    loading: () => (
-      <Card>
-        <CardHeader>
-          <Skeleton className="h-8 w-3/4" />
-          <Skeleton className="h-4 w-1/2" />
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <Skeleton className="h-48 w-full" />
-          <div className="space-y-2">
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-5/6" />
-          </div>
-        </CardContent>
-      </Card>
-    ),
-  }
-);
+type ResultsDisplayComponentType = React.ComponentType<{
+  results: OptimizationResult | null;
+  isLoading: boolean;
+  error: string | null;
+}>;
 
-
-export function CalculatorPageContent({ species }: { species: string }) {
-  const [results, setResults] = useState<OptimizationResult | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+export function CalculatorPageContent({ 
+  species,
+  ResultsDisplayComponent 
+}: { 
+  species: string,
+  ResultsDisplayComponent: ResultsDisplayComponentType;
+}) {
+  const [results, setResults] = React.useState<OptimizationResult | null>(null);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -79,7 +63,7 @@ export function CalculatorPageContent({ species }: { species: string }) {
             />
           </div>
           <div className="lg:col-span-3 lg:sticky lg:top-24">
-            <ResultsDisplay 
+            <ResultsDisplayComponent 
               results={results} 
               isLoading={isLoading} 
               error={error} 
