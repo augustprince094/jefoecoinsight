@@ -196,7 +196,7 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
                 <FormItem>
                   <FormLabel>Number of birds</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="e.g. 50000" {...field} />
+                    <Input type="number" placeholder="e.g., 50000" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -209,7 +209,7 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
                 <FormItem>
                   <FormLabel>Broiler Live Weight (kg)</FormLabel>
                   <FormControl>
-                    <Input type="number" step="0.01" placeholder="e.g. 2.5" {...field} />
+                    <Input type="number" step="0.01" placeholder="e.g., 2.5" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -222,7 +222,7 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
                 <FormItem>
                   <FormLabel>Baseline Mortality Rate (%)</FormLabel>
                   <FormControl>
-                    <Input type="number" step="0.1" placeholder="e.g. 4.5" {...field} />
+                    <Input type="number" step="0.1" placeholder="e.g., 4.5" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -236,7 +236,7 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
                    <FormLabel>Baseline FCR</FormLabel>
                    <div className="relative">
                     <FormControl>
-                      <Input type="number" step="0.01" placeholder="e.g. 1.75" {...field} />
+                      <Input type="number" step="0.01" placeholder="e.g., 1.75" {...field} />
                     </FormControl>
                     <TooltipProvider delayDuration={100}>
                       <Tooltip>
@@ -261,7 +261,7 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
                    <FormLabel>Feed cost ($/kg of feed)</FormLabel>
                    <div className="relative">
                     <FormControl>
-                      <Input type="number" step="0.01" placeholder="e.g. 0.45" {...field} />
+                      <Input type="number" step="0.01" placeholder="e.g., 0.45" {...field} />
                     </FormControl>
                     <TooltipProvider delayDuration={100}>
                       <Tooltip>
@@ -359,7 +359,7 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
                 <FormItem>
                   <FormLabel>Inclusion Rate (g/ton)</FormLabel>
                   <FormControl>
-                    <Input type="number" step="0.1" placeholder="e.g. 125" {...field} />
+                    <Input type="number" step="0.1" placeholder="e.g., 125" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -372,7 +372,7 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
                 <FormItem>
                   <FormLabel>Additive Cost ($/kg)</FormLabel>
                   <FormControl>
-                    <Input type="number" step="0.01" placeholder="e.g. 12.50" {...field} />
+                    <Input type="number" step="0.01" placeholder="e.g., 12.50" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
