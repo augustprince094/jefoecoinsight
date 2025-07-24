@@ -57,7 +57,6 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
 
   const defaultValues: Partial<FormValues> = {
     // Shared defaults
-    feedCost: 0.45,
     additiveCost: 12.50,
     // Species-specific defaults
     ...(isDairy ? {
@@ -65,7 +64,6 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
       numberOfBirds: 100, // Represents number of cows
       broilerLiveWeight: 40, // Represents daily milk yield in kg
       baselineMortalityRate: 5, // Represents cull rate
-      baselineFCR: 1.5, // Represents feed efficiency
       feedAdditive: "Lactation VB",
       applicationType: "On-top", // Dairy is always on-top for now
       inclusionRate: 10,
@@ -73,12 +71,15 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
       mortalityRateAfter: 0,
       milkPrice: 0.75,
       daysInMilk: 150,
+      feedCost: 0, // Not used for dairy, but required by schema
+      baselineFCR: 0, // Not used for dairy, but required by schema
     } : { // Broiler defaults
       region: "North America (CA)",
       numberOfBirds: 50000,
       broilerLiveWeight: 2.5,
       baselineMortalityRate: 4.5,
       baselineFCR: 1.75,
+      feedCost: 0.45,
       feedAdditive: "Jefo Pro Solution",
       applicationType: "Matrix",
       dietPhase: "Starter",
@@ -269,60 +270,64 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="baselineFCR"
-              render={({ field }) => (
-                <FormItem>
-                   <FormLabel>{labels.fcr}</FormLabel>
-                   <div className="relative">
-                    <FormControl>
-                      <Input type="number" step="0.01" placeholder={isDairy ? "e.g., 1.5" : "e.g., 1.75"} {...field} />
-                    </FormControl>
-                    <TooltipProvider delayDuration={100}>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <HelpCircle className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground cursor-help" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>
-                            {isDairy
-                              ? "Feed efficiency (kg milk / kg dry matter intake)"
-                              : "Feed Conversion Ratio (before additive)."}
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-             <FormField
-              control={form.control}
-              name="feedCost"
-              render={({ field }) => (
-                <FormItem>
-                   <FormLabel>Feed cost ($/kg of feed)</FormLabel>
-                   <div className="relative">
-                    <FormControl>
-                      <Input type="number" step="0.01" placeholder="e.g., 0.45" {...field} />
-                    </FormControl>
-                    <TooltipProvider delayDuration={100}>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                           <HelpCircle className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground cursor-help" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>The cost of 1kg of feed.</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {!isDairy && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="baselineFCR"
+                  render={({ field }) => (
+                    <FormItem>
+                       <FormLabel>{labels.fcr}</FormLabel>
+                       <div className="relative">
+                        <FormControl>
+                          <Input type="number" step="0.01" placeholder={isDairy ? "e.g., 1.5" : "e.g., 1.75"} {...field} />
+                        </FormControl>
+                        <TooltipProvider delayDuration={100}>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <HelpCircle className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground cursor-help" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>
+                                {isDairy
+                                  ? "Feed efficiency (kg milk / kg dry matter intake)"
+                                  : "Feed Conversion Ratio (before additive)."}
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                 <FormField
+                  control={form.control}
+                  name="feedCost"
+                  render={({ field }) => (
+                    <FormItem>
+                       <FormLabel>Feed cost ($/kg of feed)</FormLabel>
+                       <div className="relative">
+                        <FormControl>
+                          <Input type="number" step="0.01" placeholder="e.g., 0.45" {...field} />
+                        </FormControl>
+                        <TooltipProvider delayDuration={100}>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                               <HelpCircle className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground cursor-help" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>The cost of 1kg of feed.</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
             {isDairy && (
               <>
                 <FormField
