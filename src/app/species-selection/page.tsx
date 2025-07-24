@@ -3,14 +3,15 @@ import Link from 'next/link';
 import { JefoLogo } from '@/components/icons/jefo-logo';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Bird } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { PigIcon } from '@/components/icons/pig-icon';
 import { CowIcon } from '@/components/icons/cow-icon';
+import { HenIcon } from '@/components/icons/hen-icon';
 
 const speciesList = [
   {
     name: 'Broilers',
-    icon: <Bird className="h-10 w-10 text-primary" />,
+    icon: <HenIcon className="h-10 w-10 text-primary" />,
     description: 'Optimize your poultry production for sustainability and profitability.',
     link: '/calculator?species=broilers',
     enabled: true,
