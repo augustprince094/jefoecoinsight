@@ -131,11 +131,11 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
       let fcrReduction = 0;
 
       if (feedAdditiveValue === 'Jefo Pro Solution' && applicationTypeValue === 'On-top') {
-        if (baselineFCRValue >= 1.35 && baselineFCRValue <= 1.50) {
+        if (baselineFCRValue >= 1.35 && baselineFCRValue < 1.50) {
             fcrReduction = 0.02;
-        } else if (baselineFCRValue > 1.50 && baselineFCRValue <= 1.65) {
+        } else if (baselineFCRValue >= 1.50 && baselineFCRValue < 1.65) {
             fcrReduction = 0.03;
-        } else if (baselineFCRValue > 1.65) {
+        } else if (baselineFCRValue >= 1.65) {
             fcrReduction = 0.04;
         } else {
             fcrReduction = 0.03; 
