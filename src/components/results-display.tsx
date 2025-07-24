@@ -91,7 +91,7 @@ function MatrixDashboard({ initialResults }: { initialResults: OptimizationResul
             toast({
                 variant: "destructive",
                 title: "Recalculation Error",
-                description: e.message,
+                description: (e as Error).message,
             });
         } finally {
             setIsRecalculating(false);
@@ -549,7 +549,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                                 <div className="text-center mb-4">
                                      <p className="text-sm text-muted-foreground">Feed Cost per Bird</p>
                                     <p className="text-lg font-bold" style={{color: additiveColor}}>
-                                        Reduction of {formatCurrency(roiData.feedCostPerLiveWeightBefore * inputs.broilerLiveWeight - roiData.feedCostPerLiveweightAfter * inputs.broilerLiveWeight)} per bird
+                                        Reduction of {formatCurrency(roiData.feedCostPerLiveWeightBefore * inputs.broilerLiveWeight - roiData.feedCostPerLiveWeightAfter * inputs.broilerLiveWeight)} per bird
                                     </p>
                                 </div>
                                 <ChartContainer config={economicChartConfig} className="h-[150px] w-full">
