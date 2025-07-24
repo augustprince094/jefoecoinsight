@@ -329,25 +329,25 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
               <>
                 <FormField
                   control={form.control}
-                  name="milkPrice"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Current milk price ($/kg)</FormLabel>
-                      <FormControl>
-                        <Input type="number" step="0.01" placeholder="e.g., 0.75" {...field} onChange={e => field.onChange(parseFloat(e.target.value))}/>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                 <FormField
-                  control={form.control}
                   name="daysInMilk"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Days in milk (d)</FormLabel>
                       <FormControl>
                         <Input type="number" placeholder="e.g., 150" {...field} onChange={e => field.onChange(parseInt(e.target.value, 10))} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="milkPrice"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Current milk price ($/kg)</FormLabel>
+                      <FormControl>
+                        <Input type="number" step="0.01" placeholder="e.g., 0.75" {...field} onChange={e => field.onChange(parseFloat(e.target.value))}/>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
