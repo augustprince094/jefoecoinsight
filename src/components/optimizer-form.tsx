@@ -257,21 +257,22 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                 </FormItem>
               )}
             />
-             <FormField
-              control={form.control}
-              name="baselineMortalityRate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{labels.mortalityRate}</FormLabel>
-                  <FormControl>
-                    <Input type="number" step="0.1" placeholder={isDairy ? "e.g., 5" : "e.g., 4.5"} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+             
             {!isDairy && (
               <>
+                <FormField
+                  control={form.control}
+                  name="baselineMortalityRate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{labels.mortalityRate}</FormLabel>
+                      <FormControl>
+                        <Input type="number" step="0.1" placeholder="e.g., 4.5" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="baselineFCR"
@@ -280,7 +281,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                        <FormLabel>{labels.fcr}</FormLabel>
                        <div className="relative">
                         <FormControl>
-                          <Input type="number" step="0.01" placeholder={isDairy ? "e.g., 1.5" : "e.g., 1.75"} {...field} />
+                          <Input type="number" step="0.01" placeholder="e.g., 1.75" {...field} />
                         </FormControl>
                         <TooltipProvider delayDuration={100}>
                           <Tooltip>
@@ -288,11 +289,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                               <HelpCircle className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground cursor-help" />
                             </TooltipTrigger>
                             <TooltipContent>
-                              <p>
-                                {isDairy
-                                  ? "Feed efficiency (kg milk / kg dry matter intake)"
-                                  : "Feed Conversion Ratio (before additive)."}
-                              </p>
+                              <p>Feed Conversion Ratio (before additive).</p>
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
@@ -343,7 +340,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                     </FormItem>
                   )}
                 />
-                <FormField
+                 <FormField
                   control={form.control}
                   name="daysInMilk"
                   render={({ field }) => (
@@ -351,6 +348,19 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                       <FormLabel>Days in milk (d)</FormLabel>
                       <FormControl>
                         <Input type="number" placeholder="e.g., 150" {...field} onChange={e => field.onChange(parseInt(e.target.value, 10))} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="baselineMortalityRate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{labels.mortalityRate}</FormLabel>
+                      <FormControl>
+                        <Input type="number" step="0.1" placeholder="e.g., 5" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
