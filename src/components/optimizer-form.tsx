@@ -194,8 +194,9 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
               name="numberOfBirds"
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel>Number of birds</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="Number of birds per cycle" {...field} />
+                    <Input type="number" placeholder="e.g. 50000" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -206,8 +207,9 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
               name="broilerLiveWeight"
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel>Broiler Live Weight (kg)</FormLabel>
                   <FormControl>
-                    <Input type="number" step="0.01" placeholder="Live Weight (kg)" {...field} />
+                    <Input type="number" step="0.01" placeholder="e.g. 2.5" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -218,8 +220,9 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
               name="baselineMortalityRate"
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel>Baseline Mortality Rate (%)</FormLabel>
                   <FormControl>
-                    <Input type="number" step="0.1" placeholder="Baseline Mortality Rate (%)" {...field} />
+                    <Input type="number" step="0.1" placeholder="e.g. 4.5" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -230,9 +233,10 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
               name="baselineFCR"
               render={({ field }) => (
                 <FormItem>
+                   <FormLabel>Baseline FCR</FormLabel>
                    <div className="relative">
                     <FormControl>
-                      <Input type="number" step="0.01" placeholder="Baseline FCR" {...field} />
+                      <Input type="number" step="0.01" placeholder="e.g. 1.75" {...field} />
                     </FormControl>
                     <TooltipProvider delayDuration={100}>
                       <Tooltip>
@@ -254,9 +258,10 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
               name="feedCost"
               render={({ field }) => (
                 <FormItem>
+                   <FormLabel>Feed Cost ($/kg)</FormLabel>
                    <div className="relative">
                     <FormControl>
-                      <Input type="number" step="0.01" placeholder="Feed cost ($/kg)" {...field} />
+                      <Input type="number" step="0.01" placeholder="e.g. 0.45" {...field} />
                     </FormControl>
                     <TooltipProvider delayDuration={100}>
                       <Tooltip>
@@ -352,8 +357,9 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
               name="inclusionRate"
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel>Inclusion Rate (g/ton)</FormLabel>
                   <FormControl>
-                    <Input type="number" step="0.1" placeholder="Inclusion Rate (g/ton)" {...field} />
+                    <Input type="number" step="0.1" placeholder="e.g. 125" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -364,8 +370,9 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
               name="additiveCost"
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel>Additive Cost ($/kg)</FormLabel>
                   <FormControl>
-                    <Input type="number" step="0.01" placeholder="Additive Cost ($/kg)" {...field} />
+                    <Input type="number" step="0.01" placeholder="e.g. 12.50" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
