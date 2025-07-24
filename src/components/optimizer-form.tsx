@@ -194,9 +194,8 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
               name="numberOfBirds"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Number of birds per cycle</FormLabel>
                   <FormControl>
-                    <Input type="number" {...field} />
+                    <Input type="number" placeholder="Number of birds per cycle" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -207,9 +206,8 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
               name="broilerLiveWeight"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Live Weight (kg)</FormLabel>
                   <FormControl>
-                    <Input type="number" step="0.01" {...field} />
+                    <Input type="number" step="0.01" placeholder="Live Weight (kg)" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -220,9 +218,8 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
               name="baselineMortalityRate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Baseline Mortality Rate (%)</FormLabel>
                   <FormControl>
-                    <Input type="number" step="0.1" {...field} />
+                    <Input type="number" step="0.1" placeholder="Baseline Mortality Rate (%)" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -233,22 +230,21 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
               name="baselineFCR"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center gap-1.5">
-                    Baseline FCR
+                   <div className="relative">
+                    <FormControl>
+                      <Input type="number" step="0.01" placeholder="Baseline FCR" {...field} />
+                    </FormControl>
                     <TooltipProvider delayDuration={100}>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                          <HelpCircle className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground cursor-help" />
                         </TooltipTrigger>
                         <TooltipContent>
                           <p>Feed Conversion Ratio (before additive).</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                  </FormLabel>
-                  <FormControl>
-                    <Input type="number" step="0.01" {...field} />
-                  </FormControl>
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
@@ -258,22 +254,21 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
               name="feedCost"
               render={({ field }) => (
                 <FormItem>
-                   <FormLabel className="flex items-center gap-1.5">
-                    Feed cost ($/kg of feed)
+                   <div className="relative">
+                    <FormControl>
+                      <Input type="number" step="0.01" placeholder="Feed cost ($/kg)" {...field} />
+                    </FormControl>
                     <TooltipProvider delayDuration={100}>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                           <HelpCircle className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground cursor-help" />
                         </TooltipTrigger>
                         <TooltipContent>
                           <p>The cost of 1kg of feed.</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                  </FormLabel>
-                  <FormControl>
-                    <Input type="number" step="0.01" {...field} />
-                  </FormControl>
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
@@ -357,9 +352,8 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
               name="inclusionRate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Inclusion Rate (g/ton)</FormLabel>
                   <FormControl>
-                    <Input type="number" step="0.1" {...field} />
+                    <Input type="number" step="0.1" placeholder="Inclusion Rate (g/ton)" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -370,9 +364,8 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
               name="additiveCost"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Additive Cost ($/kg)</FormLabel>
                   <FormControl>
-                    <Input type="number" step="0.01" {...field} />
+                    <Input type="number" step="0.01" placeholder="Additive Cost ($/kg)" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
