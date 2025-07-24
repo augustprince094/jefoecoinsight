@@ -189,7 +189,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
   const feedAdditives = isDairy ? dairyFeedAdditiveTypes : broilerFeedAdditiveTypes;
 
   const labels = {
-    numberOfUnits: isDairy ? "Number of cows" : "Number of birds",
+    numberOfUnits: isDairy ? "Herd size" : "Number of birds",
     unitWeight: isDairy ? "Daily milk yield (kg/cow)" : "Broiler Live Weight (kg)",
     mortalityRate: isDairy ? "Baseline cull rate (%)" : "Baseline Mortality Rate (%)",
     fcr: isDairy ? "Baseline Feed Efficiency" : "Baseline FCR",
