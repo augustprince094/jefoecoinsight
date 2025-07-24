@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { JefoLogo } from '@/components/icons/jefo-logo';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useSearchParams } from 'next/navigation';
 
 // Dynamically import the ResultsDisplay component to optimize initial page load
 const ResultsDisplay = dynamic(
@@ -39,6 +40,8 @@ export default function CalculatorPage() {
   const [results, setResults] = useState<OptimizationResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const species = searchParams.get('species') || 'broilers';
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -52,7 +55,7 @@ export default function CalculatorPage() {
             <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
               <Link href="/about" className="text-muted-foreground hover:text-primary">About App</Link>
               <Link href="/feed-additives" className="text-muted-foreground hover:text-primary">Feed additives</Link>
-              <Link href="/calculator" className="font-semibold text-primary border-b-2 border-primary">
+              <Link href="/species-selection" className="font-semibold text-primary border-b-2 border-primary">
                   Calculator
               </Link>
             </nav>
@@ -63,10 +66,10 @@ export default function CalculatorPage() {
       <main className="flex-grow container mx-auto p-4 sm:p-6 lg:p-8">
         <div className="text-center mb-10">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
-            GHG Impact & ROI Calculator
+            GHG Impact & ROI Calculator for Broilers
           </h2>
           <p className="text-muted-foreground mt-3 max-w-2xl mx-auto text-base">
-            Analyze the environmental and financial benefits of Jefo feed additives in your livestock operation.
+            Analyze the environmental and financial benefits of Jefo feed additives in your broiler operation.
           </p>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
