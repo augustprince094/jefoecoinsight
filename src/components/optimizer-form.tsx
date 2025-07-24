@@ -193,6 +193,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
     unitWeight: isDairy ? "Daily milk yield (kg/cow)" : "Broiler Live Weight (kg)",
     mortalityRate: isDairy ? "Baseline cull rate (%)" : "Baseline Mortality Rate (%)",
     fcr: isDairy ? "Baseline Feed Efficiency" : "Baseline FCR",
+    inclusionRate: isDairy ? "Inclusion Rate (g/cow/day)" : "Inclusion Rate (g/ton)",
   };
 
   return (
@@ -428,7 +429,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
               name="inclusionRate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Inclusion Rate (g/ton)</FormLabel>
+                  <FormLabel>{labels.inclusionRate}</FormLabel>
                   <FormControl>
                     <Input type="number" step="0.1" placeholder={isDairy ? "e.g., 10" : "e.g., 125"} {...field} />
                   </FormControl>
