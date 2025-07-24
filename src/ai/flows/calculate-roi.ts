@@ -29,6 +29,9 @@ const ROIInputSchema = z.object({
     feedCost: z.number().describe('The cost per kg of feed, in $.'),
     additiveCost: z.number().describe('The cost of the feed additive in $/kg.'),
   }).describe('Cost metrics related to production.'),
+  // Dairy specific fields
+  milkPrice: z.number().optional().describe('The price of milk in $/kg.'),
+  daysInMilk: z.number().optional().describe('The number of days in milk for a dairy cow.'),
 });
 
 export type ROIInput = z.infer<typeof ROIInputSchema>;

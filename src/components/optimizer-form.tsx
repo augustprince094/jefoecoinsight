@@ -71,6 +71,8 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
       inclusionRate: 10,
       feedConversionRatioAfter: 0,
       mortalityRateAfter: 0,
+      milkPrice: 0.75,
+      daysInMilk: 150,
     } : { // Broiler defaults
       region: "North America (CA)",
       numberOfBirds: 50000,
@@ -190,7 +192,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
 
   const labels = {
     numberOfUnits: isDairy ? "Herd size" : "Number of birds",
-    unitWeight: isDairy ? "Daily milk yield (kg/cow)" : "Broiler Live Weight (kg)",
+    unitWeight: isDairy ? "Current milk yield (kg/cow/d)" : "Broiler Live Weight (kg)",
     mortalityRate: isDairy ? "Baseline cull rate (%)" : "Baseline Mortality Rate (%)",
     fcr: isDairy ? "Baseline Feed Efficiency" : "Baseline FCR",
     inclusionRate: isDairy ? "Inclusion Rate (g/cow/day)" : "Inclusion Rate (g/ton)",
@@ -321,6 +323,36 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                 </FormItem>
               )}
             />
+            {isDairy && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="milkPrice"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Current milk price ($/kg)</FormLabel>
+                      <FormControl>
+                        <Input type="number" step="0.01" placeholder="e.g., 0.75" {...field} onChange={e => field.onChange(parseFloat(e.target.value))}/>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="daysInMilk"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Days in milk (d)</FormLabel>
+                      <FormControl>
+                        <Input type="number" placeholder="e.g., 150" {...field} onChange={e => field.onChange(parseInt(e.target.value, 10))} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
           </CardContent>
         </Card>
 

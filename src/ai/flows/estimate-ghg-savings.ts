@@ -27,6 +27,9 @@ const EstimateGHGSavingsInputSchema = z.object({
   mortalityRateAfter: z.number().describe('The mortality rate after using the additive, as a percentage.'),
   feedConversionRatioBefore: z.number().describe('The feed conversion ratio before using the additive.'),
   feedConversionRatioAfter: z.number().describe('The feed conversion ratio after using the additive.'),
+  // Dairy specific fields
+  milkPrice: z.number().optional().describe('The price of milk in $/kg.'),
+  daysInMilk: z.number().optional().describe('The number of days in milk for a dairy cow.'),
 });
 export type EstimateGHGSavingsInput = z.infer<typeof EstimateGHGSavingsInputSchema>;
 

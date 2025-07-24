@@ -36,6 +36,8 @@ export async function getOptimizationResults(
       feedConversionRatioBefore: data.baselineFCR,
       feedConversionRatioAfter: data.feedConversionRatioAfter,
       costMetrics,
+      milkPrice: data.milkPrice,
+      daysInMilk: data.daysInMilk,
     };
     
     const ghgInput: EstimateGHGSavingsInput = {
@@ -50,6 +52,8 @@ export async function getOptimizationResults(
       mortalityRateAfter: data.mortalityRateAfter,
       feedConversionRatioBefore: data.baselineFCR,
       feedConversionRatioAfter: data.feedConversionRatioAfter,
+      milkPrice: data.milkPrice,
+      daysInMilk: data.daysInMilk,
     };
 
     const [roiData, ghgData] = await Promise.all([
@@ -87,6 +91,7 @@ export async function getOptimizationResults(
     return { data: { roiData, ghgData, advisoryData, inputs: updatedInputs } };
   } catch (e) {
     console.error("Error in getOptimizationResults:", e);
-    return { error: e.message || "An unexpected error occurred while processing your request." };
+    const error = e as Error;
+    return { error: error.message || "An unexpected error occurred while processing your request." };
   }
 }

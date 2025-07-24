@@ -38,6 +38,9 @@ export const formSchema = z.object({
   additiveCost: z.coerce.number().positive({ message: "Must be a positive number." }),
   feedConversionRatioAfter: z.coerce.number(),
   mortalityRateAfter: z.coerce.number().min(0, { message: "Cannot be negative." }),
+  // Dairy specific fields
+  milkPrice: z.coerce.number().optional(),
+  daysInMilk: z.coerce.number().optional(),
 });
 
 
