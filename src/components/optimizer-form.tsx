@@ -97,11 +97,26 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
 
     if (feedAdditiveValue && baselineFCRValue > 0) {
       let fcrReduction = 0;
-      switch (feedAdditiveValue) {
-        case "Jefo Pro Solution": fcrReduction = 0.03; break;
-        case "Jefo P(OA+EO)": fcrReduction = 0.04; break;
-        case "Jefo Xylanase": fcrReduction = 0.04; break;
+
+      if (feedAdditiveValue === 'Jefo Pro Solution' && applicationTypeValue === 'On-top') {
+        if (baselineFCRValue >= 1.35 && baselineFCRValue <= 1.50) {
+            fcrReduction = 0.02;
+        } else if (baselineFCRValue > 1.50 && baselineFCRValue <= 1.65) {
+            fcrReduction = 0.03;
+        } else if (baselineFCRValue > 1.65) {
+            fcrReduction = 0.04;
+        } else {
+            // Default reduction for Jefo Pro Solution if outside specified ranges
+            fcrReduction = 0.03; 
+        }
+      } else {
+        switch (feedAdditiveValue) {
+          case "Jefo Pro Solution": fcrReduction = 0.03; break;
+          case "Jefo P(OA+EO)": fcrReduction = 0.04; break;
+          case "Jefo Xylanase": fcrReduction = 0.04; break;
+        }
       }
+
       const newFCR = baselineFCRValue - fcrReduction;
       setValue("feedConversionRatioAfter", parseFloat(newFCR.toFixed(3)), { shouldValidate: true });
     }
@@ -117,7 +132,7 @@ export function OptimizerForm({ setResults, setIsLoading, setError, isCalculatin
       setValue("mortalityRateAfter", Math.max(0, parseFloat(newMortalityRate.toFixed(2))), { shouldValidate: true });
     }
 
-  }, [feedAdditiveValue, baselineFCRValue, baselineMortalityRateValue, setValue]);
+  }, [feedAdditiveValue, applicationTypeValue, baselineFCRValue, baselineMortalityRateValue, setValue]);
 
   async function onSubmit(data: FormValues) {
     setIsLoading(true);
