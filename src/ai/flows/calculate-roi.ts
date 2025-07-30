@@ -12,6 +12,7 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'zod';
 import { feedData } from '@/lib/feed-data';
+import { regionSettings } from '@/lib/types';
 
 const ROIInputSchema = z.object({
   region: z.string().describe('The region of operation.'),
@@ -26,8 +27,9 @@ const ROIInputSchema = z.object({
   feedConversionRatioBefore: z.number().describe('The feed conversion ratio before using the additive.'),
   feedConversionRatioAfter: z.number().describe('The feed conversion ratio after using the additive.'),
   costMetrics: z.object({
-    feedCost: z.number().describe('The cost per kg of feed, in $.'),
-    additiveCost: z.number().describe('The cost of the feed additive in $/kg.'),
+    feedCost: z.number().describe('The cost per kg of feed, in the regional currency.'),
+    additiveCost: z.number().describe('The cost of the feed additive in the regional currency per kg.'),
+    currency: z.string().describe('The currency code (e.g., USD, EUR, PHP).'),
   }).describe('Cost metrics related to production.'),
   // Dairy specific fields
   milkPrice: z.number().optional().describe('The price of milk in $/kg.'),
@@ -39,11 +41,11 @@ export type ROIInput = z.infer<typeof ROIInputSchema>;
 const ROIOutputSchema = z.object({
   roi: z.number().describe('The calculated return on investment (ROI) as a decimal ratio to 1.'),
   explanation: z.string().describe('An explanation of how the ROI was calculated, showing the steps.'),
-  feedCostPerLiveWeightBefore: z.number().describe('The feed cost per kg of live weight before the additive, in $.'),
-  feedCostPerLiveWeightAfter: z.number().describe('The feed cost per kg of live weight after using the additive, in $.'),
-  feedCostSavings: z.number().describe('The total feed cost savings in $.'),
-  baselineCostPerTon: z.number().optional().describe('The baseline feed cost per ton in $.'),
-  reformulatedCostPerTon: z.number().optional().describe('The reformulated feed cost per ton in $.'),
+  feedCostPerLiveWeightBefore: z.number().describe('The feed cost per kg of live weight before the additive, in the regional currency.'),
+  feedCostPerLiveWeightAfter: z.number().describe('The feed cost per kg of live weight after using the additive, in the regional currency.'),
+  feedCostSavings: z.number().describe('The total feed cost savings in the regional currency.'),
+  baselineCostPerTon: z.number().optional().describe('The baseline feed cost per ton in the regional currency.'),
+  reformulatedCostPerTon: z.number().optional().describe('The reformulated feed cost per ton in the regional currency.'),
 });
 
 export type ROIOutput = z.infer<typeof ROIOutputSchema>;
@@ -52,50 +54,9 @@ export async function calculateROI(input: ROIInput): Promise<ROIOutput> {
   return calculateROIFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'calculateROIPrompt',
-  input: {schema: ROIInputSchema},
-  output: {schema: ROIOutputSchema},
-  prompt: `You are an expert in broiler economics. Your main task is to calculate the return on investment (ROI) and related financial metrics for using a feed additive.
-
-Follow the user's formulas precisely.
-
-**Input Data:**
-- Number of birds per cycle: {{{numberOfBirds}}}
-- Target live weight per broiler: {{{broilerLiveWeight}}} kg
-- Baseline Mortality rate: {{{mortalityRateBefore}}} %
-- Baseline Feed Conversion Ratio (FCR): {{{feedConversionRatioBefore}}}
-- New Mortality rate (after additive): {{{mortalityRateAfter}}} %
-- New FCR (after additive): {{{feedConversionRatioAfter}}}
-- Cost per kg of Feed: \${{{costMetrics.feedCost}}}
-- Additive Cost: \${{{costMetrics.additiveCost}}} per kg
-- Additive Inclusion Rate: {{{inclusionRate}}} kg/ton
-
-**Calculation Steps:**
-
-1.  **Calculate Total Baseline Cost:**
-    a. First, calculate **Average Feed per Bird (Baseline)** = \`{{{feedConversionRatioBefore}}} * {{{broilerLiveWeight}}}\`.
-    b. Next, calculate the **Survival Rate (Baseline)** = \`1 - ({{{mortalityRateBefore}}} / 100)\`.
-    c. Now, calculate the **Total Baseline Cost** using this exact formula: \`( ({{{numberOfBirds}}} * Average Feed per Bird (Baseline) * {{{costMetrics.feedCost}}}) / Survival Rate (Baseline) )\`.
-    d. Calculate \`feedCostPerLiveWeightBefore\` = \`Total Baseline Cost / ({{{numberOfBirds}}} * Survival Rate (Baseline) * {{{broilerLiveWeight}}})\`.
-
-2.  **Calculate New Costs (With Additive):**
-    a. First, calculate the **Average Feed per Bird (After)** = \`{{{feedConversionRatioAfter}}} * {{{broilerLiveWeight}}}\`.
-    b. Next, calculate the **Survival Rate (After)** = \`1 - ({{{mortalityRateAfter}}} / 100)\`.
-    c. Now, calculate the **Total Feed Cost After** using this exact formula: \`( ({{{numberOfBirds}}} * Average Feed per Bird (After) * {{{costMetrics.feedCost}}}) / Survival Rate (After) )\`.
-    d. Calculate the **Total Feed Consumed After**: This is the feed portion of the cost calculation: \`( ({{{numberOfBirds}}} * Average Feed per Bird (After)) / Survival Rate (After) )\`.
-    e. Calculate **Total Investment in Additive** = \`(Total Feed Consumed After / 1000) * {{{inclusionRate}}} * {{{costMetrics.additiveCost}}}\`.
-    f. Calculate **Total Cost With Additive** = \`Total Feed Cost After + Total Investment in Additive\`.
-    g. Calculate \`feedCostPerLiveWeightAfter\` = \`Total Cost With Additive / ({{{numberOfBirds}}} * Survival Rate (After) * {{{broilerLiveWeight}}})\`.
-
-3.  **Calculate Savings and ROI:**
-    a. Calculate **Total Cost Savings (\`feedCostSavings\`)** = \`Total Baseline Cost - Total Cost With Additive\`.
-    b. If Total Investment in Additive is zero or less, the ROI is infinite. Otherwise, calculate **\`roi\`** = \`feedCostSavings / Total Investment in Additive\`.
-
-Provide a detailed step-by-step explanation following the structure above, showing the result of each calculation. The explanation should be a clear, multi-line string, perfect for display in a tooltip. For each step, clearly label the calculation and show the resulting number.
-Return all the required fields in the output schema.
-`,
-});
+const formatCurrencyForPrompt = (value: number, currency: string) => {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency, currencyDisplay: 'symbol' }).format(value);
+}
 
 const calculateROIFlow = ai.defineFlow(
   {
@@ -104,17 +65,20 @@ const calculateROIFlow = ai.defineFlow(
     outputSchema: ROIOutputSchema,
   },
   async (input) => {
+    const currency = input.costMetrics.currency;
+
     if (input.applicationType === 'Matrix' && (input.feedAdditiveType === 'Jefo Pro Solution' || input.feedAdditiveType === 'Jefo Xylanase')) {
       const dietPhase = (input.dietPhase || 'Starter') as 'Starter' | 'Grower' | 'Finisher';
-      const regionFeedData = feedData.find(d => d.region === input.region);
+      const region = input.region as keyof typeof regionSettings;
+      const regionFeedData = feedData.find(d => d.region === region);
 
       if (!regionFeedData) {
-        throw new Error(`Feed data for region ${input.region} not found.`);
+        throw new Error(`Feed data for region ${region} not found.`);
       }
       
       const dietIngredients = regionFeedData.diets[dietPhase];
       if (!dietIngredients) {
-        throw new Error(`Diet data for phase ${dietPhase} in region ${input.region} not found.`);
+        throw new Error(`Diet data for phase ${dietPhase} in region ${region} not found.`);
       }
 
       const baselineCostPerTon = dietIngredients.reduce((total, ing) => {
@@ -219,12 +183,12 @@ const calculateROIFlow = ai.defineFlow(
       const feedCostPerLiveWeightBefore = totalLiveWeightBefore > 0 ? totalFeedCostBefore / totalLiveWeightBefore : 0;
       
       const explanation = `For a 'Matrix' application with ${input.feedAdditiveType}, savings are calculated from the net change in feed cost per ton, factoring in both reformulation and additive cost:\n\n` +
-        `1. Baseline Feed Cost: ${formatCurrency(baselineCostPerTon)} per ton.\n` +
-        `2. Gross Reformulated Cost: ${formatCurrency(grossReformulatedCostPerTon)} per ton.\n` +
-        `3. Additive Cost: ${formatCurrency(additiveCostPerTon)} per ton.\n` +
-        `4. Net Reformulated Cost (Gross + Additive): ${formatCurrency(netReformulatedCostPerTon)} per ton.\n` +
-        `5. Net Saving per Ton: ${formatCurrency(netSavingsPerTon)}.\n` +
-        `6. Total Net Savings (over production cycle): ${formatCurrency(totalNetFeedCostSavings)}.\n` +
+        `1. Baseline Feed Cost: ${formatCurrencyForPrompt(baselineCostPerTon, currency)} per ton.\n` +
+        `2. Gross Reformulated Cost: ${formatCurrencyForPrompt(grossReformulatedCostPerTon, currency)} per ton.\n` +
+        `3. Additive Cost: ${formatCurrencyForPrompt(additiveCostPerTon, currency)} per ton.\n` +
+        `4. Net Reformulated Cost (Gross + Additive): ${formatCurrencyForPrompt(netReformulatedCostPerTon, currency)} per ton.\n` +
+        `5. Net Saving per Ton: ${formatCurrencyForPrompt(netSavingsPerTon, currency)}.\n` +
+        `6. Total Net Savings (over production cycle): ${formatCurrencyForPrompt(totalNetFeedCostSavings, currency)}.\n` +
         `7. Return on Investment (ROI): The final ROI, based on Total Net Savings versus Total Additive Investment, is ${roi.toFixed(1)}:1.`;
       
       return {
@@ -257,9 +221,9 @@ const calculateROIFlow = ai.defineFlow(
       const feedCostPerLiveWeightBefore = totalLiveWeightBefore > 0 ? totalCostBefore / totalLiveWeightBefore : 0;
 
       const explanation = `For an 'On-top' application with ${input.feedAdditiveType}, savings are based on improved performance (FCR and mortality) against the cost of the additive:\n\n` +
-        `1. Baseline Production Cost: ${formatCurrency(totalCostBefore)}.\n` +
-        `2. Production Cost with Additive: ${formatCurrency(totalCostAfter)} (includes ${formatCurrency(totalInvestmentInAdditive)} for the additive).\n` +
-        `3. Net Savings: ${formatCurrency(netFeedCostSavings)}.\n` +
+        `1. Baseline Production Cost: ${formatCurrencyForPrompt(totalCostBefore, currency)}.\n` +
+        `2. Production Cost with Additive: ${formatCurrencyForPrompt(totalCostAfter, currency)} (includes ${formatCurrencyForPrompt(totalInvestmentInAdditive, currency)} for the additive).\n` +
+        `3. Net Savings: ${formatCurrencyForPrompt(netFeedCostSavings, currency)}.\n` +
         `4. Return on Investment (ROI): ${roi.toFixed(1)}:1.`;
 
       return {
@@ -272,7 +236,3 @@ const calculateROIFlow = ai.defineFlow(
     }
   }
 );
-
-function formatCurrency(value: number) {
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
-}

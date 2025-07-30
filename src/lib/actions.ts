@@ -4,7 +4,7 @@
 import { calculateROI, type ROIInput } from '@/ai/flows/calculate-roi';
 import { estimateGHGSavings, type EstimateGHGSavingsInput } from '@/ai/flows/estimate-ghg-savings';
 import { provideAdvisory, type ProvideAdvisoryInput } from '@/ai/flows/provide-advisory';
-import { type FormValues, type OptimizationResult, type DietPhase } from '@/lib/types';
+import { type FormValues, type OptimizationResult, type DietPhase, regionSettings, Region } from '@/lib/types';
 
 export async function getOptimizationResults(
   data: FormValues, 
@@ -13,10 +13,12 @@ export async function getOptimizationResults(
   try {
     // If recalculating, use the provided phase, otherwise default to Starter or the form's value.
     const dietPhase = recalculateDietPhase || data.dietPhase || "Starter";
+    const currency = regionSettings[data.region as Region]?.currency || 'USD';
 
     const costMetrics = {
         feedCost: data.feedCost,
         additiveCost: data.additiveCost,
+        currency: currency,
     };
 
     // Jefo P(OA+EO) is always an "On-top" application.

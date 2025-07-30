@@ -12,6 +12,22 @@ export const broilerRegions = ["North America (CA)", "Asia (PH)", "Europe (FR)"]
 export const dairyFeedAdditiveTypes = ["Lactation VB", "Transition VB"] as const;
 export const dairyRegions = ["Canada", "United States", "Mexico", "Chile", "Colombia", "France", "Australia"] as const;
 
+export const regionSettings = {
+    // Broiler Regions
+    "North America (CA)": { currency: "USD", symbol: "$" },
+    "Asia (PH)": { currency: "PHP", symbol: "₱" },
+    "Europe (FR)": { currency: "EUR", symbol: "€" },
+    // Dairy Regions
+    "Canada": { currency: "CAD", symbol: "$" },
+    "United States": { currency: "USD", symbol: "$" },
+    "Mexico": { currency: "MXN", symbol: "$" },
+    "Chile": { currency: "CLP", symbol: "$" },
+    "Colombia": { currency: "COP", symbol: "$" },
+    "France": { currency: "EUR", symbol: "€" },
+    "Australia": { currency: "AUD", symbol: "$" },
+} as const;
+export type Region = keyof typeof regionSettings;
+
 
 // Shared constants
 export const applicationTypes = ["Matrix", "On-top"] as const;

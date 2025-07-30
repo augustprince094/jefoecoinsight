@@ -2,7 +2,7 @@
 "use client"
 
 import * as React from "react";
-import type { OptimizationResult, DietPhase, FormValues } from "@/lib/types";
+import type { OptimizationResult, DietPhase, FormValues, Region } from "@/lib/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -26,7 +26,7 @@ import type { ProvideAdvisoryOutput } from "@/ai/flows/provide-advisory";
 import { regionalBaselineGHG } from "@/lib/additive-data";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { GiRoastChicken } from "react-icons/gi";
-import { dietPhases } from "@/lib/types";
+import { dietPhases, regionSettings } from "@/lib/types";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { getOptimizationResults } from "@/lib/actions";
@@ -41,10 +41,10 @@ const additiveColorMap: { [key: string]: string } = {
 const baselineColor = "#AEAEAE"; // neutral gray
 const defaultAdditiveColor = "hsl(var(--primary))";
 
-const formatCurrency = (value: number, options: Intl.NumberFormatOptions = {}) => {
+const formatCurrency = (value: number, currency: string, options: Intl.NumberFormatOptions = {}) => {
     return new Intl.NumberFormat('en-US', {
         style: 'currency',
-        currency: 'USD',
+        currency: currency,
         ...options
     }).format(value);
 }
@@ -78,6 +78,8 @@ function MatrixDashboard({ initialResults }: { initialResults: OptimizationResul
 
     const { roiData, ghgData, advisoryData, inputs } = results;
     const additiveColor = additiveColorMap[inputs.feedAdditive as keyof typeof additiveColorMap] || defaultAdditiveColor;
+    const region = inputs.region as Region;
+    const currency = regionSettings[region]?.currency || 'USD';
     
     const { baselineCostPerTon, reformulatedCostPerTon } = roiData;
 
@@ -126,8 +128,7 @@ function MatrixDashboard({ initialResults }: { initialResults: OptimizationResul
     const minGhg = Math.min(...ghgValues);
     const ghgYAxisDomainMin = Math.max(0, Math.floor(minGhg * 0.95));
 
-    const region = inputs.region as keyof typeof regionalBaselineGHG;
-    const ghgPerKgLiveWeight = regionalBaselineGHG[region] || regionalBaselineGHG["North America (CA)"];
+    const ghgPerKgLiveWeight = regionalBaselineGHG[region as keyof typeof regionalBaselineGHG] || regionalBaselineGHG["North America (CA)"];
     const equivalentChickens = ghgData.ghgSavings > 0 ? ghgData.ghgSavings / (inputs.broilerLiveWeight * ghgPerKgLiveWeight) : 0;
     const equivalentKm = ghgData.ghgSavings > 0 ? ghgData.ghgSavings / 252 : 0;
     const carbonCreditRevenue = ghgData.ghgSavings > 0 ? (ghgData.ghgSavings / 1000) * 95  : 0;
@@ -262,7 +263,7 @@ function MatrixDashboard({ initialResults }: { initialResults: OptimizationResul
                                          <div className="p-4 rounded-lg border bg-card/50 shadow-sm">
                                             <Leaf className="h-8 w-8 text-accent mx-auto mb-1 animate-wobble" />
                                             <p className="text-sm font-semibold">Carbon Credit Revenue</p>
-                                            <p className="text-xl font-bold text-accent">{formatCurrency(carbonCreditRevenue)}</p>
+                                            <p className="text-xl font-bold text-accent">{formatCurrency(carbonCreditRevenue, currency)}</p>
                                             <p className="text-xs text-muted-foreground">from GHG savings</p>
                                         </div>
                                     </div>
@@ -288,7 +289,7 @@ function MatrixDashboard({ initialResults }: { initialResults: OptimizationResul
                                             </TooltipProvider>
                                         </CardDescription>
                                         <p className="text-xl font-bold">
-                                            {formatCurrency(roiData.feedCostSavings)}
+                                            {formatCurrency(roiData.feedCostSavings, currency)}
                                         </p>
                                     </div>
                                     <div className="p-3 rounded-lg border shadow-sm text-center" style={{ backgroundColor: `${additiveColor}1A`, borderColor: `${additiveColor}33`}}>
@@ -303,7 +304,7 @@ function MatrixDashboard({ initialResults }: { initialResults: OptimizationResul
                                     <div className="text-center mb-4">
                                         <p className="text-sm text-muted-foreground">Feed Cost per Ton</p>
                                         <p className="text-lg font-bold" style={{color: additiveColor}}>
-                                            Saving of {formatCurrency(savingsPerTon)} per ton
+                                            Saving of {formatCurrency(savingsPerTon, currency)} per ton
                                         </p>
                                     </div>
                                     <ChartContainer config={economicChartConfig} className="h-[200px] w-full">
@@ -314,7 +315,7 @@ function MatrixDashboard({ initialResults }: { initialResults: OptimizationResul
                                                 tickLine={false}
                                                 axisLine={false}
                                                 tickMargin={8}
-                                                tickFormatter={(value) => formatCurrency(value as number, { notation: 'compact' })}
+                                                tickFormatter={(value) => formatCurrency(value as number, currency, { notation: 'compact' })}
                                                 domain={[yAxisDomainMin, 'auto']}
                                             />
                                             <XAxis
@@ -328,7 +329,7 @@ function MatrixDashboard({ initialResults }: { initialResults: OptimizationResul
                                                 cursor={false}
                                                 content={<ChartTooltipContent 
                                                     indicator="line"
-                                                    formatter={(value) => formatCurrency(value as number, {minimumFractionDigits: 2})}
+                                                    formatter={(value) => formatCurrency(value as number, currency, {minimumFractionDigits: 2})}
                                                 />}
                                             />
                                             <Bar dataKey="cost" radius={4}>
@@ -337,7 +338,7 @@ function MatrixDashboard({ initialResults }: { initialResults: OptimizationResul
                                                     position="top"
                                                     offset={8}
                                                     className="fill-foreground text-xs"
-                                                    formatter={(value: number) => formatCurrency(value, {minimumFractionDigits: 2})}
+                                                    formatter={(value: number) => formatCurrency(value, currency, {minimumFractionDigits: 2})}
                                                 />
                                                 <Cell fill={baselineColor} />
                                                 <Cell fill={additiveColor} />
@@ -360,6 +361,8 @@ function MatrixDashboard({ initialResults }: { initialResults: OptimizationResul
 function OnTopDashboard({ results }: { results: OptimizationResult }) {
     const { roiData, ghgData, advisoryData, inputs } = results;
     const additiveColor = additiveColorMap[inputs.feedAdditive as keyof typeof additiveColorMap] || defaultAdditiveColor;
+    const region = inputs.region as Region;
+    const currency = regionSettings[region]?.currency || 'USD';
 
     const feedCostReduction = roiData.feedCostPerLiveWeightBefore > 0
         ? ((roiData.feedCostPerLiveWeightBefore - roiData.feedCostPerLiveWeightAfter) / roiData.feedCostPerLiveWeightBefore) * 100
@@ -393,8 +396,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
     const minGhg = Math.min(...ghgValues);
     const ghgYAxisDomainMin = Math.max(0, Math.floor(minGhg * 0.95));
 
-    const region = inputs.region as keyof typeof regionalBaselineGHG;
-    const ghgPerKgLiveWeight = regionalBaselineGHG[region] || regionalBaselineGHG["North America (CA)"];
+    const ghgPerKgLiveWeight = regionalBaselineGHG[region as keyof typeof regionalBaselineGHG] || regionalBaselineGHG["North America (CA)"];
     const equivalentChickens = ghgData.ghgSavings > 0 ? ghgData.ghgSavings / (inputs.broilerLiveWeight * ghgPerKgLiveWeight) : 0;
     const equivalentKm = ghgData.ghgSavings > 0 ? ghgData.ghgSavings / 252 : 0;
     const carbonCreditRevenue = ghgData.ghgSavings > 0 ? (ghgData.ghgSavings / 1000) * 167 : 0;
@@ -504,7 +506,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                                     <div className="p-4 rounded-lg border bg-card/50 shadow-sm">
                                         <Leaf className="h-8 w-8 text-accent mx-auto mb-1 animate-wobble" />
                                         <p className="text-sm font-semibold">Carbon Credit Revenue</p>
-                                        <p className="text-xl font-bold text-accent">{formatCurrency(carbonCreditRevenue)}</p>
+                                        <p className="text-xl font-bold text-accent">{formatCurrency(carbonCreditRevenue, currency)}</p>
                                         <p className="text-xs text-muted-foreground">from GHG savings</p>
                                     </div>
                                 </div>
@@ -535,7 +537,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                                             </Tooltip>
                                         </TooltipProvider>
                                     </p>
-                                    <p className="text-2xl font-bold">{formatCurrency(roiData.feedCostSavings)}</p>
+                                    <p className="text-2xl font-bold">{formatCurrency(roiData.feedCostSavings, currency)}</p>
                                 </div>
                                  <div className="p-3 rounded-lg border shadow-sm" style={{ backgroundColor: `${additiveColor}1A`, borderColor: `${additiveColor}33`}}>
                                     <p className="text-sm flex items-center justify-center gap-1.5 mb-1" style={{color: additiveColor}}>
@@ -549,7 +551,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                                 <div className="text-center mb-4">
                                      <p className="text-sm text-muted-foreground">Feed Cost per Bird</p>
                                     <p className="text-lg font-bold" style={{color: additiveColor}}>
-                                        Reduction of {formatCurrency(roiData.feedCostPerLiveWeightBefore * inputs.broilerLiveWeight - roiData.feedCostPerLiveWeightAfter * inputs.broilerLiveWeight)} per bird
+                                        Reduction of {formatCurrency(roiData.feedCostPerLiveWeightBefore * inputs.broilerLiveWeight - roiData.feedCostPerLiveWeightAfter * inputs.broilerLiveWeight, currency)} per bird
                                     </p>
                                 </div>
                                 <ChartContainer config={economicChartConfig} className="h-[150px] w-full">
@@ -560,7 +562,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                                             tickLine={false}
                                             axisLine={false}
                                             tickMargin={8}
-                                            tickFormatter={(value) => `$${value.toFixed(2)}`}
+                                            tickFormatter={(value) => formatCurrency(value as number, currency, {minimumFractionDigits: 2})}
                                             domain={[yAxisDomainMin, 'auto']}
                                         />
                                         <XAxis
@@ -573,7 +575,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                                             cursor={false}
                                             content={<ChartTooltipContent 
                                                 indicator="line"
-                                                formatter={(value) => formatCurrency(value as number, {minimumFractionDigits: 3})}
+                                                formatter={(value) => formatCurrency(value as number, currency, {minimumFractionDigits: 3})}
                                             />}
                                         />
                                         <Bar dataKey="cost" radius={4}>
@@ -582,7 +584,7 @@ function OnTopDashboard({ results }: { results: OptimizationResult }) {
                                                 position="top"
                                                 offset={8}
                                                 className="fill-foreground text-xs"
-                                                formatter={(value: number) => formatCurrency(value, {minimumFractionDigits: 2})}
+                                                formatter={(value: number) => formatCurrency(value, currency, {minimumFractionDigits: 2})}
                                             />
                                            <Cell fill={baselineColor} />
                                            <Cell fill={additiveColor} />

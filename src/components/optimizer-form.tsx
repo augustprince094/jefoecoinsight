@@ -42,6 +42,8 @@ import {
   dairyRegions,
   dietPhases,
   type FormValues,
+  regionSettings,
+  type Region,
 } from "@/lib/types";
 
 interface OptimizerFormProps {
@@ -96,10 +98,13 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
   const { toast } = useToast();
   const { watch, setValue } = form;
 
+  const regionValue = watch("region") as Region;
   const feedAdditiveValue = watch("feedAdditive");
   const applicationTypeValue = watch("applicationType");
   const baselineFCRValue = watch("baselineFCR");
   const baselineMortalityRateValue = watch("baselineMortalityRate");
+
+  const currencySymbol = regionSettings[regionValue]?.symbol || '$';
   
   const showApplicationType = !isDairy &&
     (feedAdditiveValue === "Jefo Pro Solution" ||
@@ -127,29 +132,37 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
       }
     }
 
-    if (feedAdditiveValue && baselineFCRValue > 0) {
+    if (feedAdditiveValue && baselineFCRValue > 0 && applicationTypeValue === 'On-top') {
       let fcrReduction = 0;
 
-      if (feedAdditiveValue === 'Jefo Pro Solution' && applicationTypeValue === 'On-top') {
+      if (feedAdditiveValue === 'Jefo Pro Solution') {
         if (baselineFCRValue >= 1.35 && baselineFCRValue < 1.50) {
             fcrReduction = 0.02;
         } else if (baselineFCRValue >= 1.50 && baselineFCRValue < 1.65) {
             fcrReduction = 0.03;
         } else if (baselineFCRValue >= 1.65) {
             fcrReduction = 0.04;
-        } else {
-            fcrReduction = 0.03; 
         }
       } else {
         switch (feedAdditiveValue) {
-          case "Jefo Pro Solution": fcrReduction = 0.03; break;
           case "Jefo P(OA+EO)": fcrReduction = 0.04; break;
           case "Jefo Xylanase": fcrReduction = 0.04; break;
         }
       }
 
-      const newFCR = baselineFCRValue - fcrReduction;
-      setValue("feedConversionRatioAfter", parseFloat(newFCR.toFixed(3)), { shouldValidate: true });
+      if (fcrReduction > 0) {
+        const newFCR = baselineFCRValue - fcrReduction;
+        setValue("feedConversionRatioAfter", parseFloat(newFCR.toFixed(3)), { shouldValidate: true });
+      }
+    } else if (feedAdditiveValue && baselineFCRValue > 0) {
+        let fcrReduction = 0;
+        switch (feedAdditiveValue) {
+          case "Jefo Pro Solution": fcrReduction = 0.03; break;
+          case "Jefo P(OA+EO)": fcrReduction = 0.04; break;
+          case "Jefo Xylanase": fcrReduction = 0.04; break;
+        }
+        const newFCR = baselineFCRValue - fcrReduction;
+        setValue("feedConversionRatioAfter", parseFloat(newFCR.toFixed(3)), { shouldValidate: true });
     }
 
     if (feedAdditiveValue && baselineMortalityRateValue > 0) {
@@ -197,6 +210,9 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
     mortalityRate: isDairy ? "Baseline cull rate (%)" : "Baseline Mortality Rate (%)",
     fcr: isDairy ? "Baseline Feed Efficiency" : "Baseline FCR",
     inclusionRate: isDairy ? "Inclusion Rate (g/cow/day)" : "Inclusion Rate (g/ton)",
+    milkPrice: `Current milk price (${currencySymbol}/kg)`,
+    feedCost: `Feed cost (${currencySymbol}/kg of feed)`,
+    additiveCost: `Additive Cost (${currencySymbol}/kg)`,
   };
 
   return (
@@ -244,22 +260,22 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="broilerLiveWeight"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{labels.unitWeight}</FormLabel>
-                  <FormControl>
-                    <Input type="number" step="0.01" placeholder={isDairy ? "e.g., 40" : "e.g., 2.5"} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
              
             {!isDairy && (
               <>
+                <FormField
+                  control={form.control}
+                  name="broilerLiveWeight"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{labels.unitWeight}</FormLabel>
+                      <FormControl>
+                        <Input type="number" step="0.01" placeholder="e.g., 2.5" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="baselineMortalityRate"
@@ -303,7 +319,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                   name="feedCost"
                   render={({ field }) => (
                     <FormItem>
-                       <FormLabel>Feed cost ($/kg of feed)</FormLabel>
+                       <FormLabel>{labels.feedCost}</FormLabel>
                        <div className="relative">
                         <FormControl>
                           <Input type="number" step="0.01" placeholder="e.g., 0.45" {...field} />
@@ -327,6 +343,19 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
             )}
             {isDairy && (
               <>
+                 <FormField
+                  control={form.control}
+                  name="broilerLiveWeight"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{labels.unitWeight}</FormLabel>
+                      <FormControl>
+                        <Input type="number" step="0.01" placeholder="e.g., 40" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="daysInMilk"
@@ -345,7 +374,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                   name="milkPrice"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Current milk price ($/kg)</FormLabel>
+                      <FormLabel>{labels.milkPrice}</FormLabel>
                       <FormControl>
                         <Input type="number" step="0.01" placeholder="e.g., 0.75" {...field} onChange={e => field.onChange(parseFloat(e.target.value))}/>
                       </FormControl>
@@ -489,7 +518,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
               name="additiveCost"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Additive Cost ($/kg)</FormLabel>
+                  <FormLabel>{labels.additiveCost}</FormLabel>
                   <FormControl>
                     <Input type="number" step="0.01" placeholder="e.g., 12.50" {...field} />
                   </FormControl>
