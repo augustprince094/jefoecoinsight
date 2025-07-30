@@ -471,35 +471,6 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
               </div>
             )}
             
-            {showDietPhase && (
-              <div className="md:col-span-2">
-                <FormField
-                  control={form.control}
-                  name="dietPhase"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Diet Phase</FormLabel>
-                       <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a diet phase..." />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {dietPhases.map((phase) => (
-                            <SelectItem key={phase} value={phase}>
-                              {phase}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            )}
-            
             <FormField
               control={form.control}
               name="inclusionRate"
