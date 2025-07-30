@@ -94,7 +94,7 @@ const calculateROIFlow = ai.defineFlow(
                 switch (ing.name) {
                   case 'Corn': 
                   case 'Wheat':
-                    newQuantity *= 1.0374; break;
+                    newQuantity *= 1.061; break;
                   case 'Soybean Meal': newQuantity *= (1 - 0.0418); break;
                   case 'Soybean Oil':
                   case 'Coconut Oil':
