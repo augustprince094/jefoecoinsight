@@ -92,29 +92,47 @@ const calculateROIFlow = ai.defineFlow(
             switch (dietPhase) {
               case 'Starter':
                 switch (ing.name) {
-                  case 'Corn': newQuantity *= 1.0374; break;
+                  case 'Corn': 
+                  case 'Wheat':
+                    newQuantity *= 1.0374; break;
                   case 'Soybean Meal': newQuantity *= (1 - 0.0418); break;
-                  case 'Soybean Oil': newQuantity *= (1 - 0.0654); break;
+                  case 'Soybean Oil':
+                  case 'Coconut Oil':
+                    newQuantity *= (1 - 0.0654); break;
                   case 'Synthetic Amino Acid': newQuantity *= (1 - 0.0334); break;
-                  case 'Other Raw Materials': newQuantity *= 1.0056; break;
+                  case 'Other Raw Materials':
+                  case 'Fish meal':
+                     newQuantity *= 1.0056; break;
                 }
                 break;
               case 'Grower':
                 switch (ing.name) {
-                  case 'Corn': newQuantity *= 1.0327; break;
+                  case 'Corn':
+                  case 'Wheat':
+                     newQuantity *= 1.0327; break;
                   case 'Soybean Meal': newQuantity *= (1 - 0.0438); break;
-                  case 'Soybean Oil': newQuantity *= (1 - 0.0596); break;
+                  case 'Soybean Oil':
+                  case 'Coconut Oil':
+                     newQuantity *= (1 - 0.0596); break;
                   case 'Synthetic Amino Acid': newQuantity *= (1 - 0.0209); break;
-                  case 'Other Raw Materials': newQuantity *= 1.0068; break;
+                  case 'Other Raw Materials':
+                  case 'Fish meal':
+                     newQuantity *= 1.0068; break;
                 }
                 break;
               case 'Finisher':
                 switch (ing.name) {
-                  case 'Corn': newQuantity *= 1.0279; break;
+                  case 'Corn':
+                  case 'Wheat':
+                    newQuantity *= 1.0279; break;
                   case 'Soybean Meal': newQuantity *= (1 - 0.0481); break;
-                  case 'Soybean Oil': newQuantity *= (1 - 0.0589); break;
+                  case 'Soybean Oil':
+                  case 'Coconut Oil':
+                    newQuantity *= (1 - 0.0589); break;
                   case 'Synthetic Amino Acid': newQuantity *= (1 - 0.0398); break;
-                  case 'Other Raw Materials': newQuantity *= 1.0075; break;
+                  case 'Other Raw Materials':
+                  case 'Fish meal':
+                     newQuantity *= 1.0075; break;
                 }
                 break;
             }
@@ -126,29 +144,47 @@ const calculateROIFlow = ai.defineFlow(
             switch (dietPhase) {
                 case 'Starter':
                     switch (ing.name) {
-                        case 'Corn': newQuantity *= 1.0343; break;
+                        case 'Corn':
+                        case 'Wheat':
+                            newQuantity *= 1.0343; break;
                         case 'Soybean Meal': newQuantity *= (1 - 0.0073); break;
-                        case 'Soybean Oil': newQuantity *= (1 - 0.3421); break;
+                        case 'Soybean Oil':
+                        case 'Coconut Oil':
+                            newQuantity *= (1 - 0.3421); break;
                         case 'Synthetic Amino Acid': newQuantity *= 1.0051; break;
-                        case 'Other Raw Materials': newQuantity *= (1 - 0.0027); break;
+                        case 'Other Raw Materials':
+                        case 'Fish meal':
+                            newQuantity *= (1 - 0.0027); break;
                     }
                     break;
                 case 'Grower':
                     switch (ing.name) {
-                        case 'Corn': newQuantity *= 1.0328; break;
+                        case 'Corn':
+                        case 'Wheat':
+                             newQuantity *= 1.0328; break;
                         case 'Soybean Meal': newQuantity *= (1 - 0.0083); break;
-                        case 'Soybean Oil': newQuantity *= (1 - 0.3343); break;
+                        case 'Soybean Oil':
+                        case 'Coconut Oil':
+                             newQuantity *= (1 - 0.3343); break;
                         case 'Synthetic Amino Acid': newQuantity *= 1.0040; break;
-                        case 'Other Raw Materials': newQuantity *= (1 - 0.0032); break;
+                        case 'Other Raw Materials':
+                        case 'Fish meal':
+                             newQuantity *= (1 - 0.0032); break;
                     }
                     break;
                 case 'Finisher':
                      switch (ing.name) {
-                        case 'Corn': newQuantity *= 1.0314; break;
+                        case 'Corn':
+                        case 'Wheat':
+                            newQuantity *= 1.0314; break;
                         case 'Soybean Meal': newQuantity *= (1 - 0.0103); break;
-                        case 'Soybean Oil': newQuantity *= (1 - 0.3792); break;
+                        case 'Soybean Oil':
+                        case 'Coconut Oil':
+                            newQuantity *= (1 - 0.3792); break;
                         case 'Synthetic Amino Acid': newQuantity *= 1.0043; break;
-                        case 'Other Raw Materials': newQuantity *= (1 - 0.0036); break;
+                        case 'Other Raw Materials':
+                        case 'Fish meal':
+                            newQuantity *= (1 - 0.0036); break;
                     }
                     break;
             }
