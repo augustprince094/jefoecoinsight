@@ -180,58 +180,100 @@ const calculateROIFlow = ai.defineFlow(
               return { ...ing, quantity: newQuantity };
             });
           }
-      } else { // Jefo Xylanase (remains generic for now)
-          reformulatedIngredients = dietIngredients.map(ing => {
-            let newQuantity = ing.quantity;
-            switch (dietPhase) {
+      } else { // Jefo Xylanase
+          if (region === 'Asia (PH)') {
+             reformulatedIngredients = dietIngredients.map(ing => {
+              let newQuantity = ing.quantity;
+              switch (dietPhase) {
                 case 'Starter':
-                    switch (ing.name) {
-                        case 'Corn':
-                        case 'Wheat':
-                            newQuantity *= 1.0343; break;
-                        case 'Soybean Meal': newQuantity *= (1 - 0.0073); break;
-                        case 'Soybean Oil':
-                        case 'Coconut Oil':
-                            newQuantity *= (1 - 0.3421); break;
-                        case 'Synthetic Amino Acid': newQuantity *= 1.0051; break;
-                        case 'Other Raw Materials':
-                        case 'Fish meal':
-                            newQuantity *= (1 - 0.0027); break;
-                    }
-                    break;
+                  switch (ing.name) {
+                    case 'Corn': newQuantity *= 1.0488; break;
+                    case 'Wheat': break;
+                    case 'Soybean Meal': newQuantity *= (1 - 0.0094); break;
+                    case 'Coconut Oil': newQuantity *= (1 - 0.5816); break;
+                    case 'Fish meal': break;
+                    case 'Synthetic Amino Acid': newQuantity *= (1 - 0.0030); break;
+                    case 'Other Raw Materials': newQuantity *= 1.0054; break;
+                  }
+                  break;
                 case 'Grower':
-                    switch (ing.name) {
-                        case 'Corn':
-                        case 'Wheat':
-                             newQuantity *= 1.0328; break;
-                        case 'Soybean Meal': newQuantity *= (1 - 0.0083); break;
-                        case 'Soybean Oil':
-                        case 'Coconut Oil':
-                             newQuantity *= (1 - 0.3343); break;
-                        case 'Synthetic Amino Acid': newQuantity *= 1.0040; break;
-                        case 'Other Raw Materials':
-                        case 'Fish meal':
-                             newQuantity *= (1 - 0.0032); break;
-                    }
-                    break;
+                  switch (ing.name) {
+                    case 'Corn': newQuantity *= 1.0218; break;
+                    case 'Wheat': break;
+                    case 'Soybean Meal': newQuantity *= (1 - 0.0058); break;
+                    case 'Coconut Oil': newQuantity *= (1 - 0.4695); break;
+                    case 'Fish meal': break;
+                    case 'Synthetic Amino Acid': newQuantity *= (1 - 0.0032); break;
+                    case 'Other Raw Materials': newQuantity *= 1.0605; break;
+                  }
+                  break;
                 case 'Finisher':
-                     switch (ing.name) {
-                        case 'Corn':
-                        case 'Wheat':
-                            newQuantity *= 1.0314; break;
-                        case 'Soybean Meal': newQuantity *= (1 - 0.0103); break;
-                        case 'Soybean Oil':
-                        case 'Coconut Oil':
-                            newQuantity *= (1 - 0.3792); break;
-                        case 'Synthetic Amino Acid': newQuantity *= 1.0043; break;
-                        case 'Other Raw Materials':
-                        case 'Fish meal':
-                            newQuantity *= (1 - 0.0036); break;
-                    }
-                    break;
-            }
-            return { ...ing, quantity: newQuantity };
-          });
+                  switch (ing.name) {
+                    case 'Corn': newQuantity *= 1.0321; break;
+                    case 'Wheat': break;
+                    case 'Soybean Meal': newQuantity *= (1 - 0.0106); break;
+                    case 'Coconut Oil': newQuantity *= (1 - 0.4871); break;
+                    case 'Fish meal': break;
+                    case 'Synthetic Amino Acid': newQuantity *= (1 - 0.0054); break;
+                    case 'Other Raw Materials': newQuantity *= 1.0274; break;
+                  }
+                  break;
+              }
+              return { ...ing, quantity: newQuantity };
+            });
+          } else { // Generic reformulation for other regions
+              reformulatedIngredients = dietIngredients.map(ing => {
+                let newQuantity = ing.quantity;
+                switch (dietPhase) {
+                    case 'Starter':
+                        switch (ing.name) {
+                            case 'Corn':
+                            case 'Wheat':
+                                newQuantity *= 1.0343; break;
+                            case 'Soybean Meal': newQuantity *= (1 - 0.0073); break;
+                            case 'Soybean Oil':
+                            case 'Coconut Oil':
+                                newQuantity *= (1 - 0.3421); break;
+                            case 'Synthetic Amino Acid': newQuantity *= 1.0051; break;
+                            case 'Other Raw Materials':
+                            case 'Fish meal':
+                                newQuantity *= (1 - 0.0027); break;
+                        }
+                        break;
+                    case 'Grower':
+                        switch (ing.name) {
+                            case 'Corn':
+                            case 'Wheat':
+                                 newQuantity *= 1.0328; break;
+                            case 'Soybean Meal': newQuantity *= (1 - 0.0083); break;
+                            case 'Soybean Oil':
+                            case 'Coconut Oil':
+                                 newQuantity *= (1 - 0.3343); break;
+                            case 'Synthetic Amino Acid': newQuantity *= 1.0040; break;
+                            case 'Other Raw Materials':
+                            case 'Fish meal':
+                                 newQuantity *= (1 - 0.0032); break;
+                        }
+                        break;
+                    case 'Finisher':
+                         switch (ing.name) {
+                            case 'Corn':
+                            case 'Wheat':
+                                newQuantity *= 1.0314; break;
+                            case 'Soybean Meal': newQuantity *= (1 - 0.0103); break;
+                            case 'Soybean Oil':
+                            case 'Coconut Oil':
+                                newQuantity *= (1 - 0.3792); break;
+                            case 'Synthetic Amino Acid': newQuantity *= 1.0043; break;
+                            case 'Other Raw Materials':
+                            case 'Fish meal':
+                                newQuantity *= (1 - 0.0036); break;
+                        }
+                        break;
+                }
+                return { ...ing, quantity: newQuantity };
+              });
+          }
       }
       
       const additiveCostPerTon = input.inclusionRate * input.costMetrics.additiveCost;
