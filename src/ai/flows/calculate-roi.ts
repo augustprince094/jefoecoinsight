@@ -87,58 +87,100 @@ const calculateROIFlow = ai.defineFlow(
       
       let reformulatedIngredients;
       if (input.feedAdditiveType === 'Jefo Pro Solution') {
-          reformulatedIngredients = dietIngredients.map(ing => {
-            let newQuantity = ing.quantity;
-            switch (dietPhase) {
-              case 'Starter':
-                switch (ing.name) {
-                  case 'Corn': 
-                  case 'Wheat':
-                    newQuantity *= 1.061; break;
-                  case 'Soybean Meal': newQuantity *= (1 - 0.0418); break;
-                  case 'Soybean Oil':
-                  case 'Coconut Oil':
-                    newQuantity *= (1 - 0.0654); break;
-                  case 'Synthetic Amino Acid': newQuantity *= (1 - 0.0334); break;
-                  case 'Other Raw Materials':
-                  case 'Fish meal':
-                     newQuantity *= 1.0056; break;
-                }
-                break;
-              case 'Grower':
-                switch (ing.name) {
-                  case 'Corn':
-                  case 'Wheat':
-                     newQuantity *= 1.0327; break;
-                  case 'Soybean Meal': newQuantity *= (1 - 0.0438); break;
-                  case 'Soybean Oil':
-                  case 'Coconut Oil':
-                     newQuantity *= (1 - 0.0596); break;
-                  case 'Synthetic Amino Acid': newQuantity *= (1 - 0.0209); break;
-                  case 'Other Raw Materials':
-                  case 'Fish meal':
-                     newQuantity *= 1.0068; break;
-                }
-                break;
-              case 'Finisher':
-                switch (ing.name) {
-                  case 'Corn':
-                  case 'Wheat':
-                    newQuantity *= 1.0279; break;
-                  case 'Soybean Meal': newQuantity *= (1 - 0.0481); break;
-                  case 'Soybean Oil':
-                  case 'Coconut Oil':
-                    newQuantity *= (1 - 0.0589); break;
-                  case 'Synthetic Amino Acid': newQuantity *= (1 - 0.0398); break;
-                  case 'Other Raw Materials':
-                  case 'Fish meal':
-                     newQuantity *= 1.0075; break;
-                }
-                break;
-            }
-            return { ...ing, quantity: newQuantity };
-          });
-      } else { // Jefo Xylanase
+          if (region === 'Asia (PH)') {
+             reformulatedIngredients = dietIngredients.map(ing => {
+              let newQuantity = ing.quantity;
+              switch (dietPhase) {
+                case 'Starter':
+                  switch (ing.name) {
+                    case 'Corn': newQuantity *= 1.061; break; // +6.1%
+                    case 'Wheat': break; // +0%
+                    case 'Soybean Meal': newQuantity *= (1 - 0.0494); break; // -4.94%
+                    case 'Coconut Oil': newQuantity *= (1 - 0.2707); break; // -27.07%
+                    case 'Fish meal': break; // 0%
+                    case 'Synthetic Amino Acid': newQuantity *= (1 - 0.0094); break; // -0.94%
+                    case 'Other Raw Materials': newQuantity *= 1.0064; break; // +0.64%
+                  }
+                  break;
+                case 'Grower':
+                  switch (ing.name) {
+                    case 'Corn': newQuantity *= 1.0466; break; // +4.66%
+                    case 'Wheat': break; // +0%
+                    case 'Soybean Meal': newQuantity *= (1 - 0.0505); break; // -5.05%
+                    case 'Coconut Oil': newQuantity *= (1 - 0.3459); break; // -34.59%
+                    case 'Fish meal': break; // 0%
+                    case 'Synthetic Amino Acid': newQuantity *= (1 - 0.0081); break; // -0.81%
+                    case 'Other Raw Materials': newQuantity *= 1.0078; break; // +0.78%
+                  }
+                  break;
+                case 'Finisher':
+                  switch (ing.name) {
+                    case 'Corn': newQuantity *= 1.0405; break; // +4.05%
+                    case 'Wheat': break; // +0%
+                    case 'Soybean Meal': newQuantity *= (1 - 0.0537); break; // -5.37%
+                    case 'Coconut Oil': newQuantity *= (1 - 0.2423); break; // -24.23%
+                    case 'Fish meal': break; // 0%
+                    case 'Synthetic Amino Acid': newQuantity *= (1 - 0.0087); break; // -0.87%
+                    case 'Other Raw Materials': newQuantity *= 1.0079; break; // +0.79%
+                  }
+                  break;
+              }
+              return { ...ing, quantity: newQuantity };
+            });
+          } else { // Generic reformulation for other regions
+            reformulatedIngredients = dietIngredients.map(ing => {
+              let newQuantity = ing.quantity;
+              switch (dietPhase) {
+                case 'Starter':
+                  switch (ing.name) {
+                    case 'Corn': 
+                    case 'Wheat':
+                      newQuantity *= 1.061; break;
+                    case 'Soybean Meal': newQuantity *= (1 - 0.0418); break;
+                    case 'Soybean Oil':
+                    case 'Coconut Oil':
+                      newQuantity *= (1 - 0.0654); break;
+                    case 'Synthetic Amino Acid': newQuantity *= (1 - 0.0334); break;
+                    case 'Other Raw Materials':
+                    case 'Fish meal':
+                       newQuantity *= 1.0056; break;
+                  }
+                  break;
+                case 'Grower':
+                  switch (ing.name) {
+                    case 'Corn':
+                    case 'Wheat':
+                       newQuantity *= 1.0327; break;
+                    case 'Soybean Meal': newQuantity *= (1 - 0.0438); break;
+                    case 'Soybean Oil':
+                    case 'Coconut Oil':
+                       newQuantity *= (1 - 0.0596); break;
+                    case 'Synthetic Amino Acid': newQuantity *= (1 - 0.0209); break;
+                    case 'Other Raw Materials':
+                    case 'Fish meal':
+                       newQuantity *= 1.0068; break;
+                  }
+                  break;
+                case 'Finisher':
+                  switch (ing.name) {
+                    case 'Corn':
+                    case 'Wheat':
+                      newQuantity *= 1.0279; break;
+                    case 'Soybean Meal': newQuantity *= (1 - 0.0481); break;
+                    case 'Soybean Oil':
+                    case 'Coconut Oil':
+                      newQuantity *= (1 - 0.0589); break;
+                    case 'Synthetic Amino Acid': newQuantity *= (1 - 0.0398); break;
+                    case 'Other Raw Materials':
+                    case 'Fish meal':
+                       newQuantity *= 1.0075; break;
+                  }
+                  break;
+              }
+              return { ...ing, quantity: newQuantity };
+            });
+          }
+      } else { // Jefo Xylanase (remains generic for now)
           reformulatedIngredients = dietIngredients.map(ing => {
             let newQuantity = ing.quantity;
             switch (dietPhase) {
