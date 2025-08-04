@@ -16,7 +16,7 @@ export interface Diets {
 }
 
 export interface RegionFeedData {
-  region: 'North America (CA)' | 'Asia (PH)' | 'Europe (FR)';
+  region: 'North America (CA)' | 'Asia (PH)' | 'Europe (FR)' | 'Latin America (BR)';
   diets: Diets;
 }
 
@@ -105,4 +105,30 @@ export const feedData: RegionFeedData[] = [
       ]
     }
   },
+  {
+    region: 'Latin America (BR)',
+    diets: {
+      Starter: [
+        { name: 'Corn', quantity: 518.7, cost: 1200, carbonFootprint: 0.4 },
+        { name: 'Soybean Meal', quantity: 396.0, cost: 2500, carbonFootprint: 1.3 },
+        { name: 'Soybean Oil', quantity: 43.6, cost: 5000, carbonFootprint: 1.0 },
+        { name: 'Synthetic Amino Acid', quantity: 7.8, cost: 15000, carbonFootprint: 3.7 },
+        { name: 'Other Raw Materials', quantity: 33.9, cost: 3000, carbonFootprint: 3.3 },
+      ],
+      Grower: [
+        { name: 'Corn', quantity: 561.0, cost: 1200, carbonFootprint: 0.4 },
+        { name: 'Soybean Meal', quantity: 359.6, cost: 2500, carbonFootprint: 1.3 },
+        { name: 'Soybean Oil', quantity: 46.2, cost: 5000, carbonFootprint: 1.0 },
+        { name: 'Synthetic Amino Acid', quantity: 6.3, cost: 15000, carbonFootprint: 3.7 },
+        { name: 'Other Raw Materials', quantity: 26.9, cost: 3000, carbonFootprint: 3.3 },
+      ],
+      Finisher: [
+        { name: 'Corn', quantity: 619.9, cost: 1200, carbonFootprint: 0.4 },
+        { name: 'Soybean Meal', quantity: 307.5, cost: 2500, carbonFootprint: 1.3 },
+        { name: 'Soybean Oil', quantity: 43.1, cost: 5000, carbonFootprint: 1.0 },
+        { name: 'Synthetic Amino Acid', quantity: 6.3, cost: 15000, carbonFootprint: 3.7 },
+        { name: 'Other Raw Materials', quantity: 23.2, cost: 3000, carbonFootprint: 3.3 },
+      ]
+    }
+  }
 ];

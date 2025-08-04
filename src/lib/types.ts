@@ -6,7 +6,7 @@ import { type ProvideAdvisoryOutput } from '@/ai/flows/provide-advisory';
 
 // Broiler-specific constants
 export const broilerFeedAdditiveTypes = ["Jefo Pro Solution", "Jefo P(OA+EO)", "Jefo Xylanase"] as const;
-export const broilerRegions = ["North America (CA)", "Asia (PH)", "Europe (FR)"] as const;
+export const broilerRegions = ["North America (CA)", "Asia (PH)", "Europe (FR)", "Latin America (BR)"] as const;
 
 // Dairy-specific constants
 export const dairyFeedAdditiveTypes = ["Lactation VB", "Transition VB"] as const;
@@ -17,6 +17,7 @@ export const regionSettings = {
     "North America (CA)": { currency: "USD", symbol: "$" },
     "Asia (PH)": { currency: "PHP", symbol: "₱" },
     "Europe (FR)": { currency: "EUR", symbol: "€" },
+    "Latin America (BR)": { currency: "BRL", symbol: "R$" },
     // Dairy Regions
     "Canada": { currency: "CAD", symbol: "$" },
     "United States": { currency: "USD", symbol: "$" },
