@@ -293,6 +293,52 @@ const estimateGHGSavingsFlow = ai.defineFlow(
               }
               return { ...ing, quantity: newQuantity };
             });
+        } else if (region === 'Latin America (BR)') {
+          reformulatedIngredients = dietIngredients.map(ing => {
+            let newQuantity = ing.quantity;
+            switch (dietPhase) {
+              case 'Starter':
+                switch (ing.name) {
+                  case 'Corn': newQuantity *= 1.022; break;
+                  case 'Soybean Meal': newQuantity *= (1 - 0.003); break;
+                  case 'Soybean Oil': newQuantity *= (1 - 0.602); break;
+                  case 'Meat and bone meal': newQuantity *= (1 - 0.002); break;
+                  case 'Calcium carbonate': newQuantity *= 1.197; break;
+                  case 'Methionine': newQuantity *= (1 - 0.005); break;
+                  case 'Lysine': newQuantity *= 1.004; break;
+                  case 'Threonine': newQuantity *= (1 - 0.011); break;
+                  case 'Microingredients': newQuantity *= (1 - 0.006); break;
+                }
+                break;
+              case 'Grower':
+                switch (ing.name) {
+                  case 'Corn': newQuantity *= 1.033; break;
+                  case 'Soybean Meal': newQuantity *= (1 - 0.009); break;
+                  case 'Soybean Oil': newQuantity *= (1 - 0.463); break;
+                  case 'Meat and bone meal': newQuantity *= 1.004; break;
+                  case 'Calcium carbonate': newQuantity *= 1.006; break;
+                  case 'Methionine': newQuantity *= (1 - 0.007); break;
+                  case 'Lysine': newQuantity *= 1.05; break;
+                  case 'Threonine': newQuantity *= (1 - 0.024); break;
+                  case 'Microingredients': newQuantity *= 1.025; break;
+                }
+                break;
+              case 'Finisher':
+                switch (ing.name) {
+                  case 'Corn': newQuantity *= 1.031; break;
+                  case 'Soybean Meal': newQuantity *= (1 - 0.012); break;
+                  case 'Soybean Oil': newQuantity *= (1 - 0.527); break;
+                  case 'Meat and bone meal': newQuantity *= (1 - 0.005); break;
+                  case 'Calcium carbonate': newQuantity *= (1 - 0.007); break;
+                  case 'Methionine': newQuantity *= 1.008; break;
+                  case 'Lysine': newQuantity *= 1.036; break;
+                  case 'Threonine': newQuantity *= 1.00; break;
+                  case 'Microingredients': newQuantity *= 1.015; break;
+                }
+                break;
+            }
+            return { ...ing, quantity: newQuantity };
+          });
         } else { // Generic reformulation
           reformulatedIngredients = dietIngredients.map(ing => {
             let newQuantity = ing.quantity;
