@@ -478,7 +478,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                 <FormItem>
                   <FormLabel>{labels.inclusionRate}</FormLabel>
                   <FormControl>
-                    <Input type="number" step="0.1" placeholder={isDairy ? "e.g., 10" : "e.g., 125"} {...field} />
+                    <Input readOnly type="number" step="0.1" placeholder={isDairy ? "e.g., 10" : "e.g., 125"} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
