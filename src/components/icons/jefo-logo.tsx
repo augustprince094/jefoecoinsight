@@ -3,36 +3,18 @@ import React from 'react';
 export const JefoLogo = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 740 250"
+    viewBox="0 0 24 24"
     fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
     {...props}
   >
-    <g transform="translate(10, 10) scale(0.8)">
-      <g stroke="currentColor" strokeWidth="4" fill="none">
-        {/* Main outlining path for the graphic */}
-        <path d="M141.2,229.4C52.6,229,1,164.1,1,75.5S53.4,1.9,142.1,1.9c88.7,0,141.2,63.6,141.2,74.5c0,27.3-22.1,49.4-49.4,49.4c-27.3,0-49.4-22.1-49.4-49.4c0-27.3,22.1-49.4,49.4-49.4c2.8,0,5.6,0.2,8.3,0.7" />
-      </g>
-      {/* Hand shape */}
-      <g>
-        <path fill="#d9c6a9" stroke="currentColor" strokeWidth="4" d="M280.4,53.2c-0.2,0-0.4,0-0.6,0c-9.7,0-15.6-7.8-15.6-15.3c0-4.9,4.6-8.8,9.2-8.8c4.2,0,7.9,3.1,8.6,7.1c0.8,4.2-1.9,8-5.9,8.6c-0.3,0-0.6,0.1-0.8,0.1c-3.6,0-6.8-2.6-7.5-6.1c-0.5-2.7,1-5.2,3.7-5.7c2.3-0.4,4.5,1.1,5.1,3.3c0.1,0.5,0.2,1.1,0.2,1.6c0,2.9-2.9,5.2-6,5.2c-0.1,0-0.2,0-0.2,0" />
-        <path stroke="currentColor" strokeWidth="4" fill="none" d="M281.8,53.4c-8.9-0.1-16.1-7.5-16-16.4c0.1-8.9,7.5-16.1,16.4-16c8.9,0.1,16.1,7.5,16,16.4C298.1,46.3,290.7,53.5,281.8,53.4z" />
-        <path stroke="currentColor" strokeWidth="4" fill="none" d="M272.9,23.3c-0.2-2.1,0.7-4.2,2.3-5.5c2.1-1.6,4.9-1.6,7-0.1c2.1,1.6,3,4.1,2.4,6.4l-3.3,13.1c-0.4,1.8-2.1,3.1-4,3.1c-1.9,0-3.6-1.3-4-3.1L272.9,23.3z" />
-        <path stroke="currentColor" strokeWidth="4" fill="none" d="M275,2.7c3.4,0.4,6.2,2.8,7.1,5.9l1,3.5c0.5,1.7-0.4,3.5-2,4.4c-1.7,0.9-3.7,0.4-4.7-1.1l-1-3.5C25.2,10.2,25.6,8.2,27.1,7.3c1.5-0.9,3.3-0.9,4.8,0" />
-        <path stroke="currentColor" strokeWidth="4" fill="none" d="M289.5,9.4c1.8,1.2,2.6,3.4,2.2,5.5l-2.4,12.1c-0.5,2.6-2.9,4.4-5.5,4.4c-2.6,0-5-1.8-5.5-4.4l-2.4-12.1c-0.5-2.6,1.3-5.1,3.9-5.7c2.6-0.6,5.2,0.9,6,3.3" />
-        <path stroke="currentColor" strokeWidth="4" fill="none" d="M301.9,24c-0.2,2.1,0.7,4.2,2.3,5.5c2.1,1.6,4.9,1.6,7,0.1c2.1-1.6,3,4.1,2.4,6.4l-3.3,13.1c-0.4,1.8-2.1,3.1-4,3.1c-1.9,0-3.6-1.3-4-3.1L301.9,24z" />
-      </g>
-      {/* Other shapes */}
-      <path fill="#b1d5d1" stroke="currentColor" strokeWidth="4" d="M307.3,101.4c-8.9-0.1-16.1-7.5-16-16.4c0.1-8.9,7.5-16.1,16.4-16c8.9,0.1,16.1,7.5,16,16.4C323.6,94.3,316.2,101.5,307.3,101.4z"/>
-      <path fill="#fcc72c" stroke="currentColor" strokeWidth="4" d="M228.6,220.9c-8.9-0.1-16.1-7.5-16-16.4c0.1-8.9,7.5-16.1,16.4-16c8.9,0.1,16.1,7.5,16,16.4C244.9,213.8,237.5,221,228.6,220.9z"/>
-      <path fill="#d52735" stroke="currentColor" strokeWidth="4" d="M141.4,245.9c-8.9-0.1-16.1-7.5-16-16.4c0.1-8.9,7.5-16.1,16.4-16c8.9,0.1,16.1,7.5,16,16.4C157.7,238.8,150.3,246,141.4,245.9z"/>
-      <path fill="#c84b7d" stroke="currentColor" strokeWidth="4" d="M68.3,212.9c-8.9-0.1-16.1-7.5-16-16.4c0.1-8.9,7.5-16.1,16.4-16c8.9,0.1,16.1,7.5,16,16.4C84.6,205.8,77.2,213,68.3,212.9z"/>
-      <path fill="#adccdc" stroke="currentColor" strokeWidth="4" d="M57.6,96.4C48.7,96.3,41.5,89,41.6,80c0.1-8.9,7.5-16.1,16.4-16c8.9,0.1,16.1,7.5,16,16.4C73.9,89.3,66.5,96.5,57.6,96.4z"/>
-      <path fill="#c0c0c0" stroke="currentColor" strokeWidth="4" d="M100,60c-8.9-0.1-16.1-7.5-16-16.4c0.1-8.9,7.5-16.1,16.4-16c8.9,0.1,16.1,7.5,16,16.4C116.3,52.9,108.9,60.1,100,60z"/>
-    </g>
-    {/* Text part of the logo */}
-    <text x="350" y="150" fontFamily="serif" fontSize="150" fill="currentColor">
-      Jefo.
-      <tspan fontSize="80" dy="-70">®</tspan>
-    </text>
+    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+    <polyline points="14 2 14 8 20 8" />
+    <line x1="16" y1="13" x2="8" y2="13" />
+    <line x1="16" y1="17" x2="8" y2="17" />
+    <line x1="10" y1="9" x2="8" y2="9" />
   </svg>
-));
+);
