@@ -9,12 +9,12 @@ const additives = [
   {
     name: 'Lactation VB',
     lcaSummary: 'Lactation VB is a specialized feed additive for dairy cows designed to enhance milk production and quality. Its unique formulation supports metabolic health during lactation, leading to improved feed efficiency and a lower environmental footprint per unit of milk produced.',
-    paperLink: 'https://example.com/paper-lactation-vb'
+    paperLink: 'https://www.sciencedirect.com/science/article/pii/S235255092500154X'
   },
   {
     name: 'Jefo Pro Solution',
     lcaSummary: 'Jefo Pro Solution demonstrates a significant reduction in environmental impact by improving nutrient utilization. The life cycle assessment highlights lower greenhouse gas emissions per unit of output, primarily driven by enhanced feed conversion and reduced waste.',
-    paperLink: 'https://example.com/paper-jefo-pro-solution'
+    paperLink: 'https://link.springer.com/article/10.1007/s11367-025-02457-4'
   },
   {
     name: 'Jefo P(OA+EO)',
