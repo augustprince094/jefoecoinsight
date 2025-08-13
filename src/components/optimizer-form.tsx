@@ -92,8 +92,16 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
   };
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: defaultValues as FormValues,
+    resolver: zodResolver(formSchema(defaultValues)),
+    defaultValues: {
+      region: defaultValues.region,
+      feedAdditive: defaultValues.feedAdditive,
+      applicationType: defaultValues.applicationType,
+      dietPhase: defaultValues.dietPhase,
+      inclusionRate: defaultValues.inclusionRate,
+      feedConversionRatioAfter: defaultValues.feedConversionRatioAfter,
+      mortalityRateAfter: defaultValues.mortalityRateAfter,
+    },
   });
   const { toast } = useToast();
   const { watch, setValue } = form;
@@ -114,8 +122,16 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
 
   React.useEffect(() => {
     // Reset form when species changes
-    form.reset(defaultValues as FormValues);
-  }, [species]);
+    form.reset({
+      region: defaultValues.region,
+      feedAdditive: defaultValues.feedAdditive,
+      applicationType: defaultValues.applicationType,
+      dietPhase: defaultValues.dietPhase,
+      inclusionRate: defaultValues.inclusionRate,
+      feedConversionRatioAfter: defaultValues.feedConversionRatioAfter,
+      mortalityRateAfter: defaultValues.mortalityRateAfter,
+    });
+  }, [species, form, defaultValues]);
 
   React.useEffect(() => {
     if (isDairy) return; // Logic below is for broilers
@@ -132,15 +148,16 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
       }
     }
 
-    if (feedAdditiveValue && baselineFCRValue > 0 && applicationTypeValue === 'On-top') {
+    const currentBaselineFCR = form.getValues("baselineFCR");
+    if (feedAdditiveValue && currentBaselineFCR && currentBaselineFCR > 0 && applicationTypeValue === 'On-top') {
       let fcrReduction = 0;
 
       if (feedAdditiveValue === 'Jefo Pro Solution') {
-        if (baselineFCRValue >= 1.35 && baselineFCRValue < 1.50) {
+        if (currentBaselineFCR >= 1.35 && currentBaselineFCR < 1.50) {
             fcrReduction = 0.02;
-        } else if (baselineFCRValue >= 1.50 && baselineFCRValue < 1.65) {
+        } else if (currentBaselineFCR >= 1.50 && currentBaselineFCR < 1.65) {
             fcrReduction = 0.03;
-        } else if (baselineFCRValue >= 1.65) {
+        } else if (currentBaselineFCR >= 1.65) {
             fcrReduction = 0.04;
         }
       } else {
@@ -151,39 +168,42 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
       }
 
       if (fcrReduction > 0) {
-        const newFCR = baselineFCRValue - fcrReduction;
+        const newFCR = currentBaselineFCR - fcrReduction;
         setValue("feedConversionRatioAfter", parseFloat(newFCR.toFixed(3)), { shouldValidate: true });
       }
-    } else if (feedAdditiveValue && baselineFCRValue > 0) {
+    } else if (feedAdditiveValue && currentBaselineFCR && currentBaselineFCR > 0) {
         let fcrReduction = 0;
         switch (feedAdditiveValue) {
           case "Jefo Pro Solution": fcrReduction = 0.03; break;
           case "Jefo P(OA+EO)": fcrReduction = 0.04; break;
           case "Jefo Xylanase": fcrReduction = 0.04; break;
         }
-        const newFCR = baselineFCRValue - fcrReduction;
+        const newFCR = currentBaselineFCR - fcrReduction;
         setValue("feedConversionRatioAfter", parseFloat(newFCR.toFixed(3)), { shouldValidate: true });
     }
-
-    if (feedAdditiveValue && baselineMortalityRateValue > 0) {
+    
+    const currentBaselineMortality = form.getValues("baselineMortalityRate");
+    if (feedAdditiveValue && currentBaselineMortality && currentBaselineMortality > 0) {
       let mortalityReduction = 0;
       switch (feedAdditiveValue) {
         case "Jefo Pro Solution": mortalityReduction = 0.5; break;
         case "Jefo P(OA+EO)": mortalityReduction = 1; break;
         case "Jefo Xylanase": mortalityReduction = 0.5; break;
       }
-      const newMortalityRate = baselineMortalityRateValue - mortalityReduction;
+      const newMortalityRate = currentBaselineMortality - mortalityReduction;
       setValue("mortalityRateAfter", Math.max(0, parseFloat(newMortalityRate.toFixed(2))), { shouldValidate: true });
     }
 
-  }, [feedAdditiveValue, applicationTypeValue, baselineFCRValue, baselineMortalityRateValue, setValue, isDairy]);
+  }, [feedAdditiveValue, applicationTypeValue, setValue, isDairy, form]);
 
   async function onSubmit(data: FormValues) {
     setIsLoading(true);
     setError(null);
     setResults(null);
     try {
-      const result = await getOptimizationResults(data);
+      // Use default values for fields that might be empty
+      const submissionData = { ...defaultValues, ...data };
+      const result = await getOptimizationResults(submissionData as FormValues);
       if (result.error) {
         throw new Error(result.error);
       }
@@ -254,7 +274,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                 <FormItem>
                   <FormLabel>{labels.numberOfUnits}</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder={isDairy ? "e.g., 100" : "e.g., 50000"} {...field} />
+                    <Input type="number" placeholder={`e.g., ${defaultValues.numberOfBirds}`} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -270,7 +290,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                     <FormItem>
                       <FormLabel>{labels.unitWeight}</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.01" placeholder="e.g., 2.5" {...field} />
+                        <Input type="number" step="0.01" placeholder={`e.g., ${defaultValues.broilerLiveWeight}`} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -283,7 +303,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                     <FormItem>
                       <FormLabel>{labels.mortalityRate}</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.1" placeholder="e.g., 4.5" {...field} />
+                        <Input type="number" step="0.1" placeholder={`e.g., ${defaultValues.baselineMortalityRate}`} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -297,7 +317,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                        <FormLabel>{labels.fcr}</FormLabel>
                        <div className="relative">
                         <FormControl>
-                          <Input type="number" step="0.01" placeholder="e.g., 1.75" {...field} />
+                          <Input type="number" step="0.01" placeholder={`e.g., ${defaultValues.baselineFCR}`} {...field} />
                         </FormControl>
                         <TooltipProvider delayDuration={100}>
                           <Tooltip>
@@ -322,7 +342,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                        <FormLabel>{labels.feedCost}</FormLabel>
                        <div className="relative">
                         <FormControl>
-                          <Input type="number" step="0.01" placeholder="e.g., 0.45" {...field} />
+                          <Input type="number" step="0.01" placeholder={`e.g., ${defaultValues.feedCost}`} {...field} />
                         </FormControl>
                         <TooltipProvider delayDuration={100}>
                           <Tooltip>
@@ -350,7 +370,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                     <FormItem>
                       <FormLabel>{labels.unitWeight}</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.01" placeholder="e.g., 40" {...field} />
+                        <Input type="number" step="0.01" placeholder={`e.g., ${defaultValues.broilerLiveWeight}`} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -363,7 +383,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                     <FormItem>
                       <FormLabel>Days in milk (d)</FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder="e.g., 150" {...field} onChange={e => field.onChange(parseInt(e.target.value, 10))} />
+                        <Input type="number" placeholder={`e.g., ${defaultValues.daysInMilk}`} onChange={e => field.onChange(parseInt(e.target.value, 10))} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -376,7 +396,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                     <FormItem>
                       <FormLabel>{labels.milkPrice}</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.01" placeholder="e.g., 0.75" {...field} onChange={e => field.onChange(parseFloat(e.target.value))}/>
+                        <Input type="number" step="0.01" placeholder={`e.g., ${defaultValues.milkPrice}`} onChange={e => field.onChange(parseFloat(e.target.value))}/>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -389,7 +409,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                     <FormItem>
                       <FormLabel>{labels.mortalityRate}</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.1" placeholder="e.g., 5" {...field} />
+                        <Input type="number" step="0.1" placeholder={`e.g., ${defaultValues.baselineMortalityRate}`} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -491,7 +511,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                 <FormItem>
                   <FormLabel>{labels.additiveCost}</FormLabel>
                   <FormControl>
-                    <Input type="number" step="0.01" placeholder="e.g., 12.50" {...field} />
+                    <Input type="number" step="0.01" placeholder={`e.g., ${defaultValues.additiveCost}`} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
