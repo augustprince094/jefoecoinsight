@@ -36,18 +36,22 @@ export default function AboutPage() {
 
           <div className="prose prose-lg dark:prose-invert max-w-none space-y-6 text-foreground/90">
             <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue.
-            </p>
-            <p>
-              Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede. Praesent blandit odio eu enim. Pellentesque sed dui ut augue blandit sodales. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aliquam nibh. Mauris ac mauris sed pede pellentesque fermentum. Maecenas adipiscing ante non diam.
+            The Jefo Eco-insight (JEI) system is built to provides an estimate and comparable analyses and insights into
+             environmental impacts, feed additive interventions, and improvements throughout the livestock value chain. 
+             The system complies with internationally recognized Food and Agricultural Organization’s Livestock Environmental Assessment and Performance guidelines for feed additives and supply chains (FAO, 2016; FAO, 2018a; FAO, 2020). 
             </p>
             <h2 className="text-2xl font-bold text-primary !mt-12 !mb-4">Our Mission</h2>
             <p>
-              Nam euismod tellus id magna. Praesent laoreet ante tempor urna. In hac habitasse platea dictumst. In est. Sed nec metus. Vivamus vel sapien. Integer sit amet risus. Nunc eleifend, urna nec iaculis getClass, nunc nulla scelerisque pede, eget ultrices diam eros vitae elit. Maecenas ullamcorper, dui et placerat feugiat, eros pede varius nisi, condimentum viverra felis nunc et lorem. Sed magna.
+            The JEI tool is a simple, user-friendly calculator for computing the potential environmental impact offsets of using commercial 
+            feed additives in livestock production. The intended end-users include sales personnel, technical team members, farmers, feed millers,
+             and all persons with technical knowledge of animal production systems.
             </p>
             <h2 className="text-2xl font-bold text-primary !mt-12 !mb-4">The Technology</h2>
             <p>
-              Vestibulum erat nulla, ullamcorper nec, rutrum non, nonummy ac, erat. Duis ac turpis. Integer rutrum ante eu lacus. Quisque nulla. Vestibulum libero nisl, porta vel, scelerisque eget, malesuada at, neque. Vivamus eget nibh. Etiam cursus leo vel metus. Nulla facilisi. Aenean nec eros. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Suspendisse sollicitudin velit sed leo.
+            The JEI calculator leverages regionally specific data and physical models that characterize production performance 
+            (zootechnical effect) from trials conducted over 20 years on commercial farms and in research institutions. It provides an intuitive yet
+             simple pathway to exploring the potential of commercial feed additives to drive sustainable production and consumption. The additives, 
+             which are fundamental to the JEI system, are designed, manufactured, and commercially distributed by Jefo Nutrition Inc. 
             </p>
           </div>
         </div>
