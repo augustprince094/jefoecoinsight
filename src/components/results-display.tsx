@@ -640,7 +640,7 @@ export function ResultsDisplay({ results, isLoading, error }: { results: Optimiz
              <Card className="flex flex-col items-center justify-center text-center p-8 h-full">
                 <CardHeader>
                   <div className="mx-auto bg-primary/10 p-4 rounded-full">
-                      <Image src="https://placehold.co/80x80.png" alt="Cow illustration" width={80} height={80} className="rounded-full" data-ai-hint="cow illustration" />
+                      <Image src="https://placehold.co/80x80.png" alt="Cow illustration" width={80} height={80} className="rounded-full" style={{ width: "auto", height: "auto" }} data-ai-hint="cow illustration" />
                   </div>
                     <CardTitle className="mt-4">Ready to Optimize?</CardTitle>
                     <CardDescription>
