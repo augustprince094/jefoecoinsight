@@ -57,7 +57,7 @@ interface OptimizerFormProps {
 export function OptimizerForm({ species, setResults, setIsLoading, setError, isCalculating }: OptimizerFormProps) {
   const isDairy = species === 'dairy';
 
-  const defaultValues: Partial<FormValues> = {
+  const defaultValues = React.useMemo<Partial<FormValues>>(() => ({
     // Shared defaults
     additiveCost: 12.50,
     // Species-specific defaults
@@ -89,7 +89,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
       feedConversionRatioAfter: 0,
       mortalityRateAfter: 0,
     })
-  };
+  }), [isDairy]);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema(defaultValues)),
@@ -122,15 +122,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
 
   React.useEffect(() => {
     // Reset form when species changes
-    form.reset({
-      region: defaultValues.region,
-      feedAdditive: defaultValues.feedAdditive,
-      applicationType: defaultValues.applicationType,
-      dietPhase: defaultValues.dietPhase,
-      inclusionRate: defaultValues.inclusionRate,
-      feedConversionRatioAfter: defaultValues.feedConversionRatioAfter,
-      mortalityRateAfter: defaultValues.mortalityRateAfter,
-    });
+    form.reset(defaultValues);
   }, [species, form, defaultValues]);
 
   React.useEffect(() => {
@@ -303,7 +295,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                     <FormItem>
                       <FormLabel>{labels.mortalityRate}</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.1" placeholder={`e.g., ${defaultValues.baselineMortalityRate}`} {...field} />
+                        <Input type="number" step="0.1" placeholder={`e.g., 4.5`} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
