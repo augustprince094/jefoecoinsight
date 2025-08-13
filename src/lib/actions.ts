@@ -15,47 +15,60 @@ export async function getOptimizationResults(
     const dietPhase = recalculateDietPhase || data.dietPhase || "Starter";
     const currency = regionSettings[data.region as Region]?.currency || 'USD';
 
+    // This is a safe guard for when the form is submitted with empty values
+    const filledData = {
+        numberOfBirds: 50000,
+        broilerLiveWeight: 2.5,
+        baselineMortalityRate: 4.5,
+        baselineFCR: 1.75,
+        feedCost: 0.45,
+        additiveCost: 12.50,
+        milkPrice: 0.75,
+        daysInMilk: 150,
+        ...data
+    }
+    
     const costMetrics = {
-        feedCost: data.feedCost,
-        additiveCost: data.additiveCost,
+        feedCost: filledData.feedCost!,
+        additiveCost: filledData.additiveCost!,
         currency: currency,
     };
 
     // Jefo P(OA+EO) is always an "On-top" application.
     // We set it here to ensure the correct calculation paths are followed in the flows.
-    const applicationType = data.feedAdditive === "Jefo P(OA+EO)" ? "On-top" : data.applicationType;
+    const applicationType = filledData.feedAdditive === "Jefo P(OA+EO)" ? "On-top" : filledData.applicationType;
     
     const roiInput: ROIInput = {
-      region: data.region,
+      region: filledData.region,
       applicationType: applicationType,
       dietPhase: dietPhase,
-      feedAdditiveType: data.feedAdditive,
-      inclusionRate: data.inclusionRate / 1000,
-      numberOfBirds: data.numberOfBirds,
-      broilerLiveWeight: data.broilerLiveWeight,
-      mortalityRateBefore: data.baselineMortalityRate,
-      mortalityRateAfter: data.mortalityRateAfter,
-      feedConversionRatioBefore: data.baselineFCR,
-      feedConversionRatioAfter: data.feedConversionRatioAfter,
+      feedAdditiveType: filledData.feedAdditive,
+      inclusionRate: filledData.inclusionRate / 1000,
+      numberOfBirds: filledData.numberOfBirds!,
+      broilerLiveWeight: filledData.broilerLiveWeight!,
+      mortalityRateBefore: filledData.baselineMortalityRate!,
+      mortalityRateAfter: filledData.mortalityRateAfter,
+      feedConversionRatioBefore: filledData.baselineFCR!,
+      feedConversionRatioAfter: filledData.feedConversionRatioAfter,
       costMetrics,
-      milkPrice: data.milkPrice,
-      daysInMilk: data.daysInMilk,
+      milkPrice: filledData.milkPrice,
+      daysInMilk: filledData.daysInMilk,
     };
     
     const ghgInput: EstimateGHGSavingsInput = {
-      region: data.region,
+      region: filledData.region,
       applicationType: applicationType,
       dietPhase: dietPhase,
-      feedAdditive: data.feedAdditive,
-      inclusionRate: data.inclusionRate / 1000,
-      numberOfBirds: data.numberOfBirds,
-      broilerLiveWeight: data.broilerLiveWeight,
-      mortalityRateBefore: data.baselineMortalityRate,
-      mortalityRateAfter: data.mortalityRateAfter,
-      feedConversionRatioBefore: data.baselineFCR,
-      feedConversionRatioAfter: data.feedConversionRatioAfter,
-      milkPrice: data.milkPrice,
-      daysInMilk: data.daysInMilk,
+      feedAdditive: filledData.feedAdditive,
+      inclusionRate: filledData.inclusionRate / 1000,
+      numberOfBirds: filledData.numberOfBirds!,
+      broilerLiveWeight: filledData.broilerLiveWeight!,
+      mortalityRateBefore: filledData.baselineMortalityRate!,
+      mortalityRateAfter: filledData.mortalityRateAfter,
+      feedConversionRatioBefore: filledData.baselineFCR!,
+      feedConversionRatioAfter: filledData.feedConversionRatioAfter,
+      milkPrice: filledData.milkPrice,
+      daysInMilk: filledData.daysInMilk,
     };
 
     const [roiData, ghgData] = await Promise.all([
@@ -69,9 +82,9 @@ export async function getOptimizationResults(
 
     const advisoryInput: ProvideAdvisoryInput = {
       inputs: {
-        feedAdditive: data.feedAdditive,
+        feedAdditive: filledData.feedAdditive,
         applicationType: applicationType,
-        numberOfBirds: data.numberOfBirds,
+        numberOfBirds: filledData.numberOfBirds!,
       },
       roiData: {
         roi: roiData.roi,
@@ -88,9 +101,9 @@ export async function getOptimizationResults(
     }
 
     // Pass the modified applicationType and current dietPhase back with the results 
-    const updatedInputs = { ...data, applicationType: applicationType, dietPhase: dietPhase };
+    const updatedInputs = { ...filledData, applicationType: applicationType, dietPhase: dietPhase };
 
-    return { data: { roiData, ghgData, advisoryData, inputs: updatedInputs } };
+    return { data: { roiData, ghgData, advisoryData, inputs: updatedInputs as FormValues } };
   } catch (e) {
     console.error("Error in getOptimizationResults:", e);
     const error = e as Error;

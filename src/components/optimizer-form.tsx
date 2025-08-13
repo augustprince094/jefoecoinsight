@@ -57,51 +57,39 @@ interface OptimizerFormProps {
 export function OptimizerForm({ species, setResults, setIsLoading, setError, isCalculating }: OptimizerFormProps) {
   const isDairy = species === 'dairy';
 
-  const defaultValues = React.useMemo<Partial<FormValues>>(() => ({
-    // Shared defaults
-    additiveCost: 12.50,
-    // Species-specific defaults
+  const exampleValues = React.useMemo(() => ({
     ...(isDairy ? {
-      region: "Canada",
-      numberOfBirds: 100, // Represents number of cows
-      broilerLiveWeight: 40, // Represents daily milk yield in kg
-      baselineMortalityRate: 5, // Represents cull rate
-      feedAdditive: "Lactation VB",
-      applicationType: "On-top", // Dairy is always on-top for now
-      inclusionRate: 10,
-      feedConversionRatioAfter: 0,
-      mortalityRateAfter: 0,
-      milkPrice: 0.75,
-      daysInMilk: 150,
-      feedCost: 0, // Not used for dairy, but required by schema
-      baselineFCR: 0, // Not used for dairy, but required by schema
-    } : { // Broiler defaults
-      region: "North America (CA)",
-      numberOfBirds: 50000,
-      broilerLiveWeight: 2.5,
-      baselineMortalityRate: 4.5,
-      baselineFCR: 1.75,
-      feedCost: 0.45,
-      feedAdditive: "Jefo Pro Solution",
-      applicationType: "Matrix",
-      dietPhase: "Starter",
-      inclusionRate: 125,
-      feedConversionRatioAfter: 0,
-      mortalityRateAfter: 0,
-    })
+        numberOfBirds: 100,
+        broilerLiveWeight: 40,
+        baselineMortalityRate: 5,
+        milkPrice: 0.75,
+        daysInMilk: 150,
+        additiveCost: 12.50,
+        inclusionRate: 10,
+      } : {
+        numberOfBirds: 50000,
+        broilerLiveWeight: 2.5,
+        baselineMortalityRate: 4.5,
+        baselineFCR: 1.75,
+        feedCost: 0.45,
+        additiveCost: 12.50,
+        inclusionRate: 125,
+      })
   }), [isDairy]);
 
+  const defaultValues = React.useMemo<Partial<FormValues>>(() => ({
+    region: isDairy ? "Canada" : "North America (CA)",
+    feedAdditive: isDairy ? "Lactation VB" : "Jefo Pro Solution",
+    applicationType: isDairy ? "On-top" : "Matrix",
+    dietPhase: "Starter",
+    feedConversionRatioAfter: 0,
+    mortalityRateAfter: 0,
+    inclusionRate: exampleValues.inclusionRate,
+  }), [isDairy, exampleValues.inclusionRate]);
+
   const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema(defaultValues)),
-    defaultValues: {
-      region: defaultValues.region,
-      feedAdditive: defaultValues.feedAdditive,
-      applicationType: defaultValues.applicationType,
-      dietPhase: defaultValues.dietPhase,
-      inclusionRate: defaultValues.inclusionRate,
-      feedConversionRatioAfter: defaultValues.feedConversionRatioAfter,
-      mortalityRateAfter: defaultValues.mortalityRateAfter,
-    },
+    resolver: zodResolver(formSchema(exampleValues)),
+    defaultValues,
   });
   const { toast } = useToast();
   const { watch, setValue } = form;
@@ -128,16 +116,14 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
   React.useEffect(() => {
     if (isDairy) return; // Logic below is for broilers
 
-    if (feedAdditiveValue) {
-      let newInclusionRate = 0;
-      switch (feedAdditiveValue) {
-        case "Jefo Pro Solution": newInclusionRate = 125; break;
-        case "Jefo Xylanase": newInclusionRate = 100; break;
-        case "Jefo P(OA+EO)": newInclusionRate = 300; break;
-      }
-      if (newInclusionRate > 0) {
-        setValue("inclusionRate", newInclusionRate, { shouldValidate: true });
-      }
+    let newInclusionRate = 0;
+    switch (feedAdditiveValue) {
+      case "Jefo Pro Solution": newInclusionRate = 125; break;
+      case "Jefo Xylanase": newInclusionRate = 100; break;
+      case "Jefo P(OA+EO)": newInclusionRate = 300; break;
+    }
+    if (newInclusionRate > 0) {
+      setValue("inclusionRate", newInclusionRate, { shouldValidate: true });
     }
 
     const currentBaselineFCR = form.getValues("baselineFCR");
@@ -193,8 +179,18 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
     setError(null);
     setResults(null);
     try {
-      // Use default values for fields that might be empty
-      const submissionData = { ...defaultValues, ...data };
+      const submissionData = {
+        numberOfBirds: data.numberOfBirds ?? exampleValues.numberOfBirds,
+        broilerLiveWeight: data.broilerLiveWeight ?? exampleValues.broilerLiveWeight,
+        baselineMortalityRate: data.baselineMortalityRate ?? exampleValues.baselineMortalityRate,
+        baselineFCR: data.baselineFCR ?? exampleValues.baselineFCR,
+        feedCost: data.feedCost ?? exampleValues.feedCost,
+        additiveCost: data.additiveCost ?? exampleValues.additiveCost,
+        milkPrice: data.milkPrice ?? exampleValues.milkPrice,
+        daysInMilk: data.daysInMilk ?? exampleValues.daysInMilk,
+        ...data,
+      };
+
       const result = await getOptimizationResults(submissionData as FormValues);
       if (result.error) {
         throw new Error(result.error);
@@ -241,7 +237,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Region of Interest</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a region..." />
@@ -266,7 +262,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                 <FormItem>
                   <FormLabel>{labels.numberOfUnits}</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder={`e.g., ${defaultValues.numberOfBirds}`} {...field} />
+                    <Input type="number" placeholder={`e.g., ${exampleValues.numberOfBirds}`} {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -282,7 +278,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                     <FormItem>
                       <FormLabel>{labels.unitWeight}</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.01" placeholder={`e.g., ${defaultValues.broilerLiveWeight}`} {...field} />
+                        <Input type="number" step="0.01" placeholder={`e.g., ${exampleValues.broilerLiveWeight}`} {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -295,7 +291,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                     <FormItem>
                       <FormLabel>{labels.mortalityRate}</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.1" placeholder={`e.g., 4.5`} {...field} />
+                        <Input type="number" step="0.1" placeholder={`e.g., ${exampleValues.baselineMortalityRate}`} {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -309,7 +305,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                        <FormLabel>{labels.fcr}</FormLabel>
                        <div className="relative">
                         <FormControl>
-                          <Input type="number" step="0.01" placeholder={`e.g., ${defaultValues.baselineFCR}`} {...field} />
+                          <Input type="number" step="0.01" placeholder={`e.g., ${exampleValues.baselineFCR}`} {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                         </FormControl>
                         <TooltipProvider delayDuration={100}>
                           <Tooltip>
@@ -334,7 +330,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                        <FormLabel>{labels.feedCost}</FormLabel>
                        <div className="relative">
                         <FormControl>
-                          <Input type="number" step="0.01" placeholder={`e.g., ${defaultValues.feedCost}`} {...field} />
+                          <Input type="number" step="0.01" placeholder={`e.g., ${exampleValues.feedCost}`} {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                         </FormControl>
                         <TooltipProvider delayDuration={100}>
                           <Tooltip>
@@ -362,7 +358,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                     <FormItem>
                       <FormLabel>{labels.unitWeight}</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.01" placeholder={`e.g., ${defaultValues.broilerLiveWeight}`} {...field} />
+                        <Input type="number" step="0.01" placeholder={`e.g., ${exampleValues.broilerLiveWeight}`} {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -375,7 +371,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                     <FormItem>
                       <FormLabel>Days in milk (d)</FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder={`e.g., ${defaultValues.daysInMilk}`} onChange={e => field.onChange(parseInt(e.target.value, 10))} />
+                        <Input type="number" placeholder={`e.g., ${exampleValues.daysInMilk}`} {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -388,7 +384,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                     <FormItem>
                       <FormLabel>{labels.milkPrice}</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.01" placeholder={`e.g., ${defaultValues.milkPrice}`} onChange={e => field.onChange(parseFloat(e.target.value))}/>
+                        <Input type="number" step="0.01" placeholder={`e.g., ${exampleValues.milkPrice}`} {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -401,7 +397,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                     <FormItem>
                       <FormLabel>{labels.mortalityRate}</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.1" placeholder={`e.g., ${defaultValues.baselineMortalityRate}`} {...field} />
+                        <Input type="number" step="0.1" placeholder={`e.g., ${exampleValues.baselineMortalityRate}`} {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -424,7 +420,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Feed Additive Type</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select an additive..." />
@@ -455,7 +451,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                       <FormControl>
                         <RadioGroup
                           onValueChange={field.onChange}
-                          defaultValue={field.value}
+                          value={field.value}
                           className="flex items-center space-x-4"
                         >
                           <FormItem className="flex items-center space-x-2 space-y-0">
@@ -490,7 +486,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                 <FormItem>
                   <FormLabel>{labels.inclusionRate}</FormLabel>
                   <FormControl>
-                    <Input readOnly type="number" step="0.1" placeholder={isDairy ? "e.g., 10" : "e.g., 125"} {...field} />
+                    <Input readOnly type="number" step="0.1" placeholder={isDairy ? "e.g., 10" : "e.g., 125"} {...field} value={field.value ?? ''} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -503,7 +499,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                 <FormItem>
                   <FormLabel>{labels.additiveCost}</FormLabel>
                   <FormControl>
-                    <Input type="number" step="0.01" placeholder={`e.g., ${defaultValues.additiveCost}`} {...field} />
+                    <Input type="number" step="0.01" placeholder={`e.g., ${exampleValues.additiveCost}`} {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
