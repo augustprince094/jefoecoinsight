@@ -76,7 +76,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
         inclusionRate: 125,
       })
   }), [isDairy]);
-
+  
   const defaultValues = React.useMemo<Partial<FormValues>>(() => ({
     region: isDairy ? "Canada" : "North America (CA)",
     feedAdditive: isDairy ? "Lactation VB" : "Jefo Pro Solution",
@@ -130,10 +130,32 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
     if (feedAdditiveValue && currentBaselineFCR && currentBaselineFCR > 0) {
       let fcrReduction = 0;
 
-      switch (feedAdditiveValue) {
-        case "Jefo Pro Solution": fcrReduction = 0.03; break;
-        case "Jefo P(OA+EO)": fcrReduction = 0.04; break;
-        case "Jefo Xylanase": fcrReduction = 0.04; break;
+      if (applicationTypeValue === 'On-top') {
+        switch (feedAdditiveValue) {
+          case "Jefo Pro Solution":
+            if (currentBaselineFCR >= 1.65) fcrReduction = 0.04;
+            else if (currentBaselineFCR > 1.5) fcrReduction = 0.03;
+            else if (currentBaselineFCR > 1.35) fcrReduction = 0.02;
+            break;
+          case "Jefo P(OA+EO)":
+            fcrReduction = 0.04;
+            break;
+          case "Jefo Xylanase":
+            fcrReduction = 0.04;
+            break;
+        }
+      } else { // Matrix or other
+         switch (feedAdditiveValue) {
+          case "Jefo Pro Solution":
+            fcrReduction = 0.03;
+            break;
+          case "Jefo P(OA+EO)": // This additive is always on-top
+            fcrReduction = 0.04;
+            break;
+          case "Jefo Xylanase":
+            fcrReduction = 0.04;
+            break;
+        }
       }
 
       if (fcrReduction > 0) {
@@ -154,7 +176,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
       setValue("mortalityRateAfter", Math.max(0, parseFloat(newMortalityRate.toFixed(2))), { shouldValidate: true });
     }
 
-  }, [feedAdditiveValue, applicationTypeValue, setValue, isDairy, form]);
+  }, [feedAdditiveValue, applicationTypeValue, baselineFCRValue, baselineMortalityRateValue, setValue, isDairy, form]);
 
   async function onSubmit(data: FormValues) {
     setIsLoading(true);
