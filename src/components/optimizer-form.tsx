@@ -127,37 +127,19 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
     }
 
     const currentBaselineFCR = form.getValues("baselineFCR");
-    if (feedAdditiveValue && currentBaselineFCR && currentBaselineFCR > 0 && applicationTypeValue === 'On-top') {
+    if (feedAdditiveValue && currentBaselineFCR && currentBaselineFCR > 0) {
       let fcrReduction = 0;
 
-      if (feedAdditiveValue === 'Jefo Pro Solution') {
-        if (currentBaselineFCR >= 1.35 && currentBaselineFCR < 1.50) {
-            fcrReduction = 0.02;
-        } else if (currentBaselineFCR >= 1.50 && currentBaselineFCR < 1.65) {
-            fcrReduction = 0.03;
-        } else if (currentBaselineFCR >= 1.65) {
-            fcrReduction = 0.04;
-        }
-      } else {
-        switch (feedAdditiveValue) {
-          case "Jefo P(OA+EO)": fcrReduction = 0.04; break;
-          case "Jefo Xylanase": fcrReduction = 0.04; break;
-        }
+      switch (feedAdditiveValue) {
+        case "Jefo Pro Solution": fcrReduction = 0.03; break;
+        case "Jefo P(OA+EO)": fcrReduction = 0.04; break;
+        case "Jefo Xylanase": fcrReduction = 0.04; break;
       }
 
       if (fcrReduction > 0) {
         const newFCR = currentBaselineFCR - fcrReduction;
         setValue("feedConversionRatioAfter", parseFloat(newFCR.toFixed(3)), { shouldValidate: true });
       }
-    } else if (feedAdditiveValue && currentBaselineFCR && currentBaselineFCR > 0) {
-        let fcrReduction = 0;
-        switch (feedAdditiveValue) {
-          case "Jefo Pro Solution": fcrReduction = 0.03; break;
-          case "Jefo P(OA+EO)": fcrReduction = 0.04; break;
-          case "Jefo Xylanase": fcrReduction = 0.04; break;
-        }
-        const newFCR = currentBaselineFCR - fcrReduction;
-        setValue("feedConversionRatioAfter", parseFloat(newFCR.toFixed(3)), { shouldValidate: true });
     }
     
     const currentBaselineMortality = form.getValues("baselineMortalityRate");
