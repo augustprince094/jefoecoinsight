@@ -383,7 +383,10 @@ const calculateROIFlow = ai.defineFlow(
       const totalNetFeedCostSavings = netSavingsPerTon * totalFeedConsumedAfterInTons;
       const totalInvestmentInAdditive = totalFeedConsumedAfterInTons * additiveCostPerTon;
       
-      const roi = totalInvestmentInAdditive > 0 ? totalNetFeedCostSavings / totalInvestmentInAdditive : Infinity;
+      let roi = totalInvestmentInAdditive > 0 ? totalNetFeedCostSavings / totalInvestmentInAdditive : Infinity;
+      if (!isFinite(roi)) {
+          roi = 9999;
+      }
       
       const totalFeedCostAfter = totalFeedConsumedAfterInTons * netReformulatedCostPerTon;
       const totalFeedCostBefore = ((input.numberOfBirds * input.feedConversionRatioBefore * input.broilerLiveWeight) / (1 - (input.mortalityRateBefore / 100))) / 1000 * baselineCostPerTon;
@@ -424,7 +427,10 @@ const calculateROIFlow = ai.defineFlow(
       const totalCostAfter = totalFeedCostAfter + totalInvestmentInAdditive;
       
       const netFeedCostSavings = totalCostBefore - totalCostAfter;
-      const roi = totalInvestmentInAdditive > 0 ? netFeedCostSavings / totalInvestmentInAdditive : Infinity;
+      let roi = totalInvestmentInAdditive > 0 ? netFeedCostSavings / totalInvestmentInAdditive : Infinity;
+      if (!isFinite(roi)) {
+          roi = 9999;
+      }
 
       const totalLiveWeightAfter = input.numberOfBirds * (1 - (input.mortalityRateAfter / 100)) * input.broilerLiveWeight;
       const totalLiveWeightBefore = input.numberOfBirds * (1 - (input.mortalityRateBefore / 100)) * input.broilerLiveWeight;
