@@ -17,14 +17,14 @@ export async function getOptimizationResults(
 
     // This is a safe guard for when the form is submitted with empty values
     const filledData = {
-        numberOfBirds: 50000,
-        broilerLiveWeight: 2.5,
-        baselineMortalityRate: 4.5,
-        baselineFCR: 1.75,
-        feedCost: 0.45,
-        additiveCost: 12.50,
-        milkPrice: 0.75,
-        daysInMilk: 150,
+        numberOfBirds: data.numberOfBirds ?? 50000,
+        broilerLiveWeight: data.broilerLiveWeight ?? 2.5,
+        baselineMortalityRate: data.baselineMortalityRate ?? 4.5,
+        baselineFCR: data.baselineFCR ?? 1.75,
+        feedCost: data.feedCost ?? 0.45,
+        additiveCost: data.additiveCost ?? 12.50,
+        milkPrice: data.milkPrice ?? 0.75,
+        daysInMilk: data.daysInMilk ?? 150,
         ...data
     }
     
