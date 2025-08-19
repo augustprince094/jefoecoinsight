@@ -436,16 +436,24 @@ const estimateGHGSavingsFlow = ai.defineFlow(
       const reductionFactor = additiveInfo.ghgReductionOnTop?.[region];
 
       if (reductionFactor) {
-          const survivingBirdsAfter = input.numberOfBirds * (1 - input.mortalityRateAfter / 100);
-          const totalLiveWeightAfter = survivingBirdsAfter * input.broilerLiveWeight;
+          const survivingBirdsBefore = input.numberOfBirds * (1 - input.mortalityRateBefore / 100);
+          const totalLiveWeightBefore = survivingBirdsBefore * input.broilerLiveWeight;
           const baselineGHGPerKg = regionalBaselineGHG[region];
           
-          const totalBaselineGHG = totalLiveWeightAfter * baselineGHGPerKg;
-          const ghgSavings = totalBaselineGHG * reductionFactor;
-          const ghgWithAdditive = totalBaselineGHG - ghgSavings;
+          const totalBaselineGHG = totalLiveWeightBefore * baselineGHGPerKg;
+          
+          // Calculate GHG with additive based on *after* parameters for an accurate comparison
+          const survivingBirdsAfter = input.numberOfBirds * (1 - input.mortalityRateAfter / 100);
+          const totalLiveWeightAfter = survivingBirdsAfter * input.broilerLiveWeight;
+          
+          // Apply the reduction factor to the baseline emission rate
+          const ghgWithAdditivePerKg = baselineGHGPerKg * (1 - reductionFactor);
+          const ghgWithAdditive = totalLiveWeightAfter * ghgWithAdditivePerKg;
+
+          const ghgSavings = totalBaselineGHG - ghgWithAdditive;
 
           const explanation = `For an 'On-top' application in ${region} with ${input.feedAdditive}, GHG savings are based on reduced emissions per kg of live weight:\n\n` +
-          `1. Total Live Weight Produced: ${totalLiveWeightAfter.toFixed(2)} kg.\n` +
+          `1. Total Baseline Live Weight Produced: ${totalLiveWeightBefore.toFixed(2)} kg.\n` +
           `2. Baseline GHG Emissions: ${totalBaselineGHG.toFixed(2)} kg CO2e (at ${baselineGHGPerKg} kg CO2e per kg live weight).\n` +
           `3. GHG Reduction with Additive: ${(reductionFactor * 100).toFixed(1)}%.\n` +
           `4. Total GHG Savings: ${ghgSavings.toFixed(2)} kg CO2e.`;
