@@ -62,6 +62,16 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
     feedAdditive: isDairy ? "Lactation VB" : "Jefo Pro Solution",
     applicationType: isDairy ? "On-top" : "Matrix",
     dietPhase: "Starter",
+    // Set numeric fields to undefined to show placeholders
+    numberOfBirds: undefined,
+    broilerLiveWeight: undefined,
+    baselineMortalityRate: undefined,
+    baselineFCR: undefined,
+    feedCost: undefined,
+    additiveCost: undefined,
+    milkPrice: undefined,
+    daysInMilk: undefined,
+    // Set pre-calculated fields
     feedConversionRatioAfter: 0,
     mortalityRateAfter: 0,
     inclusionRate: isDairy ? 10 : 125,
@@ -73,7 +83,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
     mode: "onChange",
   });
   const { toast } = useToast();
-  const { watch, setValue } = form;
+  const { watch, setValue, formState } = form;
 
   const regionValue = watch("region") as Region;
   const feedAdditiveValue = watch("feedAdditive");
@@ -493,7 +503,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
           </CardContent>
         </Card>
 
-        <Button type="submit" className="w-full" size="lg" disabled={isCalculating}>
+        <Button type="submit" className="w-full" size="lg" disabled={!formState.isValid || isCalculating}>
           {isCalculating ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
