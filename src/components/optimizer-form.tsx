@@ -83,7 +83,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
     mode: "onChange",
   });
   const { toast } = useToast();
-  const { watch, setValue, formState } = form;
+  const { watch, setValue } = form;
 
   const regionValue = watch("region") as Region;
   const feedAdditiveValue = watch("feedAdditive");
@@ -503,7 +503,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
           </CardContent>
         </Card>
 
-        <Button type="submit" className="w-full" size="lg" disabled={!formState.isValid || isCalculating}>
+        <Button type="submit" className="w-full" size="lg" disabled={isCalculating}>
           {isCalculating ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -517,5 +517,3 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
     </Form>
   );
 }
-
-    
