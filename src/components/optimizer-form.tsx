@@ -196,6 +196,18 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
     additiveCost: `Additive Cost (${currencySymbol}/kg)`,
   };
 
+  const placeholders = {
+    numberOfUnits: isDairy ? "e.g., 250" : "e.g., 100000",
+    unitWeight: isDairy ? "e.g., 40" : "e.g., 2.5",
+    mortalityRate: isDairy ? "e.g., 35" : "e.g., 4",
+    fcr: "e.g., 1.6",
+    milkPrice: "e.g., 0.85",
+    daysInMilk: "e.g., 150",
+    feedCost: "e.g., 0.48",
+    additiveCost: "e.g., 20.00",
+  };
+
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -235,7 +247,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                 <FormItem>
                   <FormLabel>{labels.numberOfUnits}</FormLabel>
                   <FormControl>
-                    <Input type="number" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
+                    <Input type="number" placeholder={placeholders.numberOfUnits} {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -251,7 +263,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                     <FormItem>
                       <FormLabel>{labels.unitWeight}</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.01" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
+                        <Input type="number" step="0.01" placeholder={placeholders.unitWeight} {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -264,7 +276,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                     <FormItem>
                       <FormLabel>{labels.mortalityRate}</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.1" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
+                        <Input type="number" step="0.1" placeholder={placeholders.mortalityRate} {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -278,7 +290,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                        <FormLabel>{labels.fcr}</FormLabel>
                        <div className="relative">
                         <FormControl>
-                          <Input type="number" step="0.01" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
+                          <Input type="number" step="0.01" placeholder={placeholders.fcr} {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                         </FormControl>
                         <TooltipProvider delayDuration={100}>
                           <Tooltip>
@@ -303,7 +315,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                        <FormLabel>{labels.feedCost}</FormLabel>
                        <div className="relative">
                         <FormControl>
-                          <Input type="number" step="0.01" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
+                          <Input type="number" step="0.01" placeholder={placeholders.feedCost} {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                         </FormControl>
                         <TooltipProvider delayDuration={100}>
                           <Tooltip>
@@ -331,7 +343,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                     <FormItem>
                       <FormLabel>{labels.unitWeight}</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.01" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
+                        <Input type="number" step="0.01" placeholder={placeholders.unitWeight} {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -344,7 +356,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                     <FormItem>
                       <FormLabel>Days in milk (d)</FormLabel>
                       <FormControl>
-                        <Input type="number" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
+                        <Input type="number" placeholder={placeholders.daysInMilk} {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -357,7 +369,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                     <FormItem>
                       <FormLabel>{labels.milkPrice}</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.01" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
+                        <Input type="number" step="0.01" placeholder={placeholders.milkPrice} {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -370,7 +382,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                     <FormItem>
                       <FormLabel>{labels.mortalityRate}</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.1" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
+                        <Input type="number" step="0.1" placeholder={placeholders.mortalityRate} {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -472,7 +484,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                 <FormItem>
                   <FormLabel>{labels.additiveCost}</FormLabel>
                   <FormControl>
-                    <Input type="number" step="0.01" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
+                    <Input type="number" step="0.01" placeholder={placeholders.additiveCost} {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -495,3 +507,5 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
     </Form>
   );
 }
+
+    
