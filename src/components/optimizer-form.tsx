@@ -57,26 +57,6 @@ interface OptimizerFormProps {
 export function OptimizerForm({ species, setResults, setIsLoading, setError, isCalculating }: OptimizerFormProps) {
   const isDairy = species === 'dairy';
 
-  const exampleValues = React.useMemo(() => ({
-    ...(isDairy ? {
-        numberOfBirds: 100,
-        broilerLiveWeight: 40,
-        baselineMortalityRate: 5,
-        milkPrice: 0.75,
-        daysInMilk: 150,
-        additiveCost: 12.50,
-        inclusionRate: 10,
-      } : {
-        numberOfBirds: 50000,
-        broilerLiveWeight: 2.5,
-        baselineMortalityRate: 4.5,
-        baselineFCR: 1.75,
-        feedCost: 0.45,
-        additiveCost: 12.50,
-        inclusionRate: 125,
-      })
-  }), [isDairy]);
-  
   const defaultValues = React.useMemo<Partial<FormValues>>(() => ({
     region: isDairy ? "Canada" : "North America (CA)",
     feedAdditive: isDairy ? "Lactation VB" : "Jefo Pro Solution",
@@ -84,12 +64,13 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
     dietPhase: "Starter",
     feedConversionRatioAfter: 0,
     mortalityRateAfter: 0,
-    inclusionRate: exampleValues.inclusionRate,
-  }), [isDairy, exampleValues.inclusionRate]);
+    inclusionRate: isDairy ? 10 : 125,
+  }), [isDairy]);
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema(exampleValues)),
+    resolver: zodResolver(formSchema(isDairy)),
     defaultValues,
+    mode: "onChange",
   });
   const { toast } = useToast();
   const { watch, setValue } = form;
@@ -183,19 +164,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
     setError(null);
     setResults(null);
     try {
-      const submissionData = {
-        numberOfBirds: data.numberOfBirds ?? exampleValues.numberOfBirds,
-        broilerLiveWeight: data.broilerLiveWeight ?? exampleValues.broilerLiveWeight,
-        baselineMortalityRate: data.baselineMortalityRate ?? exampleValues.baselineMortalityRate,
-        baselineFCR: data.baselineFCR ?? exampleValues.baselineFCR,
-        feedCost: data.feedCost ?? exampleValues.feedCost,
-        additiveCost: data.additiveCost ?? exampleValues.additiveCost,
-        milkPrice: data.milkPrice ?? exampleValues.milkPrice,
-        daysInMilk: data.daysInMilk ?? exampleValues.daysInMilk,
-        ...data,
-      };
-
-      const result = await getOptimizationResults(submissionData as FormValues);
+      const result = await getOptimizationResults(data);
       if (result.error) {
         throw new Error(result.error);
       }
@@ -266,7 +235,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                 <FormItem>
                   <FormLabel>{labels.numberOfUnits}</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder={`e.g., ${exampleValues.numberOfBirds}`} {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
+                    <Input type="number" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -282,7 +251,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                     <FormItem>
                       <FormLabel>{labels.unitWeight}</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.01" placeholder={`e.g., ${exampleValues.broilerLiveWeight}`} {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
+                        <Input type="number" step="0.01" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -295,7 +264,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                     <FormItem>
                       <FormLabel>{labels.mortalityRate}</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.1" placeholder={`e.g., ${exampleValues.baselineMortalityRate}`} {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
+                        <Input type="number" step="0.1" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -309,7 +278,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                        <FormLabel>{labels.fcr}</FormLabel>
                        <div className="relative">
                         <FormControl>
-                          <Input type="number" step="0.01" placeholder={`e.g., ${exampleValues.baselineFCR}`} {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
+                          <Input type="number" step="0.01" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                         </FormControl>
                         <TooltipProvider delayDuration={100}>
                           <Tooltip>
@@ -334,7 +303,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                        <FormLabel>{labels.feedCost}</FormLabel>
                        <div className="relative">
                         <FormControl>
-                          <Input type="number" step="0.01" placeholder={`e.g., ${exampleValues.feedCost}`} {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
+                          <Input type="number" step="0.01" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                         </FormControl>
                         <TooltipProvider delayDuration={100}>
                           <Tooltip>
@@ -362,7 +331,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                     <FormItem>
                       <FormLabel>{labels.unitWeight}</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.01" placeholder={`e.g., ${exampleValues.broilerLiveWeight}`} {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
+                        <Input type="number" step="0.01" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -375,7 +344,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                     <FormItem>
                       <FormLabel>Days in milk (d)</FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder={`e.g., ${exampleValues.daysInMilk}`} {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
+                        <Input type="number" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -388,7 +357,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                     <FormItem>
                       <FormLabel>{labels.milkPrice}</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.01" placeholder={`e.g., ${exampleValues.milkPrice}`} {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
+                        <Input type="number" step="0.01" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -401,7 +370,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                     <FormItem>
                       <FormLabel>{labels.mortalityRate}</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.1" placeholder={`e.g., ${exampleValues.baselineMortalityRate}`} {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
+                        <Input type="number" step="0.1" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -490,7 +459,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                 <FormItem>
                   <FormLabel>{labels.inclusionRate}</FormLabel>
                   <FormControl>
-                    <Input readOnly type="number" step="0.1" placeholder={isDairy ? "e.g., 10" : "e.g., 125"} {...field} value={field.value ?? ''} />
+                    <Input readOnly type="number" step="0.1" {...field} value={field.value ?? ''} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -503,7 +472,7 @@ export function OptimizerForm({ species, setResults, setIsLoading, setError, isC
                 <FormItem>
                   <FormLabel>{labels.additiveCost}</FormLabel>
                   <FormControl>
-                    <Input type="number" step="0.01" placeholder={`e.g., ${exampleValues.additiveCost}`} {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
+                    <Input type="number" step="0.01" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
