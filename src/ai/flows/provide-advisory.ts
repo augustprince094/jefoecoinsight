@@ -86,6 +86,11 @@ const provideAdvisoryFlow = ai.defineFlow(
     const textResponse = await response.text();
     // Clean the text response to ensure it's valid JSON
     const cleanedText = textResponse.replace(/```json/g, '').replace(/```/g, '').trim();
-    return JSON.parse(cleanedText);
+    try {
+      return JSON.parse(cleanedText);
+    } catch (e) {
+      console.error("Failed to parse JSON from model response:", cleanedText);
+      throw new Error("The model returned an invalid response. Please try again.");
+    }
   }
 );
