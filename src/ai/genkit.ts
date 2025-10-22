@@ -8,5 +8,7 @@ export const ai = genkit({
       apiVersion: 'v1', // Force the use of the v1 API
     }),
   ],
-  model: googleAI.model('gemini-1.5-flash'),
 });
+
+// Set the default model for all `ai.generate()` calls that don't specify one.
+ai.model = googleAI.model('gemini-1.5-flash');
