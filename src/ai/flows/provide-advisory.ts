@@ -10,6 +10,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { googleAI } from '@genkit-ai/google-genai';
 
 const AdvisoryInputSchema = z.object({
   inputs: z.object({
@@ -38,6 +39,7 @@ export async function provideAdvisory(input: ProvideAdvisoryInput): Promise<Prov
 
 const prompt = ai.definePrompt({
   name: 'provideAdvisoryPrompt',
+  model: googleAI.model('gemini-1.5-flash'),
   input: {schema: AdvisoryInputSchema},
   output: {schema: ProvideAdvisoryOutputSchema},
   prompt: `You are a Jefo expert poultry consultant. Your task is to provide a concise key benefit based on the user's selected additive.
@@ -86,5 +88,3 @@ const provideAdvisoryFlow = ai.defineFlow(
     return output!;
   }
 );
-
-    

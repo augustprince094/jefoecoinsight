@@ -13,6 +13,7 @@ import {ai} from '@/ai/genkit';
 import {z} from 'zod';
 import { feedData } from '@/lib/feed-data';
 import { regionSettings } from '@/lib/types';
+import { googleAI } from '@genkit-ai/google-genai';
 
 const ROIInputSchema = z.object({
   region: z.string().describe('The region of operation.'),
@@ -454,5 +455,3 @@ const calculateROIFlow = ai.defineFlow(
     }
   }
 );
-
-    

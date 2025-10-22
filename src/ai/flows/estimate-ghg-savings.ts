@@ -15,6 +15,7 @@ import {z} from 'genkit';
 import { feedAdditiveData, regionalBaselineGHG } from '@/lib/additive-data';
 import { feedData } from '@/lib/feed-data';
 import { regionSettings } from '@/lib/types';
+import { googleAI } from '@genkit-ai/google-genai';
 
 const EstimateGHGSavingsInputSchema = z.object({
   region: z.string().describe('The region of operation.'),
@@ -403,7 +404,7 @@ const estimateGHGSavingsFlow = ai.defineFlow(
           const totalBaselineGHG = totalLiveWeightBefore * baselineGHGPerKg;
           
           // Calculate GHG with additive based on *after* parameters for an accurate comparison
-          const survivingBirdsAfter = input.numberOfBirds * (1 - input.mortalityRateAfter / 100);
+          const survivingBirdsAfter = input.numberOfBirds * (1 - (input.mortalityRateAfter / 100));
           const totalLiveWeightAfter = survivingBirdsAfter * input.broilerLiveWeight;
           
           // Apply the reduction factor to the baseline emission rate
@@ -449,5 +450,3 @@ const estimateGHGSavingsFlow = ai.defineFlow(
     };
   }
 );
-
-    
