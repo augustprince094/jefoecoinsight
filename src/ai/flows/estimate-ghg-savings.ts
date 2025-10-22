@@ -49,11 +49,18 @@ export async function estimateGHGSavings(input: EstimateGHGSavingsInput): Promis
 const prompt = ai.definePrompt({
   name: 'estimateGHGSavingsPrompt',
   input: {schema: EstimateGHGSavingsInputSchema},
-  output: {schema: EstimateGHGSavingsOutputSchema},
   prompt: `You are an expert in estimating greenhouse gas (GHG) emission reductions in broiler production.
 
   Based on the provided information, estimate the GHG emission reductions resulting from the use of a feed additive. The savings come from improved feed efficiency and reduced mortality.
   Use the following formula to estimate total feed consumption, which accounts for mortality: Total Feed Consumed = (Total Birds * FCR * Live Weight) / (1 - (Mortality Rate / 100)).
+
+  You must respond in a valid JSON format. The output should be a JSON object that matches the following schema:
+  {
+    "ghgSavings": "number (The estimated greenhouse gas emission reductions in kg CO2e.)",
+    "explanation": "string (An explanation of how the GHG savings were estimated.)",
+    "baselineGHG": "number (The baseline total GHG emissions in kg CO2e.)",
+    "ghgWithAdditive": "number (The total GHG emissions with the additive in kg CO2e.)"
+  }
 
   Scenario Details:
   - Livestock Type: Broilers
@@ -438,7 +445,7 @@ const estimateGHGSavingsFlow = ai.defineFlow(
       if (reductionFactor) {
           const survivingBirdsBefore = input.numberOfBirds * (1 - input.mortalityRateBefore / 100);
           const totalLiveWeightBefore = survivingBirdsBefore * input.broilerLiveWeight;
-          const baselineGHGPerKg = regionalBaselineGHG[region];
+          const baselineGHGPerKg = regionalBaselineGHG[region as keyof typeof regionalBaselineGHG] || regionalBaselineGHG["North America (CA)"];
           
           const totalBaselineGHG = totalLiveWeightBefore * baselineGHGPerKg;
           
@@ -468,7 +475,9 @@ const estimateGHGSavingsFlow = ai.defineFlow(
     }
 
     // Fallback to original prompt-based calculation for other regions/applications
-    const {output} = await prompt(input);
-    return output!;
+    const response = await ai.generate({ prompt: prompt, input });
+    return JSON.parse(response.text);
   }
 );
+
+    
