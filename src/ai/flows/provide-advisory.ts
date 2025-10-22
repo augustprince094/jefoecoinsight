@@ -39,6 +39,7 @@ export async function provideAdvisory(input: ProvideAdvisoryInput): Promise<Prov
 const prompt = ai.definePrompt({
   name: 'provideAdvisoryPrompt',
   input: {schema: AdvisoryInputSchema},
+  output: {schema: ProvideAdvisoryOutputSchema},
   prompt: `You are a Jefo expert poultry consultant. Your task is to provide a concise key benefit based on the user's selected additive.
 
 You must respond in a valid JSON format. The output should be a JSON object that matches the following schema:
@@ -81,8 +82,8 @@ const provideAdvisoryFlow = ai.defineFlow(
     outputSchema: ProvideAdvisoryOutputSchema,
   },
   async input => {
-    const response = await ai.generate({ prompt: prompt, input });
-    return JSON.parse(response.text);
+    const {output} = await prompt(input);
+    return output!;
   }
 );
 

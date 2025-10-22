@@ -46,53 +46,6 @@ export async function estimateGHGSavings(input: EstimateGHGSavingsInput): Promis
   return estimateGHGSavingsFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'estimateGHGSavingsPrompt',
-  input: {schema: EstimateGHGSavingsInputSchema},
-  prompt: `You are an expert in estimating greenhouse gas (GHG) emission reductions in broiler production.
-
-  Based on the provided information, estimate the GHG emission reductions resulting from the use of a feed additive. The savings come from improved feed efficiency and reduced mortality.
-  Use the following formula to estimate total feed consumption, which accounts for mortality: Total Feed Consumed = (Total Birds * FCR * Live Weight) / (1 - (Mortality Rate / 100)).
-
-  You must respond in a valid JSON format. The output should be a JSON object that matches the following schema:
-  {
-    "ghgSavings": "number (The estimated greenhouse gas emission reductions in kg CO2e.)",
-    "explanation": "string (An explanation of how the GHG savings were estimated.)",
-    "baselineGHG": "number (The baseline total GHG emissions in kg CO2e.)",
-    "ghgWithAdditive": "number (The total GHG emissions with the additive in kg CO2e.)"
-  }
-
-  Scenario Details:
-  - Livestock Type: Broilers
-  - Number of birds per cycle: {{{numberOfBirds}}}
-  - Target live weight per broiler: {{{broilerLiveWeight}}} kg
-  
-  Baseline Scenario (Before Additive):
-  - Mortality rate: {{{mortalityRateBefore}}} %
-  - Feed Conversion Ratio (FCR): {{{feedConversionRatioBefore}}}
-  
-  New Scenario (After Additive):
-  - Mortality rate: {{{mortalityRateAfter}}} %
-  - Feed Conversion Ratio (FCR): {{{feedConversionRatioAfter}}}
-
-  Feed Additive Details:
-  - Type: {{{feedAdditive}}}
-
-  Calculation Steps:
-  1.  Calculate total feed consumed for the 'Before' scenario. Formula: Total Feed Consumed (Before) = (Number of Birds * FCR Before * Live Weight) / (1 - (Mortality Rate Before / 100)).
-  2.  Calculate total feed consumed for the 'After' scenario. Formula: Total Feed Consumed (After) = (Number of Birds * FCR After * Live Weight) / (1 - (Mortality Rate After / 100)).
-  3.  Calculate total feed saved = Total Feed Consumed (Before) - Total Feed Consumed (After).
-  4.  The GHG factor for feed is 1.2 kg CO2e/kg feed.
-  5.  Calculate Baseline GHG = Total Feed Consumed (Before) * 1.2.
-  6.  Calculate GHG With Additive = Total Feed Consumed (After) * 1.2.
-  7.  Calculate GHG Savings = Baseline GHG - GHG With Additive.
-
-  Provide both the estimated GHG savings and a brief explanation of your calculation.
-  Ensure that the units for ghgSavings are in kg CO2e.
-  Return all required fields, including baselineGHG and ghgWithAdditive.
-  `,
-});
-
 const estimateGHGSavingsFlow = ai.defineFlow(
   {
     name: 'estimateGHGSavingsFlow',
@@ -474,9 +427,26 @@ const estimateGHGSavingsFlow = ai.defineFlow(
       }
     }
 
-    // Fallback to original prompt-based calculation for other regions/applications
-    const response = await ai.generate({ prompt: prompt, input });
-    return JSON.parse(response.text);
+    // Fallback calculation for scenarios not covered by hardcoded logic.
+    // This part is likely not hit due to the comprehensive logic above, but it's a good safeguard.
+    const totalFeedConsumedBefore = (input.numberOfBirds * input.feedConversionRatioBefore * input.broilerLiveWeight) / (1 - (input.mortalityRateBefore / 100));
+    const totalFeedConsumedAfter = (input.numberOfBirds * input.feedConversionRatioAfter * input.broilerLiveWeight) / (1 - (input.mortalityRateAfter / 100));
+    const ghgFactor = 1.2; // kg CO2e/kg feed
+    const baselineGHG = totalFeedConsumedBefore * ghgFactor;
+    const ghgWithAdditive = totalFeedConsumedAfter * ghgFactor;
+    const ghgSavings = baselineGHG - ghgWithAdditive;
+    const explanation = `GHG savings are calculated based on the reduction in total feed consumed due to improved Feed Conversion Ratio (FCR) and reduced mortality.\n\n` +
+      `1. Feed Consumed (Before): ${totalFeedConsumedBefore.toFixed(2)} kg.\n` +
+      `2. Feed Consumed (After): ${totalFeedConsumedAfter.toFixed(2)} kg.\n` +
+      `3. GHG Emission Factor for Feed: ${ghgFactor} kg CO₂e per kg of feed.\n` +
+      `4. Total GHG Savings: ${ghgSavings.toFixed(2)} kg CO₂e.`;
+
+    return {
+      ghgSavings,
+      explanation,
+      baselineGHG,
+      ghgWithAdditive,
+    };
   }
 );
 
