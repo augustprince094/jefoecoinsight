@@ -1,3 +1,4 @@
+
 // estimate-ghg-savings.ts
 'use server';
 
@@ -42,17 +43,24 @@ const EstimateGHGSavingsOutputSchema = z.object({
 });
 export type EstimateGHGSavingsOutput = z.infer<typeof EstimateGHGSavingsOutputSchema>;
 
-export async function estimateGHGSavings(input: EstimateGHGSavingsInput): Promise<EstimateGHGSavingsOutput> {
-  return estimateGHGSavingsFlow(input);
-}
 
-const estimateGHGSavingsFlow = ai.defineFlow(
+const ghgPrompt = ai.definePrompt(
   {
-    name: 'estimateGHGSavingsFlow',
+    name: 'estimateGHGSavingsPrompt',
+    model: googleAI.model('gemini-1.5-pro-latest'),
     inputSchema: EstimateGHGSavingsInputSchema,
-    outputSchema: EstimateGHGSavingsOutputSchema,
+    output: {
+      format: 'json',
+      schema: EstimateGHGSavingsOutputSchema,
+    },
   },
   async (input) => {
+    // This prompt does not need a template; the logic is handled in the main function.
+  }
+);
+
+
+export async function estimateGHGSavings(input: EstimateGHGSavingsInput): Promise<EstimateGHGSavingsOutput> {
     // Matrix application
     if (input.applicationType === 'Matrix' && (input.feedAdditive === 'Jefo Pro Solution' || input.feedAdditive === 'Jefo Xylanase')) {
       const dietPhase = (input.dietPhase || 'Starter') as 'Starter' | 'Grower' | 'Finisher';
@@ -447,5 +455,4 @@ const estimateGHGSavingsFlow = ai.defineFlow(
       baselineGHG,
       ghgWithAdditive,
     };
-  }
-);
+}

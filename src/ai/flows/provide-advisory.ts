@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview An AI flow to provide expert advisory based on calculator results.
@@ -32,13 +33,14 @@ const ProvideAdvisoryOutputSchema = z.object({
 });
 export type ProvideAdvisoryOutput = z.infer<typeof ProvideAdvisoryOutputSchema>;
 
-export async function provideAdvisory(input: ProvideAdvisoryInput): Promise<ProvideAdvisoryOutput> {
-  return provideAdvisoryFlow(input);
-}
-
-const prompt = ai.definePrompt({
+const advisoryPrompt = ai.definePrompt({
   name: 'provideAdvisoryPrompt',
-  model: googleAI.model('gemini-1.5-flash'),
+  model: googleAI.model('gemini-1.5-pro-latest'),
+  inputSchema: AdvisoryInputSchema,
+  output: {
+      format: 'json',
+      schema: ProvideAdvisoryOutputSchema,
+  },
   prompt: `You are a Jefo expert poultry consultant. Your task is to provide a concise key benefit based on the user's selected additive.
 
 You must respond in a valid JSON format. The output should be a JSON object that matches the following schema:
@@ -74,22 +76,11 @@ You must respond in a valid JSON format. The output should be a JSON object that
 `,
 });
 
-const provideAdvisoryFlow = ai.defineFlow(
-  {
-    name: 'provideAdvisoryFlow',
-    inputSchema: AdvisoryInputSchema,
-    outputSchema: ProvideAdvisoryOutputSchema,
-  },
-  async input => {
-    const response = await prompt(input);
-    const textResponse = await response.text();
-    // Clean the text response to ensure it's valid JSON
-    const cleanedText = textResponse.replace(/```json/g, '').replace(/```/g, '').trim();
-    try {
-      return JSON.parse(cleanedText);
-    } catch (e) {
-      console.error("Failed to parse JSON from model response:", cleanedText);
-      throw new Error("The model returned an invalid response. Please try again.");
-    }
+export async function provideAdvisory(input: ProvideAdvisoryInput): Promise<ProvideAdvisoryOutput> {
+  const response = await advisoryPrompt(input);
+  const output = response.output();
+  if (!output) {
+    throw new Error("The model failed to return valid advisory output.");
   }
-);
+  return output;
+}

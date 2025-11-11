@@ -1,3 +1,4 @@
+
 // src/ai/flows/calculate-roi.ts
 'use server';
 /**
@@ -50,21 +51,28 @@ const ROIOutputSchema = z.object({
 
 export type ROIOutput = z.infer<typeof ROIOutputSchema>;
 
-export async function calculateROI(input: ROIInput): Promise<ROIOutput> {
-  return calculateROIFlow(input);
-}
 
 const formatCurrencyForPrompt = (value: number, currency: string) => {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency, currencyDisplay: 'symbol' }).format(value);
 }
 
-const calculateROIFlow = ai.defineFlow(
+const roiPrompt = ai.definePrompt(
   {
-    name: 'calculateROIFlow',
+    name: 'calculateROIPrompt',
+    model: googleAI.model('gemini-1.5-pro-latest'),
     inputSchema: ROIInputSchema,
-    outputSchema: ROIOutputSchema,
+    output: {
+      format: 'json',
+      schema: ROIOutputSchema,
+    }
   },
   async (input) => {
+    // This prompt does not need a template; the logic is handled in the main function.
+  }
+);
+
+
+export async function calculateROI(input: ROIInput): Promise<ROIOutput> {
     const currency = input.costMetrics.currency;
 
     if (input.applicationType === 'Matrix' && (input.feedAdditiveType === 'Jefo Pro Solution' || input.feedAdditiveType === 'Jefo Xylanase')) {
@@ -452,5 +460,4 @@ const calculateROIFlow = ai.defineFlow(
         feedCostSavings: netFeedCostSavings,
       };
     }
-  }
-);
+}
