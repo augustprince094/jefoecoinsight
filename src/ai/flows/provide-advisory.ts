@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview An AI flow to provide expert advisory based on calculator results.
@@ -39,7 +38,7 @@ export async function provideAdvisory(input: ProvideAdvisoryInput): Promise<Prov
 
 const prompt = ai.definePrompt({
   name: 'provideAdvisoryPrompt',
-  model: googleAI.model('gemini-1.5-pro-latest'),
+  model: googleAI.model('gemini-1.5-flash'),
   prompt: `You are a Jefo expert poultry consultant. Your task is to provide a concise key benefit based on the user's selected additive.
 
 You must respond in a valid JSON format. The output should be a JSON object that matches the following schema:
