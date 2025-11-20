@@ -61,10 +61,6 @@ const roiPrompt = ai.definePrompt(
     name: 'calculateROIPrompt',
     model: googleAI.model('gemini-1.5-pro-latest'),
     inputSchema: ROIInputSchema,
-    output: {
-      format: 'json',
-      schema: ROIOutputSchema,
-    }
   },
   async (input) => {
     // This prompt does not need a template; the logic is handled in the main function.
@@ -461,3 +457,5 @@ export async function calculateROI(input: ROIInput): Promise<ROIOutput> {
       };
     }
 }
+
+    

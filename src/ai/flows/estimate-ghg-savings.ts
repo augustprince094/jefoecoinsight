@@ -49,10 +49,6 @@ const ghgPrompt = ai.definePrompt(
     name: 'estimateGHGSavingsPrompt',
     model: googleAI.model('gemini-1.5-pro-latest'),
     inputSchema: EstimateGHGSavingsInputSchema,
-    output: {
-      format: 'json',
-      schema: EstimateGHGSavingsOutputSchema,
-    },
   },
   async (input) => {
     // This prompt does not need a template; the logic is handled in the main function.
@@ -456,3 +452,5 @@ export async function estimateGHGSavings(input: EstimateGHGSavingsInput): Promis
       ghgWithAdditive,
     };
 }
+
+    

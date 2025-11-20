@@ -37,13 +37,9 @@ const advisoryPrompt = ai.definePrompt({
   name: 'provideAdvisoryPrompt',
   model: googleAI.model('gemini-1.5-pro-latest'),
   inputSchema: AdvisoryInputSchema,
-  output: {
-      format: 'json',
-      schema: ProvideAdvisoryOutputSchema,
-  },
   prompt: `You are a Jefo expert poultry consultant. Your task is to provide a concise key benefit based on the user's selected additive.
 
-You must respond in a valid JSON format. The output should be a JSON object that matches the following schema:
+You must respond with only a valid JSON object that matches the following schema:
 {
   "keyBenefit": "string (A single, concise key benefit of the selected additive.)"
 }
@@ -73,14 +69,20 @@ You must respond in a valid JSON format. The output should be a JSON object that
 **Final Output:**
 - Populate the \`keyBenefit\` field in the output schema.
 - Do not use bullet points, headers, or any extra formatting in the string.
+- Your entire response must be only the JSON object.
 `,
 });
 
 export async function provideAdvisory(input: ProvideAdvisoryInput): Promise<ProvideAdvisoryOutput> {
   const response = await advisoryPrompt(input);
-  const output = response.output();
-  if (!output) {
-    throw new Error("The model failed to return valid advisory output.");
+  const textResponse = response.text();
+  try {
+    const jsonResponse = JSON.parse(textResponse);
+    return ProvideAdvisoryOutputSchema.parse(jsonResponse);
+  } catch (e) {
+    console.error("Failed to parse advisory JSON:", e, "Raw text:", textResponse);
+    throw new Error("The model returned invalid advisory data.");
   }
-  return output;
 }
+
+    
