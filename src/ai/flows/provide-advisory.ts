@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview An AI flow to provide expert advisory based on calculator results.
@@ -9,7 +10,6 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import { googleAI } from '@genkit-ai/google-genai';
 
 const AdvisoryInputSchema = z.object({
   inputs: z.object({
@@ -34,7 +34,7 @@ export type ProvideAdvisoryOutput = z.infer<typeof ProvideAdvisoryOutputSchema>;
 
 const advisoryPrompt = ai.definePrompt({
   name: 'provideAdvisoryPrompt',
-  model: googleAI.model('gemini-pro'),
+  model: 'googleai/gemini-pro',
   inputSchema: AdvisoryInputSchema,
   prompt: `You are a Jefo expert poultry consultant. Your task is to provide a concise key benefit based on the user's selected additive.
 
@@ -83,3 +83,5 @@ export async function provideAdvisory(input: ProvideAdvisoryInput): Promise<Prov
     throw new Error("The model returned invalid advisory data.");
   }
 }
+
+    

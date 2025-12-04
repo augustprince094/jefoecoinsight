@@ -1,3 +1,4 @@
+
 // estimate-ghg-savings.ts
 'use server';
 
@@ -14,7 +15,6 @@ import {z} from 'genkit';
 import { feedAdditiveData, regionalBaselineGHG } from '@/lib/additive-data';
 import { feedData } from '@/lib/feed-data';
 import { regionSettings } from '@/lib/types';
-import { googleAI } from '@genkit-ai/google-genai';
 
 const EstimateGHGSavingsInputSchema = z.object({
   region: z.string().describe('The region of operation.'),
@@ -46,7 +46,7 @@ export type EstimateGHGSavingsOutput = z.infer<typeof EstimateGHGSavingsOutputSc
 const ghgPrompt = ai.definePrompt(
   {
     name: 'estimateGHGSavingsPrompt',
-    model: googleAI.model('gemini-pro'),
+    model: 'googleai/gemini-pro',
     inputSchema: EstimateGHGSavingsInputSchema,
   },
   async (input) => {
@@ -451,3 +451,5 @@ export async function estimateGHGSavings(input: EstimateGHGSavingsInput): Promis
       ghgWithAdditive,
     };
 }
+
+    

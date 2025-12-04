@@ -1,3 +1,4 @@
+
 // src/ai/flows/calculate-roi.ts
 'use server';
 /**
@@ -12,7 +13,6 @@ import {ai} from '@/ai/genkit';
 import {z} from 'zod';
 import { feedData } from '@/lib/feed-data';
 import { regionSettings } from '@/lib/types';
-import { googleAI } from '@genkit-ai/google-genai';
 
 const ROIInputSchema = z.object({
   region: z.string().describe('The region of operation.'),
@@ -58,7 +58,7 @@ const formatCurrencyForPrompt = (value: number, currency: string) => {
 const roiPrompt = ai.definePrompt(
   {
     name: 'calculateROIPrompt',
-    model: googleAI.model('gemini-pro'),
+    model: 'googleai/gemini-pro',
     inputSchema: ROIInputSchema,
   },
   async (input) => {
@@ -456,3 +456,5 @@ export async function calculateROI(input: ROIInput): Promise<ROIOutput> {
       };
     }
 }
+
+    
