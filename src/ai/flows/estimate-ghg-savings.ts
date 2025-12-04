@@ -46,7 +46,7 @@ export type EstimateGHGSavingsOutput = z.infer<typeof EstimateGHGSavingsOutputSc
 const ghgPrompt = ai.definePrompt(
   {
     name: 'estimateGHGSavingsPrompt',
-    model: 'googleai/gemini-pro',
+    model: 'models/gemini-pro',
     inputSchema: EstimateGHGSavingsInputSchema,
   },
   async (input) => {

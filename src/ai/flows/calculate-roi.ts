@@ -58,7 +58,7 @@ const formatCurrencyForPrompt = (value: number, currency: string) => {
 const roiPrompt = ai.definePrompt(
   {
     name: 'calculateROIPrompt',
-    model: 'googleai/gemini-pro',
+    model: 'models/gemini-pro',
     inputSchema: ROIInputSchema,
   },
   async (input) => {
