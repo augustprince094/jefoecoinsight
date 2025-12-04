@@ -1,3 +1,4 @@
+
 // src/ai/flows/calculate-roi.ts
 'use server';
 /**
@@ -58,7 +59,7 @@ const formatCurrencyForPrompt = (value: number, currency: string) => {
 const roiPrompt = ai.definePrompt(
   {
     name: 'calculateROIPrompt',
-    model: googleAI.model('gemini-1.5-flash'),
+    model: 'gemini-pro',
     inputSchema: ROIInputSchema,
   },
   async (input) => {
@@ -456,3 +457,5 @@ export async function calculateROI(input: ROIInput): Promise<ROIOutput> {
       };
     }
 }
+
+    
