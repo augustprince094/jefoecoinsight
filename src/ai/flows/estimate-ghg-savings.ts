@@ -47,7 +47,7 @@ export type EstimateGHGSavingsOutput = z.infer<typeof EstimateGHGSavingsOutputSc
 const ghgPrompt = ai.definePrompt(
   {
     name: 'estimateGHGSavingsPrompt',
-    model: 'gemini-pro',
+    model: googleAI.model('gemini-pro'),
     inputSchema: EstimateGHGSavingsInputSchema,
   },
   async (input) => {
@@ -198,7 +198,7 @@ export async function estimateGHGSavings(input: EstimateGHGSavingsInput): Promis
                   }
                   break;
                 case 'Finisher':
-                  switch (ing.name) {
+                    switch (ing.name) {
                       case 'Corn':
                       case 'Wheat':
                          newQuantity *= 1.0279; break;
@@ -452,5 +452,3 @@ export async function estimateGHGSavings(input: EstimateGHGSavingsInput): Promis
       ghgWithAdditive,
     };
 }
-
-    

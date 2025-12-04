@@ -35,7 +35,7 @@ export type ProvideAdvisoryOutput = z.infer<typeof ProvideAdvisoryOutputSchema>;
 
 const advisoryPrompt = ai.definePrompt({
   name: 'provideAdvisoryPrompt',
-  model: 'gemini-pro',
+  model: googleAI.model('gemini-pro'),
   inputSchema: AdvisoryInputSchema,
   prompt: `You are a Jefo expert poultry consultant. Your task is to provide a concise key benefit based on the user's selected additive.
 
@@ -84,5 +84,3 @@ export async function provideAdvisory(input: ProvideAdvisoryInput): Promise<Prov
     throw new Error("The model returned invalid advisory data.");
   }
 }
-
-    
