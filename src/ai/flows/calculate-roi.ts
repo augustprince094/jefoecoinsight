@@ -58,7 +58,6 @@ const formatCurrencyForPrompt = (value: number, currency: string) => {
 const roiPrompt = ai.definePrompt(
   {
     name: 'calculateROIPrompt',
-    model: 'models/gemini-pro',
     inputSchema: ROIInputSchema,
   },
   async (input) => {
@@ -456,5 +455,3 @@ export async function calculateROI(input: ROIInput): Promise<ROIOutput> {
       };
     }
 }
-
-    
