@@ -8,8 +8,6 @@
  * - ProvideAdvisoryOutput - The return type for the provideAdvisory function.
  */
 
-import {ai} from '@/ai/genkit';
-import { googleAI } from '@genkit-ai/google-genai';
 import {z} from 'genkit';
 
 const AdvisoryInputSchema = z.object({
@@ -33,56 +31,33 @@ const ProvideAdvisoryOutputSchema = z.object({
 });
 export type ProvideAdvisoryOutput = z.infer<typeof ProvideAdvisoryOutputSchema>;
 
-const advisoryPrompt = ai.definePrompt({
-  name: 'provideAdvisoryPrompt',
-  model: googleAI.model('gemini-1.5-flash-latest'),
-  inputSchema: AdvisoryInputSchema,
-  prompt: `You are a Jefo expert poultry consultant. Your task is to provide a concise key benefit based on the user's selected additive.
-
-You must respond with only a valid JSON object that matches the following schema:
-{
-  "keyBenefit": "string (A single, concise key benefit of the selected additive.)"
-}
-
-**Input Data:**
-- Feed Additive: {{{inputs.feedAdditive}}}
-- Application Type: {{{inputs.applicationType}}}
-
-**Instructions:**
-
-1.  **Select a Key Benefit (for the 'keyBenefit' field):**
-    *   Choose the *exact* sentence from the "Key Benefit Options" below that matches the user's selected \`feedAdditive\` and \`applicationType\`.
-
-**Key Benefit Options (Use one of these verbatim):**
-
-*   **If feedAdditive is 'Jefo Pro Solution':**
-    *   And \`applicationType\` is 'Matrix': "Jefo Pro Solution can reduce feed cost without compromising performance when added to broiler diets containing either traditional or alternative feed ingredients and formulated based on its recommended nutrition matrix."
-    *   And \`applicationType\` is 'On-top': "During heat stress situations, the use of Jefo Pro Solution, both in regular feeds and low density feeds, drastically reduces total mortality."
-
-*   **If feedAdditive is 'Jefo P(OA+EO)':**
-    *   (This is always 'On-top'): "The use of Jefo P(OA+EO) is an efficient strategy to reduce Salmonella Typhimurium counts in broiler chickens."
-
-*   **If feedAdditive is 'Jefo Xylanase':**
-    *   And \`applicationType\` is 'Matrix': "Jefo Xylanase can be used in reduced energy corn-soybean based diets to improve growth performance and reduce cost of broiler diets."
-    *   And \`applicationType\` is 'On-top': "Jefo Xylanase is a reliable solution for better performance, improves footpad quality and economic returns."
-
-**Final Output:**
-- Populate the \`keyBenefit\` field in the output schema.
-- Do not use bullet points, headers, or any extra formatting in the string.
-- Your entire response must be only the JSON object.
-`,
-});
+const keyBenefits = {
+  'Jefo Pro Solution': {
+    'Matrix': "Jefo Pro Solution can reduce feed cost without compromising performance when added to broiler diets containing either traditional or alternative feed ingredients and formulated based on its recommended nutrition matrix.",
+    'On-top': "During heat stress situations, the use of Jefo Pro Solution, both in regular feeds and low density feeds, drastically reduces total mortality."
+  },
+  'Jefo P(OA+EO)': {
+    'On-top': "The use of Jefo P(OA+EO) is an efficient strategy to reduce Salmonella Typhimurium counts in broiler chickens."
+  },
+  'Jefo Xylanase': {
+    'Matrix': "Jefo Xylanase can be used in reduced energy corn-soybean based diets to improve growth performance and reduce cost of broiler diets.",
+    'On-top': "Jefo Xylanase is a reliable solution for better performance, improves footpad quality and economic returns."
+  }
+};
 
 export async function provideAdvisory(input: ProvideAdvisoryInput): Promise<ProvideAdvisoryOutput> {
-  const response = await advisoryPrompt(input);
-  const textResponse = response.text();
-  try {
-    const jsonResponse = JSON.parse(textResponse);
-    return ProvideAdvisoryOutputSchema.parse(jsonResponse);
-  } catch (e) {
-    console.error("Failed to parse advisory JSON:", e, "Raw text:", textResponse);
-    throw new Error("The model returned invalid advisory data.");
-  }
-}
+  const { feedAdditive, applicationType } = input.inputs;
 
-    
+  let benefit = "Jefo feed additives provide significant performance and economic benefits."; // Default fallback
+
+  const additiveBenefits = keyBenefits[feedAdditive as keyof typeof keyBenefits];
+  if (additiveBenefits) {
+    // For additives with only one application type (like Jefo P(OA+EO)), or if type is not specified
+    const appType = applicationType as keyof typeof additiveBenefits || 'On-top';
+    benefit = additiveBenefits[appType] || Object.values(additiveBenefits)[0];
+  }
+
+  return {
+    keyBenefit: benefit
+  };
+}

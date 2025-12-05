@@ -9,8 +9,6 @@
  * - ROIOutput - The return type for the calculateROI function.
  */
 
-import {ai} from '@/ai/genkit';
-import { googleAI } from '@genkit-ai/google-genai';
 import {z} from 'zod';
 import { feedData } from '@/lib/feed-data';
 import { regionSettings } from '@/lib/types';
@@ -55,17 +53,6 @@ export type ROIOutput = z.infer<typeof ROIOutputSchema>;
 const formatCurrencyForPrompt = (value: number, currency: string) => {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency, currencyDisplay: 'symbol' }).format(value);
 }
-
-const roiPrompt = ai.definePrompt(
-  {
-    name: 'calculateROIPrompt',
-    model: googleAI.model('gemini-1.5-flash-latest'),
-    inputSchema: ROIInputSchema,
-  },
-  async (input) => {
-    // This prompt does not need a template; the logic is handled in the main function.
-  }
-);
 
 
 export async function calculateROI(input: ROIInput): Promise<ROIOutput> {
@@ -457,5 +444,3 @@ export async function calculateROI(input: ROIInput): Promise<ROIOutput> {
       };
     }
 }
-
-    

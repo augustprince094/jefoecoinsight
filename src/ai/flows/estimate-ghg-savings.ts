@@ -10,8 +10,6 @@
  * - EstimateGHGSavingsOutput - The return type for the estimateGHGSavings function.
  */
 
-import {ai} from '@/ai/genkit';
-import { googleAI } from '@genkit-ai/google-genai';
 import {z} from 'genkit';
 import { feedAdditiveData, regionalBaselineGHG } from '@/lib/additive-data';
 import { feedData } from '@/lib/feed-data';
@@ -42,18 +40,6 @@ const EstimateGHGSavingsOutputSchema = z.object({
   ghgWithAdditive: z.number().optional().describe('The total GHG emissions with the additive in kg CO2e.'),
 });
 export type EstimateGHGSavingsOutput = z.infer<typeof EstimateGHGSavingsOutputSchema>;
-
-
-const ghgPrompt = ai.definePrompt(
-  {
-    name: 'estimateGHGSavingsPrompt',
-    model: googleAI.model('gemini-1.5-flash-latest'),
-    inputSchema: EstimateGHGSavingsInputSchema,
-  },
-  async (input) => {
-    // This prompt does not need a template; the logic is handled in the main function.
-  }
-);
 
 
 export async function estimateGHGSavings(input: EstimateGHGSavingsInput): Promise<EstimateGHGSavingsOutput> {
@@ -452,5 +438,3 @@ export async function estimateGHGSavings(input: EstimateGHGSavingsInput): Promis
       ghgWithAdditive,
     };
 }
-
-    
