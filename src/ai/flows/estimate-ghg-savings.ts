@@ -11,6 +11,7 @@
  */
 
 import {ai} from '@/ai/genkit';
+import { googleAI } from '@genkit-ai/google-genai';
 import {z} from 'genkit';
 import { feedAdditiveData, regionalBaselineGHG } from '@/lib/additive-data';
 import { feedData } from '@/lib/feed-data';
@@ -46,6 +47,7 @@ export type EstimateGHGSavingsOutput = z.infer<typeof EstimateGHGSavingsOutputSc
 const ghgPrompt = ai.definePrompt(
   {
     name: 'estimateGHGSavingsPrompt',
+    model: googleAI.model('gemini-1.5-flash-latest'),
     inputSchema: EstimateGHGSavingsInputSchema,
   },
   async (input) => {

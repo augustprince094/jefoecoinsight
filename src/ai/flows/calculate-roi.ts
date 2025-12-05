@@ -10,6 +10,7 @@
  */
 
 import {ai} from '@/ai/genkit';
+import { googleAI } from '@genkit-ai/google-genai';
 import {z} from 'zod';
 import { feedData } from '@/lib/feed-data';
 import { regionSettings } from '@/lib/types';
@@ -58,6 +59,7 @@ const formatCurrencyForPrompt = (value: number, currency: string) => {
 const roiPrompt = ai.definePrompt(
   {
     name: 'calculateROIPrompt',
+    model: googleAI.model('gemini-1.5-flash-latest'),
     inputSchema: ROIInputSchema,
   },
   async (input) => {
