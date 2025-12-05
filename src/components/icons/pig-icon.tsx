@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 export const PigIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -13,11 +14,13 @@ export const PigIcon = (props: React.SVGProps<SVGSVGElement>) => (
     strokeLinejoin="round"
     {...props}
   >
-    <path d="M15.2 6.2a2.4 2.4 0 0 0-2.4-3.2" />
-    <path d="M4.6 13.4a2.4 2.4 0 0 1 0-3.2" />
-    <path d="M11 20H5a2 2 0 0 1-2-2v-3.4a2 2 0 0 1 .4-1.2L5 11" />
-    <path d="m11 13 4 7" />
-    <path d="M14 11.2a2.4 2.4 0 0 0-3.2 2.4" />
-    <path d="M18 11a2 2 0 1 1 4 0v3a8 8 0 0 1-8 8h-1" />
+    <path d="M15 11h.01" />
+    <path d="M11.5 7.5a2.5 2.5 0 0 1 5 0" />
+    <path d="M18.5 12.5a2.5 2.5 0 0 1 0 5" />
+    <path d="M12 13.5V21a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-4.8" />
+    <path d="M15 13.5V21a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-4.8" />
+    <path d="M12.5 10.5a2.5 2.5 0 0 1-5 0" />
+    <path d="M5.5 12.5a2.5 2.5 0 0 1 0 5" />
+    <path d="M5 11.5A6.5 6.5 0 0 1 12.5 4H15a2.5 2.5 0 0 1 0 5h-1a6.5 6.5 0 0 1-5.2-9.2" />
   </svg>
 );
