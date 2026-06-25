@@ -1,54 +1,18 @@
+"use client";
 
-import { Suspense } from 'react';
-import { Skeleton } from '@/components/ui/skeleton';
-import Link from 'next/link';
-import { JefoLogo } from '@/components/icons/jefo-logo';
-import { WrapperCalculatorPageContent } from '@/components/wrapper-calculator-page-content';
+import { Footer } from "@/components/footer";
+import { Header } from "@/components/header";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
-function CalculatorLoading() {
+export default function CalculatorPage() {
+  const searchParams = useSearchParams();
+
   return (
-    <div className="min-h-screen flex flex-col">
-       <header className="bg-card/80 backdrop-blur-sm border-b sticky top-0 z-10">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-             <Link href="/" className="flex items-center gap-3">
-              <JefoLogo className="h-10 w-10 text-primary" />
-              <span className="text-2xl font-bold text-primary">Jefo EcoInsight</span>
-            </Link>
-            <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-              <Link href="/about" className="text-muted-foreground hover:text-primary">About App</Link>
-              <Link href="/feed-additives" className="text-muted-foreground hover:text-primary">Feed additives</Link>
-              <Link href="/species-selection" className="font-semibold text-primary border-b-2 border-primary">
-                  Calculator
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
-      <main className="flex-grow container mx-auto p-4 sm:p-6 lg:p-8">
-        <div className="text-center mb-10">
-          <Skeleton className="h-10 w-3/4 mx-auto" />
-          <Skeleton className="h-5 w-1/2 mx-auto mt-3" />
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
-          <div className="lg:col-span-2 space-y-4">
-            <Skeleton className="h-64 w-full" />
-            <Skeleton className="h-64 w-full" />
-            <Skeleton className="h-12 w-full" />
-          </div>
-          <div className="lg:col-span-3">
-            <Skeleton className="h-96 w-full" />
-          </div>
-        </div>
-      </main>
+    <div>
+      <Header />
+      <div className="text-5xl h-svh">Calculator</div>
+      <Footer />
     </div>
-  );
-}
-
-export default function Page() {
-  return (
-    <Suspense fallback={<CalculatorLoading />}>
-      <WrapperCalculatorPageContent />
-    </Suspense>
   );
 }
