@@ -57,3 +57,13 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+
+.glass {
+  @apply bg-white/40 backdrop-blur-xl border border-white/30 shadow-xl;
+}
+
+.glass-dark {
+  @apply bg-black/10 backdrop-blur-xl border border-white/10 shadow-xl;
+}
